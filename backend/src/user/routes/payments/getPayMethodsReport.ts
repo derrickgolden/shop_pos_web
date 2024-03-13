@@ -1,0 +1,22 @@
+import express, {Request, Response} from 'express';
+import { universalResponse } from 'user/types/universalResponse';
+import { getPayMethodsReport } from '../../dbServices/payments/getPayMethodReport';
+
+const router = express.Router();
+
+router.post('/get-report', async(req: Request, res: Response) =>{
+    const {shop_id} = req.body;
+
+    try {
+        const response:universalResponse = await getPayMethodsReport(shop_id);
+        response.success ? 
+            res.status(200).json(response):
+            res.status(302).json(response)
+        
+    } catch (error) {
+        console.log(error)
+        res.status(302).json({success: false, msg: "sever side error", err: error.message})
+    }
+});
+
+export default router;
