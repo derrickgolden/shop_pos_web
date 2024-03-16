@@ -4,9 +4,9 @@ import Swal from "sweetalert2";
 
 interface updateStockProps{
     handleClose: () => void,
-    totalStock: number, stock_id: number
+    totalStock: number, product_id: number
 }
-export const updateStock = async({handleClose, totalStock, stock_id}: updateStockProps) =>{
+export const updateStock = async({handleClose, totalStock, product_id}: updateStockProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -21,7 +21,7 @@ export const updateStock = async({handleClose, totalStock, stock_id}: updateStoc
         return
     }
     
-    const data = JSON.stringify({totalStock, stock_id})
+    const data = JSON.stringify({totalStock, product_id})
     let config = {
         method: 'post',
         maxBodyLength: Infinity,
@@ -38,7 +38,7 @@ export const updateStock = async({handleClose, totalStock, stock_id}: updateStoc
         if(response.data.success){
             Swal.fire({
                 title: "Success",
-                text: "Medicine added successfully.",
+                text: "Product added successfully.",
                 icon: "success"
             }).then((result) =>{
                 handleClose();

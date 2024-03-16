@@ -1,9 +1,9 @@
 
 interface PricingDetailsCardProps{
-    handlePricingInput: () => void; 
+    handlePricingInput: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void; 
     pricingDetails: {
         price: number;
-        unit_of_mesurement: string;
+        unit_of_mesurement: number;
         package_size: number
     }
 }
@@ -18,8 +18,8 @@ const PricingDetailsCard: React.FC<PricingDetailsCardProps> = ({handlePricingInp
                         type="number" className="form-control" id="price" name="price"
                         placeholder="0.00" required/>
                 </div>
-                <div className="form-group mb-3 col-10 col-sm-5">
-                        <label htmlFor="exampleFormControlSelect1">Unit of Medicine</label>
+                {/* <div className="form-group mb-3 col-10 col-sm-5">
+                        <label htmlFor="exampleFormControlSelect1">Unit of the Product</label>
                         <select onChange={handlePricingInput} value={pricingDetails?.unit_of_mesurement}
                         className="form-control" id="exampleFormControlSelect1" name="unit_of_mesurement">
                             <option>-select unit-</option>
@@ -27,7 +27,7 @@ const PricingDetailsCard: React.FC<PricingDetailsCardProps> = ({handlePricingInp
                                 <option key={i} >{unit}</option>
                             ))}
                         </select>
-                </div>
+                </div> */}
 
                 <div className="form-group mb-3 col-10 col-sm-5">
                     <label htmlFor="package_size">Units per container</label>

@@ -1,28 +1,26 @@
 
 import { useState } from "react";
 
-import MedicineDetails from "../components/inventory/MedicineDetails";
-import MedicineList from "../components/inventory/MedicineList";
+import ProductDetails from "../components/inventory/ProductDetails";
+import ProductList from "../components/inventory/ProductList";
 import PagesHeader from "../components/sharedComponents/PagesHeader";
-import { Medicine } from "../components/inventory/types";
-import AddMedicineForm from "../components/inventory/AddMedicineForm";
+import { Product } from "../components/inventory/types";
+import AddProductForm from "../components/inventory/AddProductForm";
 import Swal from "sweetalert2";
 
-const InventoryMedicineList = () =>{
+const InventoryProductList = () =>{
     const [showDetails, setShowDetails] = useState("list")
-    const [medicineDetails, setMedicineDetails] = useState({
-        medicine_id: 0, medicine_name: "", group_name: "", stock_qty: 0, action: ""
-    })
+    const [productDetails, setProductDetails] = useState<Product>()
 
-    const handleActionDetails = (row: Medicine) =>{
-        setMedicineDetails(row);
+    const handleActionDetails = (row: Product) =>{
+        setProductDetails(row);
         setShowDetails("details");
     }
    
-    const handleUpdateStock = (row: Medicine) =>{
+    const handleUpdateStock = (row: Product) =>{
         
         Swal.fire({
-            title: `Do you want to update stock for ${row.medicine_name}?`,
+            title: `Do you want to update stock for ${row.product_name}?`,
             inputLabel: "New stock number(will be added to previous stock)",
             input: "number",
             showCancelButton: true,
@@ -41,25 +39,25 @@ const InventoryMedicineList = () =>{
         <div className='body2 bg-white pb-5' style={{paddingTop: "2rem"}}>
             <PagesHeader 
                 setShowDetails ={setShowDetails}
-                btnInfo ={{text: "Add New Medicine", navigate: "addmedicine", details: "medicine"}}
+                btnInfo ={{text: "Add New Product", navigate: "addproduct", details: "product"}}
             />
             {showDetails === "list" && 
-                <MedicineList
+                <ProductList
                     onHandleActionDetails = {handleActionDetails} 
                     onHandleUpdateStock = {handleUpdateStock}
                 />}
-            {showDetails === "details" && 
-                <MedicineDetails
+            {showDetails === "details" && productDetails &&
+                <ProductDetails
                     onHandleActionDetails = {handleActionDetails}
-                    medicineDetails = {medicineDetails}
+                    productDetails = {productDetails}
                     setShowDetails = {setShowDetails}
                  />}
-            {showDetails === "addmedicine" && 
-                <AddMedicineForm
+            {showDetails === "addproduct" && 
+                <AddProductForm
                     setShowDetails = {setShowDetails}
                  />}
         </div>
     )
 }
 
-export default InventoryMedicineList;
+export default InventoryProductList;

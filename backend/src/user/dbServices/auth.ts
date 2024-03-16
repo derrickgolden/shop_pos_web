@@ -22,7 +22,6 @@ const signupUser = async (signupDetails: SignupDetails | GoogleUserProfileAdd,
     const {email} = signupDetails;
     try {
         const connection: RowDataPacket = await pool.getConnection();
-        console.log(auth_with);
 
         // Check if the user already exists
         const [existingUser] = await connection.query(`
@@ -183,7 +182,6 @@ const storeLinkToken = async( user_id: number, email: string, token: string
 
         connection.release();
 
-        console.log(res)
         return {success: true, msg: "",
             details: [{link_tokens_id:res.insertId, user_id, email}]
         };

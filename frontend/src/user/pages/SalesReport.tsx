@@ -7,14 +7,15 @@ import { setSalesReportList } from '../../redux/salesReport';
 import { RootState } from '../../redux/store';
 import { ResultItem, calculateTotalSales } from './calculations/totalSalesUnits';
 import ReportHeader, { SelectedDate } from '../components/reports/ReportHeader';
-import SalesTable from '../components/reports/SalesTable';
-import Swal from 'sweetalert2';
+import SalesTable from "../components/reports/SalesTable"
 
 export const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
 const SalesReport = () =>{
-    const [sortedSalesByDateSelect, setSortedSalesByDateSelect] = useState<ResultItem>({accumulatedSales: [], sortedSales: []})
+    const [sortedSalesByDateSelect, setSortedSalesByDateSelect] = useState<ResultItem>({
+        accumulatedSales: [], sortedSales: []
+    })
     const [selectedDate, setSelectedDate] = useState<SelectedDate>({
         startDate:  thirtyDaysAgo,
         endDate: new Date(),
@@ -22,23 +23,23 @@ const SalesReport = () =>{
 
     const dispatch = useDispatch()
     const sales = useSelector((state: RootState) => state.salesReport)
-    const activePharmacy = useSelector((state: RootState) => state.activePharmacy); 
+    const activeShop = useSelector((state: RootState) => state.activeShop); 
 
     useEffect(() =>{
-        if(activePharmacy.pharmacy){
+        if(activeShop.shop){
             const url = "sales/get-sales"
-            const pharmacy_id = activePharmacy.pharmacy.pharmacy_id
-            const salesReport = getSalesReportApi({url, pharmacy_id});
+            const shop_id = activeShop.shop.shop_id
+            const salesReport = getSalesReportApi({url, shop_id});
             salesReport.then((data) =>{
                 dispatch(setSalesReportList(data));
             })
         }
-    }, [sales.length === 0, activePharmacy]);
+    }, [sales.length === 0, activeShop]);
 
     useEffect(() =>{
         const sortedSalesByDate = calculateTotalSales({data: sales, date: selectedDate, keyType: "sales_items" })
         setSortedSalesByDateSelect(sortedSalesByDate);
-    }, [sales, activePharmacy])
+    }, [sales, activeShop])
 
     const handleRegenerateGraph = (date: SelectedDate) =>{
         if(date.endDate === null){
@@ -91,8 +92,8 @@ const SalesReport = () =>{
             </div>
         </div>
         <SalesTable 
-            salesData={sortedSalesByDateSelect?.sortedSales} 
-            activePharmacy = {activePharmacy}    
+            salesData={sortedSalesByDateSelect?.sortedSales } 
+            activeShop = {activeShop}    
         />
         </div>
     )

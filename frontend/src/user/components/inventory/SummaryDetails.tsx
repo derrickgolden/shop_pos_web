@@ -2,7 +2,7 @@
 import DataTableComponent from "../sharedComponents/DataTableComponent";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { Medicine, StockDetails } from "./types";
+import { Product } from "./types";
 
 import Update_stock_modal from "./PopupModal"
 
@@ -18,9 +18,9 @@ const SummaryDetails = () =>{
     const { data, caption, color } = useLocation().state;
     console.log(data);
 
-    const [search, setSearch] = useState('medicine_name');
-    const [searchType, setSearchType] = useState('medicine_name');
-    const [selectData, setSelectData] = useState<Medicine>();
+    const [search, setSearch] = useState('product_name');
+    const [searchType, setSearchType] = useState('product_name');
+    const [selectData, setSelectData] = useState<Product>();
     const [isScrollable, setIsScrollable] = useState(false);
     const componentRef = useRef(null);
 
@@ -29,38 +29,38 @@ const SummaryDetails = () =>{
 
     const columns = [
         {
-            name: "Medicine Id",
-            selector: (row: Medicine) => row.medicine_id,
+            name: "Product Id",
+            selector: (row: Product) => row.product_id,
             sortable: true
         },
         {
-            name: "Medicine Name",
-            selector: (row: Medicine) => row.medicine_name,
+            name: "Product Name",
+            selector: (row: Product) => row.product_name,
             sortable: true
         },
         {
             name: "Stock in Qty",
-            selector: (row: Medicine) => row.containers,
+            selector: (row: Product) => row.containers,
             sortable: true
         },
         {
             name: "Open Stock",
-            selector: (row: Medicine) => row.open_container_units,
+            selector: (row: Product) => row.open_container_units,
             sortable: true
         },
         {
             name: "Warining Limit",
-            selector: (row: Medicine) => row.warning_limit,
+            selector: (row: Product) => row.warning_limit,
             sortable: true
         },
         {
             name: "Last Stocked",
-            selector: (row: Medicine) => new Date(row?.last_stocked).toLocaleDateString(),
+            selector: (row: Product) => new Date(row.last_stocked).toLocaleDateString(),
             sortable: true
         },
         {
             name: "Action",
-            cell: (row: Medicine) => <>
+            cell: (row: Product) => <>
                 {/* <button onClick={() => onHandleActionDetails(row)} className=" btn btn-info btn-sm ms-1"  >
                     <FontAwesomeIcon icon={faCircleInfo} />
                 </button> */}
@@ -85,7 +85,7 @@ const SummaryDetails = () =>{
         setSearchType(e.target.value); // Prop to set the search type in the parent component
     }; 
     
-    const handleUpdateStock = (row: Medicine) =>{
+    const handleUpdateStock = (row: Product) =>{
         setOpen_update_modal({ render: !open_update_modal.render, modal_open: true })
         setSelectData(row);
     };
@@ -110,9 +110,9 @@ const SummaryDetails = () =>{
                             <div className="card-header d-flex justify-content-between border-bottom pb-1">
                                 <h4 className={`${color} `}>{caption}</h4>
                                 <select value={search} onChange={handleSearchChange}>
-                                    <option value="medicine_name">Medicine Name</option>
-                                    <option value="group_name">Medicine Group</option>
-                                    <option value="medicine_id">Medicine Id</option>
+                                    <option value="product_name">Product Name</option>
+                                    <option value="group_name">Product Group</option>
+                                    <option value="product_id">Product Id</option>
                                 </select>
                             </div>
                             <div className="card-body">

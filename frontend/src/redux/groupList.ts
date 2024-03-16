@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { StockDetails } from '../user/sections/pointOfEntry/types';
+import { ProductDetails } from '../user/sections/pointOfEntry/types';
 
 export interface Group {
   group_id: number;
   group_name: string;
   description: string;
-  stock: StockDetails[];
+  products: ProductDetails[];
 }
 
 const initialState: Group[] = [];

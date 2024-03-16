@@ -1,19 +1,11 @@
-
 import axios from "axios";
 import { server_baseurl } from "../../../../baseUrl";
 import Swal from "sweetalert2";
+import { Shop } from "../../../../redux/activeShop";
 
-interface updateStockProps {
-    handleClose: () => void;
-    warning_limit: number;
-    stock_name: string;  
-    stock_id: number;  
-}
-
-export const editStockDetailsApi = async ({ handleClose, warning_limit, stock_name, stock_id }: updateStockProps) => {
+export const getShopDetailsApi = async(): Promise<Shop[] | undefined> =>{
 
     const tokenString = sessionStorage.getItem("userToken");
-
     if (tokenString !== null) {
         var token = JSON.parse(tokenString);
     } else {
@@ -22,31 +14,23 @@ export const editStockDetailsApi = async ({ handleClose, warning_limit, stock_na
             text: "Try to login Again then add the group.",
             icon: "warning"
         });
-        return;
+        return
     }
 
-    const data = JSON.stringify({ warning_limit, stock_name, stock_id }); 
     let config = {
-        method: 'post',
+        method: 'get',
         maxBodyLength: Infinity,
-        url: `${server_baseurl}/user/inventory/update`,
+        url: `${server_baseurl}/user/shop-details`,
         headers: { 
             'Content-Type': 'application/json',
             'Authorization': `${token}`
         },
-        data : data
     };
 
     return await axios.request(config)
     .then((response) => {
         if(response.data.success){
-            Swal.fire({
-                title: "Success",
-                text: "Stock update successfully.",
-                icon: "success"
-            }).then((result) =>{
-                handleClose();
-            });
+           return response.data.details
         }else{
             Swal.fire({
                 title: "Failed",
@@ -54,15 +38,13 @@ export const editStockDetailsApi = async ({ handleClose, warning_limit, stock_na
                 icon: "warning"
             });
         }
-        return {success: response.data.success}
     })
     .catch((error) => {
         console.log(error);
         Swal.fire({
-            title: "Failed",
+            title: "Oooops...",
             text: `Server side error`,
             icon: "warning"
         });
-        return {success: false}
     });   
 }

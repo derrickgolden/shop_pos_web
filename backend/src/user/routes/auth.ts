@@ -120,7 +120,6 @@ router.patch('/reset-password', async(req: Request, res: Response) =>{
 
     try {
         const tokenResponce: LinkTokenRes = await getLinkToken(token)
-        console.log(tokenResponce);
         
         if(tokenResponce.success){
             const hash = await bcrypt.hash(password, 10);

@@ -2,22 +2,22 @@ import { configureStore } from '@reduxjs/toolkit'
 import userDetailsReducer from './userDetails'
 import callApiReducer from './callApi'
 import groupListReducer from './groupList'
-import stockListReducer from './stockList'
-import stockListDetailsReducer from './stockListDetails'
+import productListReducer from './productList'
+import shopListDetailsReducer from './shopListDetails'
 import salesReportReducer from './salesReport'
 import rerenderReducer from './rerender'
-import activeStockReducer from './activeShop'
+import activeShopReducer from './activeShop'
 
 export const store = configureStore({
   reducer: {
     userDetails: userDetailsReducer, 
     callApi: callApiReducer,
     groupList: groupListReducer,
-    stockList: stockListReducer,
-    stockListDetailsList: stockListDetailsReducer,
+    productList: productListReducer,
+    shopListDetailsList: shopListDetailsReducer,
     salesReport: salesReportReducer,
     rerender: rerenderReducer,
-    activeStock: activeStockReducer,
+    activeShop: activeShopReducer,
   },
 })
 

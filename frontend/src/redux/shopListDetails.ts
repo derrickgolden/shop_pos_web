@@ -1,9 +1,12 @@
 
 import { createSlice } from '@reduxjs/toolkit';
+import { Shop } from "./activeShop";
+
+const initialState: Shop[] | [] = []
 
 const shopListDetailsSlice = createSlice({
   name: 'shopListDetails',
-  initialState: [],
+  initialState,
   reducers: {
     setShopListDetails: (state, action) => {      
       return action.payload;

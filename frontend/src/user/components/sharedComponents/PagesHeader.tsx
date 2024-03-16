@@ -12,15 +12,15 @@ interface PagesHeaderProps{
 const PagesHeader: React.FC<PagesHeaderProps> = ({setShowDetails, btnInfo }) =>{
     const [totals, setTotals] = useState<number>()
     const groupList = useSelector((state: RootState) => state.groupList)    
-    const medicineList = useSelector((state: RootState) => state.medicineList)
+    const productList = useSelector((state: RootState) => state.productList)
     
     useEffect(() =>{
-        if(btnInfo.details === "medicine"){
-            setTotals(medicineList.length);
+        if(btnInfo.details === "product"){
+            setTotals(productList.length);
         }else if(btnInfo.details === "group"){
             setTotals(groupList.length)
         }
-    }, [ groupList, medicineList])
+    }, [ groupList, productList])
     const handleButtonClick =() =>{
         setShowDetails(btnInfo.navigate)
     }
@@ -35,13 +35,13 @@ const PagesHeader: React.FC<PagesHeaderProps> = ({setShowDetails, btnInfo }) =>{
                         </h1>
                         <FaChevronRight />
                         <h1 className="font-weight-bold fs-4" style={{ fontFamily: 'Poppins', color: '#1D242E' }}>
-                            &nbsp; {btnInfo.details ==="medicine"? `List of Medicines(${totals})`:
+                            &nbsp; {btnInfo.details ==="product"? `List of products(${totals})`:
                                     btnInfo.details === "group"? `List of Groups(${totals})` : null}
                         </h1>
                     </div>
                     <p className="font-family-poppins font-weight-400 font-size-14 line-height-21 text-dark">
-                        {btnInfo.details ==="medicine"? `List of medicines available for sales.`:
-                        btnInfo.details === "group"? `List of medicine groups available for sales.` : null}
+                        {btnInfo.details ==="product"? `List of products available for sales.`:
+                        btnInfo.details === "group"? `List of product groups available for sales.` : null}
                     </p>
                 </div>
                 <div className="bg-white d-flex align-items-center" 

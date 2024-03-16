@@ -1,18 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import MedicineSelectNavbar from "../../components/pointOfEntry/MedicineSelectNavbar";
-import POEmedicineCard from "../../components/pointOfEntry/POEmedicineCard";
+import ProductSelectNavbar from "../../components/pointOfEntry/ProductSelectNavbar";
+import POEproductCard from "../../components/pointOfEntry/POEproductCard";
 import { RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
-import { getMedicineGroupList } from "../../components/inventory/medicineGroup/apiCalls/getStockGroupList";
+import { getProductGroupList } from "../../components/inventory/productGroup/apiCalls/getProductGroupList";
 import { setGroupList } from "../../../redux/groupList";
 import { OrderDetail } from "../../pages/SalesEntry";
 import OrdersCard from "../../components/pointOfEntry/OrdersCard";
 import { FaOpencart } from "react-icons/fa";
 import { getSessionStorage } from "../../controllers/getSessionStorage";
-import { MedicineDetails } from "./types";
+import { ProductDetails } from "./types";
 
 interface InventorySelectProps {
-    handleNewOrderSelect: (newOrder: MedicineDetails) =>void;
+    handleNewOrderSelect: (newOrder: ProductDetails) =>void;
     orderDetails: OrderDetail[];
     handleEditOrder: (order: OrderDetail) => void;
     handlePayment: () => void;
@@ -22,50 +22,48 @@ const InventorySelect: React.FC<InventorySelectProps> = ({
     handleNewOrderSelect, handleEditOrder, orderDetails, handlePayment, setShowInventoryOrders }) =>{
     const [groupNames, setGroupNames] = useState<string[]>([])
     const [showGroup, setShowGroup] = useState("All")
-    const [searchMedicine, setSearchMedicine] = useState("")
+    const [searchProduct, setSearchProduct] = useState("")
 
     const dispatch = useDispatch()
-    const medicineGroup = useSelector((state: RootState) => state.groupList);
+    const productGroup = useSelector((state: RootState) => state.groupList);
 
-    const userPharm = getSessionStorage();
-    const { localPharm } = userPharm;
+    const userShop = getSessionStorage();
+    const { localShop } = userShop;
     
     useEffect(()=>{
-        const groupNames: string[] = medicineGroup.map((group) => {
+        const groupNames: string[] = productGroup.map((group) => {
             return group.group_name
         })
         setGroupNames(groupNames);
-    }, [medicineGroup])
+    }, [productGroup])
 
     useEffect(()=>{
-        if(localPharm.available){
             const filterNull = true;
-            const pharmacy_id = localPharm.localPharm?.pharmacy_id;
-            if(pharmacy_id !== undefined){
-                const res = getMedicineGroupList(filterNull, pharmacy_id);
+            const shop_id = localShop?.shop_id;
+            if(shop_id !== undefined){
+                const res = getProductGroupList(filterNull, shop_id);
                 res.then((data) =>{        
                     dispatch(setGroupList(data));
                 })
             }
-        }
-    },[medicineGroup.length === 0])
+    },[productGroup.length === 0])
     
     return(
         <div className="col-12 px-0">
-            <MedicineSelectNavbar 
+            <ProductSelectNavbar 
                 groupNames = {groupNames}
                 setShowGroup = {setShowGroup}
-                setSearchMedicine = {setSearchMedicine}
+                setSearchProduct = {setSearchProduct}
             />
             <div className="d-flex flex-wrap align-items-start inventory-select col-12"> 
             {
-                medicineGroup.map((group, i) =>{
+                productGroup.map((group, i) =>{
                     if(showGroup === "All" || showGroup === group.group_name){
-                        return group.medicines.map((medicine, j)=>{
-                            if(medicine.medicine_name?.toLowerCase().match(searchMedicine?.toLowerCase())){
+                        return group.products.map((product, j)=>{
+                            if(product.product_name?.toLowerCase().match(searchProduct?.toLowerCase())){
                                 const uniqueKey = i+j;
-                                return <POEmedicineCard key={uniqueKey}
-                                    medicineDetails ={medicine}
+                                return <POEproductCard key={uniqueKey}
+                                    productDetails ={product}
                                     handleNewOrderSelect = {handleNewOrderSelect}
                                 />    
                             }

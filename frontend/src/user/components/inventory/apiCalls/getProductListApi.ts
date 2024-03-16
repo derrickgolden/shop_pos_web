@@ -2,9 +2,10 @@ import axios from "axios";
 import { server_baseurl } from "../../../../baseUrl";
 import Swal from "sweetalert2";
 
-export const getPharmacyDetailsApi = async() =>{
+export const getProductListApi = async(shop_id: number) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
+
     if (tokenString !== null) {
         var token = JSON.parse(tokenString);
     } else {
@@ -16,20 +17,22 @@ export const getPharmacyDetailsApi = async() =>{
         return
     }
 
+    const data = JSON.stringify({shop_id})
     let config = {
-        method: 'get',
+        method: 'POST',
         maxBodyLength: Infinity,
-        url: `${server_baseurl}/user/pharmacy-details`,
+        url: `${server_baseurl}/user/inventory/get-product`,
         headers: { 
             'Content-Type': 'application/json',
             'Authorization': `${token}`
         },
+        data
     };
 
     return await axios.request(config)
     .then((response) => {
-        if(response.data.success){
-           return response.data.details
+        if(response.data.success){            
+            return response.data.details
         }else{
             Swal.fire({
                 title: "Failed",

@@ -2,20 +2,25 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { useNavigate } from "react-router-dom";
-import { regiterPharmacyApi } from "./apiCalls/registerPhamacyApi";
+import { regiterShopApi } from "./apiCalls/registerShopApi";
 
-const inputDetails = [
-    {label: "Pharmacy Name", type: "text", placeholder: "Pharma one", name: "pharmacy_name"},
+const inputDetails: {
+    label: string;
+    type: string;
+    placeholder: string;
+    name: "shop_name" | "location" | "shop_email" | "shop_tel";
+}[] = [
+    {label: "Shop Name", type: "text", placeholder: "Pharma one", name: "shop_name"},
     {label: "Location", type: "text", placeholder: "Westlands Nairobi", name: "location"},
-    {label: "Pharmacy Email", type: "email", placeholder: "pharmaone@gmail.com", name: "pharmacy_email"},
-    {label: "Pharmacy Tel", type: "text", placeholder: "+2547147000000", name: "pharmacy_tel"},
+    {label: "Shop Email", type: "email", placeholder: "pharmaone@gmail.com", name: "shop_email"},
+    {label: "Shop Tel", type: "text", placeholder: "+2547147000000", name: "shop_tel"},
 ]
 
-const RegisterPhamacy: React.FC = () =>{
+const RegisterShop: React.FC = () =>{
     const navigate = useNavigate()
 
-    const [pharmacyDetails, setPharmacyDetails] = useState({
-        pharmacy_name: "", location: "", pharmacy_email: "", pharmacy_tel: "", extra_info: "", logo: ""
+    const [shopDetails, setShopDetails] = useState({
+        shop_name: "", location: "", shop_email: "", shop_tel: "", extra_info: "", logo: ""
     })
     const [selectRows, setSelectRows] = useState(3)
 
@@ -23,46 +28,47 @@ const RegisterPhamacy: React.FC = () =>{
         const name = e.target.name;
         const value = e.target.value;
     
-        setPharmacyDetails((obj) =>({...obj, [name]: value}))
+        setShopDetails((obj) =>({...obj, [name]: value}))
     }
 
-    const handleRegPharmacySubmit: React.FormEventHandler<HTMLFormElement> = (e) =>{
+    const handleRegShopSubmit: React.FormEventHandler<HTMLFormElement> = (e) =>{
         e.preventDefault()
-        console.log(pharmacyDetails);
         
-        regiterPharmacyApi({pharmacyDetails, navigate})         
+        regiterShopApi({shopDetails, navigate})         
     }
 
     return(
         <div className='body2 bg-white pb-5' style={{paddingTop: "2rem"}}>
             <section className="upper-section bg-light py-5 mb-5">
                 <div className="px-5">
-                    <form onSubmit={handleRegPharmacySubmit} enctype="multipart/form-data"
+                    <form onSubmit={handleRegShopSubmit} encType="multipart/form-data"
                     className="col-sm-10"> 
                         <div className="d-flex flex-wrap justify-content-between align-items-center ">
                             {
-                                inputDetails.map((detail, i) =>(
+                                inputDetails.map((detail, i) =>{
+                                    const {label, name, type, placeholder} = detail;
+                                    return(
                                     <div key={i}
                                     className="form-group mb-3 col-sm-5">
-                                        <label htmlFor="exampleFormControlInput1">{detail.label}</label>
+                                        <label htmlFor="exampleFormControlInput1">{label}</label>
                                         <input onChange={handleFormInput} 
-                                            value={pharmacyDetails[detail.name] as string}
-                                            type={detail.type} className="form-control" id="medicinename"
-                                            name={detail.name} placeholder={detail.placeholder} required/>
+                                            value={shopDetails[name] }
+                                            type={type} className="form-control" id="productname"
+                                            name={name} placeholder={placeholder} required/>
                                     </div>
-                                ))
+                                )})
                             }
                                     {/* <div className="form-group mb-3 col-sm-5">
                                         <label htmlFor="exampleFormControlInput1">Upload your logo</label>
                                         <input type="file" name="logo" id="" 
-                                            onChange={(e) => setPharmacyDetails(
+                                            onChange={(e)ShopDetails(
                                             (obj) =>({...obj, logo: e.target.files[0]}))
                                         } />   
                                     </div> */}
                         </div> 
                         <div className="form-group mb-3 ">
                             <label htmlFor="exampleFormControlTextarea1">Any Etra Info</label>
-                            <textarea onChange={handleFormInput} value={pharmacyDetails.extra_info}
+                            <textarea onChange={handleFormInput} value={shopDetails.extra_info}
                                 className="form-control" id="exampleFormControlTextarea1" required name="extra_info"
                                 aria-required rows={selectRows}>
                                 
@@ -84,4 +90,4 @@ const RegisterPhamacy: React.FC = () =>{
     )
 }
 
-export default RegisterPhamacy;
+export default RegisterShop;

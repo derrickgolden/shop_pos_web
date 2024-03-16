@@ -1,19 +1,20 @@
 import axios from "axios";
 import { server_baseurl } from "../../../../baseUrl";
 import Swal from "sweetalert2";
+import { NavigateFunction } from "react-router-dom";
 
 interface handleAddGroupProps{
-    pharmacyDetails: {
-        pharmacy_name: string;
+    shopDetails: {
+        shop_name: string;
          location: string;
-         pharmacy_email: string;
-         pharmacy_tel: string;
+         shop_email: string;
+         shop_tel: string;
          extra_info: string;
-         logo: {}
+         logo: string;
     }
-    navigate: (arg: number | string) => void   
+    navigate: NavigateFunction   
 }
-export const regiterPharmacyApi = ({pharmacyDetails, navigate}: handleAddGroupProps) =>{
+export const regiterShopApi = ({shopDetails, navigate}: handleAddGroupProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -29,19 +30,19 @@ export const regiterPharmacyApi = ({pharmacyDetails, navigate}: handleAddGroupPr
     }
 
     const formData = new FormData();
-    const {pharmacy_name, location, pharmacy_email, pharmacy_tel, extra_info, logo} = pharmacyDetails
+    const {shop_name, location, shop_email, shop_tel, extra_info, logo} = shopDetails
 
-    formData.append('pharmacy_name', pharmacy_name);
+    formData.append('shop_name', shop_name);
     formData.append('location', location);
-    formData.append('pharmacy_email', pharmacy_email);
-    formData.append('pharmacy_tel', pharmacy_tel);
+    formData.append('shop_email', shop_email);
+    formData.append('shop_tel', shop_tel);
     formData.append('extra_info', extra_info);
     formData.append('logo', logo); 
     
     let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: `${server_baseurl}/user/register-pharmacy`,
+        url: `${server_baseurl}/user/register-shop`,
         headers: { 
             'Authorization': `${token}`
         },
@@ -53,7 +54,7 @@ export const regiterPharmacyApi = ({pharmacyDetails, navigate}: handleAddGroupPr
         if(response.data.success){
             Swal.fire({
                 title: "Good job!",
-                text: "Pharmacy registered succefully!",
+                text: "Shop registered succefully!",
                 icon: "success",
                 confirmButtonText: "Ok",
               }).then((result) => {

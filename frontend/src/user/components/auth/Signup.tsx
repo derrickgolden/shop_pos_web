@@ -27,14 +27,13 @@ const Signup = () =>{
         setSignupDetails((obj) => ({...obj, user_type}))
     }, [user_type]);
 
-    const toggleButton = (role: string) => {
+    const toggleButton = (role: UserAcc) => {
         setUser_type(role);
       };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>{
         const name = e.target.name
         const value = e.target.value
-        console.log(value);
         
         if(name !== "remember_me"){
             setSignupDetails((obj) =>({...obj, [name]: value}))
@@ -53,11 +52,8 @@ const Signup = () =>{
     const handleSignupDetailsSubmit = async (e: React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault()
         
-        // console.log(signupDetails);
         const phone = "+" + countries[signupDetails.country].phone + signupDetails.phone
-        let data = JSON.stringify({...signupDetails, phone, auth_with: "app"});
-        console.log(data);
-        
+        let data = JSON.stringify({...signupDetails, phone, auth_with: "app"});        
 
         let config = {
             method: 'post',
@@ -71,7 +67,6 @@ const Signup = () =>{
 
         axios.request(config)
         .then((response) => {
-            console.log(response.data);
             if(response.data.msg === "User Registered"){
                 navigate('/user/login', {replace: true});
             }else{

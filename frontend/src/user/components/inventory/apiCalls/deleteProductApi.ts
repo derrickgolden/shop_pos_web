@@ -1,8 +1,14 @@
+
 import axios from "axios";
-import { server_baseurl } from "../../../../../baseUrl";
+import { server_baseurl } from "../../../../baseUrl";
 import Swal from "sweetalert2";
 
-export const shiftStockGroupApi = (group_id: number, stock_id: number, handleClose: () => void) =>{
+interface updateStockProps{
+    setShowDetails: (lists: string) => void,
+     product_id: number
+}
+export const deleteProductApi = async (
+    {setShowDetails, product_id}: updateStockProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -11,19 +17,17 @@ export const shiftStockGroupApi = (group_id: number, stock_id: number, handleClo
     } else {
         Swal.fire({
             title: "Token not Found",
-            text: "Try to login Again First.",
+            text: "Try to login Again then add the group.",
             icon: "warning"
         });
         return
     }
-
-    let data = JSON.stringify({group_id, stock_id});
-    console.log(data);
     
+    const data = JSON.stringify({ product_id})
     let config = {
-        method: 'PATCH',
+        method: 'post',
         maxBodyLength: Infinity,
-        url: `${server_baseurl}/user/inventory/shift-group`,
+        url: `${server_baseurl}/user/inventory/delete`,
         headers: { 
             'Content-Type': 'application/json',
             'Authorization': `${token}`
@@ -31,15 +35,16 @@ export const shiftStockGroupApi = (group_id: number, stock_id: number, handleClo
         data : data
     };
 
-    axios.request(config)
+    return await axios.request(config)
     .then((response) => {
         if(response.data.success){
             Swal.fire({
                 title: "Success",
-                text: "Stock group shifted successfully.",
+                text: "Product Deleted Successfully.",
                 icon: "success"
+            }).then((result) =>{
+                setShowDetails("list");
             });
-            handleClose();
         }else{
             Swal.fire({
                 title: "Failed",
@@ -47,13 +52,15 @@ export const shiftStockGroupApi = (group_id: number, stock_id: number, handleClo
                 icon: "warning"
             });
         }
+        return {success: response.data.success}
     })
     .catch((error) => {
         console.log(error);
         Swal.fire({
-            title: "Sorry",
+            title: "Failed",
             text: `Server side error`,
             icon: "warning"
         });
+        return {success: false}
     });   
 }

@@ -1,18 +1,17 @@
 import { useDispatch } from "react-redux";
 import DetailCard from "./DetailCard"
-import { StockApi } from "./apiCalls/deleteStockApi";
-import { StockDetailsProps } from "./types";
+import { deleteProductApi } from "./apiCalls/deleteProductApi";
+import { ProductDetailsProps } from "./types";
 import { setCallApi } from "../../../redux/callApi";
 import Swal from "sweetalert2";
 
-const StockDetails: React.FC<StockDetailsProps> = ({onHandleActionDetails, stockDetails, setShowDetails}) =>{
-    // console.log(stockDetails);
+const ProductDetails: React.FC<ProductDetailsProps> = ({onHandleActionDetails, productDetails, setShowDetails}) =>{
     const dispatch = useDispatch();
 
-    const StockDelete = (stock_id: number, stock_name: string) =>{
+    const handleProductDelete = (product_id: number, product_name: string) =>{
         Swal.fire({
-            title: `Are you sure you want to delete ${stock_name}?`,
-            text: `All data will be lost including sales history related to the stock.`,
+            title: `Are you sure you want to delete ${product_name}?`,
+            text: `All data will be lost including sales history related to the product.`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -20,7 +19,7 @@ const StockDetails: React.FC<StockDetailsProps> = ({onHandleActionDetails, stock
             confirmButtonText: "Yes, Delete!"
         }).then((result) => {
             if (result.isConfirmed) {
-                StockApi({setShowDetails, stock_id}).then((data) =>{
+                deleteProductApi({setShowDetails, product_id}).then((data) =>{
                     dispatch(setCallApi(true));
                 });
             }
@@ -31,18 +30,18 @@ const StockDetails: React.FC<StockDetailsProps> = ({onHandleActionDetails, stock
         <div className="px-2 px-md-5">
             {<DetailCard 
                 key={1}
-                data ={stockDetails}/>}
+                data ={productDetails}/>}
             <div className="bg-white d-flex gap-4 align-items-center justify-content-between" >
                 <button type="button" 
-                onClick={() => StockDelete(stockDetails?.stock_id, stockDetails.stock_name)}
-                className="btn btn-outline-danger">Delete Item</button>
+                onClick={() => handleProductDelete(productDetails?.product_id, productDetails.product_name)}
+                className="btn btn-outline-danger">Delete Product</button>
                 <button onClick={() => setShowDetails("list")}
                     type="button" className="btn btn-primary text-white">
-                        Back to Stock List
+                        Back to Product List
                 </button>
             </div> 
         </div>
     )
 }
 
-export default StockDetails
+export default ProductDetails

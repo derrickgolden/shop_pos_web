@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
 
-const MedicineSelectNavbar =({groupNames, setShowGroup, setSearchMedicine}) =>{
+interface ProductSelectNavbarProps {
+  groupNames: string[];
+  setShowGroup: React.Dispatch<React.SetStateAction<string>>; 
+  setSearchProduct: React.Dispatch<React.SetStateAction<string>>;
+}
+const ProductSelectNavbar: React.FC<ProductSelectNavbarProps> =({groupNames, setShowGroup, setSearchProduct}) =>{
 
     return(
       <nav className="navbar navbar-expand navbar-light bg-body-tertiary bg-light w-100 "
@@ -27,7 +32,7 @@ const MedicineSelectNavbar =({groupNames, setShowGroup, setSearchMedicine}) =>{
                     </ul>
                   </div>
             <form className="form-inline my-2 my-lg-0 col-4">
-              <input onChange={(e) =>setSearchMedicine(e.target.value)}
+              <input onChange={(e) =>setSearchProduct(e.target.value)}
               className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
             </form>
           </ul>
@@ -36,4 +41,4 @@ const MedicineSelectNavbar =({groupNames, setShowGroup, setSearchMedicine}) =>{
     )
 }
 
-export default MedicineSelectNavbar
+export default ProductSelectNavbar

@@ -1,33 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import DataTable from 'react-data-table-component'
-import { DataTableComponentProps } from './types'
-import { Product } from '../inventory/types'
+import { DataTableProductGroupProps } from './types'
 
-const DataTableComponent: React.FC<DataTableComponentProps> = ({ apidata, columns, search }) =>{
-  const [data, setData] = useState(apidata as Product[])
+const DataTableProductGroup: React.FC<DataTableProductGroupProps> = ({ apidata, columns, search }) =>{
+  const [data, setData] = useState(apidata)
   const [datafilter, setFilter] = useState('')
-  const [datafinals, setFinals] = useState(apidata as Product[])
+  const [datafinals, setFinals] = useState(apidata)
 
+  // console.log(apidata)
   useEffect(() => {
-    let result: Product[] = data?.filter((val ) => {      
-      if (search == 'product_name') {
-        return val.product_name?.toLowerCase().match(datafilter?.toLowerCase())
-      }
-      else if (search == 'group_name') {
+    let result = data?.filter((val ) => {      
+      if (search == 'group_name') {
         return val.group_name?.toLowerCase().match(datafilter?.toLowerCase())
       }
-      else if (search == 'product_id') {
-        return val.product_id?.toString().match(datafilter?.toString())
-      }
-    }) as Product[]
+    })
 
     setFinals(result)
-
   }, [datafilter])
 
   useEffect(() => {
-    setFinals(apidata as Product[])
-    setData(apidata as Product[])
+    setFinals(apidata)
+    setData(apidata)
   }, [apidata])
 
 
@@ -60,4 +53,4 @@ const DataTableComponent: React.FC<DataTableComponentProps> = ({ apidata, column
   )
 }
 
-export default DataTableComponent;
+export default DataTableProductGroup;

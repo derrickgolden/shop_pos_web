@@ -4,21 +4,21 @@ import { OrderDetail } from "../SalesEntry";
 import { Dispatch, SetStateAction } from "react";
 
 export interface UpdateStockProps{
-    medicine_id: number;
+    product_id: number;
 }
 
-export const handleUpdatingStock = (medicine: OrderDetail, 
+export const handleUpdatingStock = (product: OrderDetail, 
     setUpdateStock: Dispatch<SetStateAction<UpdateStockProps[]>>, 
     activeCard: number, newUnits: number, 
     useActiveCard = true) =>{
 
-    const medicine2 = {
-    unitsPerContainer: medicine.package_size,
-    containersInStock: medicine.stock_qty,
-    openContainerUnits: medicine.open_container_units,
+    const product2 = {
+    unitsPerContainer: product.package_size,
+    containersInStock: product.stock_qty,
+    openContainerUnits: product.open_container_units,
     };
 
-    const { error, msg, remainingContainers, remainingUnits  } = calculateRemainingStock( medicine2, newUnits);
+    const { error, msg, remainingContainers, remainingUnits  } = calculateRemainingStock( product2, newUnits);
 
     if(error){
         Swal.fire({
@@ -30,9 +30,9 @@ export const handleUpdatingStock = (medicine: OrderDetail,
         setUpdateStock((stockArr) => {
             if(useActiveCard){
                 const updatedStockArr = stockArr.map((item) => {
-                    if (item.medicine_id === activeCard ) {
+                    if (item.product_id === activeCard ) {
                         return {
-                            medicine_id: activeCard,
+                            product_id: activeCard,
                             remainingContainers,
                             remainingUnits
                         };
@@ -42,10 +42,10 @@ export const handleUpdatingStock = (medicine: OrderDetail,
                 }); 
                 return updatedStockArr; 
             }else{
-                if(!stockArr.some(stock => stock.medicine_id === medicine.medicine_id)){
+                if(!stockArr.some(stock => stock.product_id === product.product_id)){
                     return(
                         [...stockArr, 
-                        {medicine_id: medicine.medicine_id, remainingContainers, remainingUnits}]
+                        {product_id: product.product_id, remainingContainers, remainingUnits}]
                     )
                 }else{
                     return stockArr;
@@ -53,6 +53,6 @@ export const handleUpdatingStock = (medicine: OrderDetail,
             }
         })
     }
-    const customer_note = medicine.customer_note || "";
-    return { ...medicine, units: newUnits, sub_total: medicine.price * newUnits, customer_note };
+    const customer_note = product.customer_note || "";
+    return { ...product, units: newUnits, sub_total: product.price * newUnits, customer_note };
 }

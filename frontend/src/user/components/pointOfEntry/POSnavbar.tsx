@@ -20,10 +20,8 @@ interface POSnavbar{
 const POSnavbar: React.FC<POSnavbar> = ({
   showInventoryOrders, setShowInventoryOrders, entryStep, setEntryStep, isOnline, ordersList}) =>{
 
-    const userPharm = getSessionStorage();
-    const { localPharm: pharm } = userPharm.localPharm;
-    const { user } = userPharm.user;
-    console.log(showInventoryOrders, entryStep)
+    const userShop = getSessionStorage();
+    const { localShop, user } = userShop;
 
     return(
         <nav className="navbar navbar-expand z-30 navbar-light w-100 py-0"
@@ -37,7 +35,7 @@ const POSnavbar: React.FC<POSnavbar> = ({
                       </button>
                     )
                   }
-                  <h2 className="d-none d-md-block">{pharm?.pharmacy_name}</h2>
+                  <h2 className="d-none d-md-block">{localShop?.shop_name}</h2>
                 </div>
                 <div className="d-flex align-items-center gap-2 ">
                   <div className="fs-4 fw-bold">

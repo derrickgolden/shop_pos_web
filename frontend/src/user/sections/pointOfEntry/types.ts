@@ -23,17 +23,17 @@ export interface CommonSalesEntryProps{
   handleEntryStep?: () => void
 }
 
-export interface StockDetails {
+export interface ProductDetails {
   price: number;
   img_path: string | null;
   stock_qty: number;
   pricing_id: number;
-  medicine_id: number;
+  product_id: number;
   side_effect: string;
   instructions: string;
   package_size: number;
-  medicine_code: string;
-  medicine_name: string;
+  product_code: string;
+  product_name: string;
   unit_of_measurement: string;
   open_container_units: number;
 }

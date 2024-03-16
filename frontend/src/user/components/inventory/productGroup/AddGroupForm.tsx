@@ -15,10 +15,10 @@ const AddGroupForm: React.FC<AddGroupFormProps> = ({ setShowDetails}) =>{
     const [selectRows, setSelectRows] = useState(3);
 
     const userShop = getSessionStorage();
-    const { localShop } = userShop.localShop;
-
+    const { localShop } = userShop;
+    // console.log(localShop);
     useEffect(() =>{
-        if(localShop.shop_name){
+        if(localShop?.shop_name){
             setGroupDetails((obj) =>({...obj, shop_id: localShop.shop_id}))
         }else{
             Swal.fire({
@@ -42,7 +42,7 @@ const AddGroupForm: React.FC<AddGroupFormProps> = ({ setShowDetails}) =>{
 
     return(
         <div className="px-5">
-            <h3>New stock group for <span className="text-warning">{localShop.shop_name}</span></h3>
+            <h3>New product group for <span className="text-warning">{localShop?.shop_name}</span></h3>
             <form onSubmit={handleAddGroupSubmit}
             className="col-sm-10"> 
                 <div className="d-flex flex-wrap justify-content-between align-items-center ">
@@ -50,7 +50,7 @@ const AddGroupForm: React.FC<AddGroupFormProps> = ({ setShowDetails}) =>{
                         <label htmlFor="exampleFormControlInput1 p-4">Group Name</label>
                         <input onChange={handleFormInput} value={groupDetails.group_name}
                         type="text" className="form-control" id="group_name" name="group_name"
-                         placeholder="New Stock" required/>
+                         placeholder="Generic Product" required/>
                     </div>
                 </div>  
                 

@@ -1,8 +1,8 @@
 import axios from "axios";
-import { server_baseurl } from "../../../../baseUrl";
+import { server_baseurl } from "../../../../../baseUrl";
 import Swal from "sweetalert2";
 
-export const getStockListApi = async(shop_id: number) =>{
+export const shiftProductGroupApi = (group_id: number, product_id: number, handleClose: () => void) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -11,30 +11,34 @@ export const getStockListApi = async(shop_id: number) =>{
     } else {
         Swal.fire({
             title: "Token not Found",
-            text: "Try to login Again then add the group.",
+            text: "Try to login Again First.",
             icon: "warning"
         });
         return
     }
 
-    const data = JSON.stringify({shop_id})
+    let data = JSON.stringify({group_id, product_id});
+    
     let config = {
-        method: 'POST',
+        method: 'PATCH',
         maxBodyLength: Infinity,
-        url: `${server_baseurl}/user/inventory/get-stock`,
+        url: `${server_baseurl}/user/inventory/shift-group`,
         headers: { 
             'Content-Type': 'application/json',
             'Authorization': `${token}`
         },
-        data
+        data : data
     };
 
-    return await axios.request(config)
+    axios.request(config)
     .then((response) => {
         if(response.data.success){
-            console.log(response.data.details);
-            
-            return response.data.details
+            Swal.fire({
+                title: "Success",
+                text: "Product group shifted successfully.",
+                icon: "success"
+            });
+            handleClose();
         }else{
             Swal.fire({
                 title: "Failed",
@@ -46,7 +50,7 @@ export const getStockListApi = async(shop_id: number) =>{
     .catch((error) => {
         console.log(error);
         Swal.fire({
-            title: "Oooops...",
+            title: "Sorry",
             text: `Server side error`,
             icon: "warning"
         });

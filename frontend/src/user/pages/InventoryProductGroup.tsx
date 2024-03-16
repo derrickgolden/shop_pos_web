@@ -1,21 +1,17 @@
+
 import { useState } from "react";
 import PagesHeader from "../components/sharedComponents/PagesHeader";
-import GroupList from "../components/inventory/medicineGroup/GroupList";
-import GroupMedicineDetails from "../components/inventory/medicineGroup/GroupMedicineDetails";
-import { MedicineGroup } from "../components/inventory/medicineGroup/types";
-import AddGroupForm from "../components/inventory/medicineGroup/AddGroupForm";
+import GroupList from "../components/inventory/productGroup/GroupList";
+import GroupProductDetails from "../components/inventory/productGroup/GroupProductDetails";
+import AddGroupForm from "../components/inventory/productGroup/AddGroupForm";
+import { Group } from "../../redux/groupList";
 
-const InventoryMedicineGroup = () =>{
+const InventoryProductGroup = () =>{
     const [showDetails, setShowDetails] = useState("list");
-    const [medicineDetails, setMedicineDetails] = useState({
-        medicine_totals: 0, action: "", group_name: "",
-        medicine_list:[{
-            medicine_id: 0, medicine_name: "", group_name: "", stock_qty: 0, action: ""
-        }]
-    });
+    const [productDetails, setProductDetails] = useState<Group>();
 
-    const handleActionDetails = (row: MedicineGroup) =>{
-        setMedicineDetails(row);
+    const handleActionDetails = (row: Group) =>{
+        setProductDetails(row);
         setShowDetails("details");
     }
   
@@ -30,9 +26,9 @@ const InventoryMedicineGroup = () =>{
                     onHandleActionDetails = {handleActionDetails}
                 />
             }
-            {showDetails === "details" && 
-                <GroupMedicineDetails 
-                    medicineDetails = {medicineDetails}
+            {showDetails === "details" && productDetails &&
+                <GroupProductDetails 
+                    productDetails = {productDetails}
                     onHandleActionDetails = {handleActionDetails}
                     setShowDetails={setShowDetails}
                 />
@@ -46,4 +42,4 @@ const InventoryMedicineGroup = () =>{
     )
 }
 
-export default InventoryMedicineGroup;
+export default InventoryProductGroup;

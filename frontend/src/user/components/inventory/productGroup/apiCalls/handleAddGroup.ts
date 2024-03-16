@@ -1,11 +1,17 @@
 import axios from "axios";
-import { server_baseurl } from "../../../baseUrl";
+import { server_baseurl } from "../../../../../baseUrl";
 import Swal from "sweetalert2";
 
-export const getStockDetailsApi = async(shop_id: number) =>{
+interface handleAddGroupProps{
+    groupDetails: {group_name: string, description: string}
+    setShowDetails: (component: string) =>void
+}
+export const handleAddGroup = ({groupDetails, setShowDetails}: handleAddGroupProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
-
+    
+    
+// return;
     if (tokenString !== null) {
         var token = JSON.parse(tokenString);
     } else {
@@ -17,11 +23,13 @@ export const getStockDetailsApi = async(shop_id: number) =>{
         return
     }
 
-    let data = JSON.stringify({shop_id});   
+    let data = JSON.stringify(groupDetails);
+    // console.log(data);
+    
     let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: `${server_baseurl}/user/stock/stock-details`,
+        url: `${server_baseurl}/user/inventory/add-group`,
         headers: { 
             'Content-Type': 'application/json',
             'Authorization': `${token}`
@@ -29,10 +37,15 @@ export const getStockDetailsApi = async(shop_id: number) =>{
         data : data
     };
 
-    return await axios.request(config)
+    axios.request(config)
     .then((response) => {
-        if(response.data.success){            
-            return (response.data.details);
+        if(response.data.success){
+            setShowDetails("list");
+            Swal.fire({
+                title: "Success",
+                text: "Group added successfully.",
+                icon: "success"
+            });
         }else{
             Swal.fire({
                 title: "Failed",

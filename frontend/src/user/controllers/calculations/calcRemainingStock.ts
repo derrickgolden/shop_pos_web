@@ -1,11 +1,11 @@
-type Medicine = {
+type Product = {
   unitsPerContainer: number; // Number of units in a container (e.g., tablets, capsules, etc.)
   containersInStock: number; // Number of containers in stock
   openContainerUnits: number; // Number of units in the open container
 };
 
 export const calculateRemainingStock = (
-  medicine: Medicine,
+  product: Product,
   unitsSold: number
 ): { error: boolean; msg: string; remainingContainers?: number; remainingUnits?: number } => {
   
@@ -17,8 +17,8 @@ export const calculateRemainingStock = (
   }
 
   const totalUnitsInStock =
-    medicine.containersInStock * medicine.unitsPerContainer +
-    medicine.openContainerUnits;
+    product.containersInStock * product.unitsPerContainer +
+    product.openContainerUnits;
 
   if (unitsSold > totalUnitsInStock) {
     return {
@@ -27,7 +27,7 @@ export const calculateRemainingStock = (
     };
   }
 
-  let remainingUnits = medicine.openContainerUnits;
+  let remainingUnits = product.openContainerUnits;
 
   // Deduct from the open container first
   if (remainingUnits >= unitsSold) {
@@ -35,14 +35,14 @@ export const calculateRemainingStock = (
   } else {
     // Deduct from the open container and then move to closed containers
     unitsSold -= remainingUnits;
-    const closedContainersToDeduct = Math.ceil(unitsSold / medicine.unitsPerContainer);
+    const closedContainersToDeduct = Math.ceil(unitsSold / product.unitsPerContainer);
     const remainingClosedContainers = Math.max(
-      medicine.containersInStock - closedContainersToDeduct,
+      product.containersInStock - closedContainersToDeduct,
       0
     );
 
     remainingUnits =
-      closedContainersToDeduct * medicine.unitsPerContainer - unitsSold;
+      closedContainersToDeduct * product.unitsPerContainer - unitsSold;
 
     return {
       error: false,
@@ -55,7 +55,7 @@ export const calculateRemainingStock = (
   return {
     error: false,
     msg: '',
-    remainingContainers: medicine.containersInStock,
+    remainingContainers: product.containersInStock,
     remainingUnits,
   };
 };

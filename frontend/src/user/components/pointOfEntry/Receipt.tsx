@@ -12,9 +12,8 @@ interface ReceiptProps{
     saleRes: SaleRes;
 }
 const Receipt:React.FC<ReceiptProps> =({componentRef, saleRes, orderDetails, totalPrice}) =>{
-    const userPharm = getSessionStorage();
-    const { localPharm: activePharmacy } = userPharm.localPharm;
-    const { user } = userPharm.user;
+    const userShop = getSessionStorage();
+    const { localShop, user } = userShop;
 
     return(
         <div className="d-flex justify-content-center h-100 m-auto "
@@ -23,15 +22,15 @@ const Receipt:React.FC<ReceiptProps> =({componentRef, saleRes, orderDetails, tot
                 className="col-11 my-2 bg-white p-2 receipt " >
                     <header className="d-flex flex-column text-center mb-2">
                         <div>
-                            <img src={`${server_baseurl}/${activePharmacy?.logo_path}`} alt="logo" 
+                            <img src={`${server_baseurl}/${localShop?.logo_path}`} alt="logo" 
                             style={{width: "40px", height:"30px"}}/>
-                            <span>{activePharmacy?.pharmacy_name}</span>
+                            <span>{localShop?.shop_name}</span>
                         </div>
                         <span className=" col-10 m-auto">
-                            {activePharmacy?.pharmacy_email}
+                            {localShop?.shop_email}
                         </span>
                         <span className="border-bottom col-10 m-auto pb-2 mb-2">
-                            {activePharmacy?.pharmacy_tel}
+                            {localShop?.shop_tel}
                         </span>
                         <span>Served by {user?.last_name} {user?.first_name}</span>
                         <span><b>{saleRes.sale_id}</b></span>

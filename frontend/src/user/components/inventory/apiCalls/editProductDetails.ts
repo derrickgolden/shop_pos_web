@@ -1,11 +1,14 @@
-import axios from "axios";
-import { server_baseurl } from "../../../../../baseUrl";
-import Swal from "sweetalert2";
-import { Group } from "../../../../../redux/groupList";
 
-export const getStockGroupList = async(
-        filterNull: boolean, shop_id: number, isOnline?: boolean
-    ): Promise<Group[] | []> =>{
+import axios from "axios";
+import { server_baseurl } from "../../../../baseUrl";
+import Swal from "sweetalert2";
+
+interface updateStockProps{
+    handleClose: () => void,
+    warning_limit: number, product_name: string, product_id: number
+}
+export const editProductDetailsApi = async (
+    {handleClose, warning_limit, product_name, product_id}: updateStockProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -17,28 +20,31 @@ export const getStockGroupList = async(
             text: "Try to login Again then add the group.",
             icon: "warning"
         });
-        return []
+        return
     }
     
-    const data = JSON.stringify({ filterNull, shop_id });
-    const url = isOnline ? `https://pharmabackend.karibuchakula.co.ke/user/inventory/get-groups` :
-                `http://localhost:5020/user/inventory/get-groups`;
-
+    const data = JSON.stringify({warning_limit, product_name, product_id})
     let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: `${server_baseurl}/user/inventory/get-groups`,
+        url: `${server_baseurl}/user/inventory/update`,
         headers: { 
             'Content-Type': 'application/json',
             'Authorization': `${token}`
         },
-        data: data
+        data : data
     };
 
     return await axios.request(config)
     .then((response) => {
-        if(response.data.success){ 
-            return(response.data.details)
+        if(response.data.success){
+            Swal.fire({
+                title: "Success",
+                text: "Product added successfully.",
+                icon: "success"
+            }).then((result) =>{
+                handleClose();
+            });
         }else{
             Swal.fire({
                 title: "Failed",
@@ -46,13 +52,15 @@ export const getStockGroupList = async(
                 icon: "warning"
             });
         }
+        return {success: response.data.success}
     })
     .catch((error) => {
         console.log(error);
         Swal.fire({
-            title: "Oooops...",
-            text: `Server side error while fetching stock List`,
+            title: "Failed",
+            text: `Server side error`,
             icon: "warning"
         });
+        return {success: false}
     });   
 }

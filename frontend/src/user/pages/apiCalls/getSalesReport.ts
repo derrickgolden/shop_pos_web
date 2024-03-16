@@ -4,13 +4,12 @@ import Swal from "sweetalert2";
 
 interface salesReportProps{
     url: string,
-    pharmacy_id: number
+    shop_id: number
 }
 
-export const getSalesReportApi = async({url, pharmacy_id}: salesReportProps) =>{
+export const getSalesReportApi = async({url, shop_id}: salesReportProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
-    const localPharm = sessionStorage.getItem("activepharmacy")
 
     if (tokenString !== null) {
         var token = JSON.parse(tokenString);
@@ -23,7 +22,7 @@ export const getSalesReportApi = async({url, pharmacy_id}: salesReportProps) =>{
         return
     }
     
-    let data = JSON.stringify({pharmacy_id});
+    let data = JSON.stringify({shop_id});
     
     let config = {
         method: 'post',

@@ -15,14 +15,10 @@ export interface Shop {
 
 export interface ShopState {
     shop: Shop | null;
-    loading: boolean;
-    error: string | null;
 }
 
 const initialState: ShopState = {
     shop: null,
-    loading: false,
-    error: null
 };
 
 const activeShopSlice = createSlice({

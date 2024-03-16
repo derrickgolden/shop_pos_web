@@ -1,5 +1,5 @@
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md"
-import { Stock } from "./types";
+import { Product } from "./types";
 import { useEffect, useState } from "react";
 import { RootState } from "../../../redux/store";
 import { useSelector } from "react-redux";
@@ -7,22 +7,21 @@ import { useSelector } from "react-redux";
 export interface SalesProps{
     sub_total: number,
     units_sold: number,
-    stock_id: number,
+    product_id: number,
     sales_item_id: number
 }
 
-const DetailCard: React.FC<Stock> = ({data}) =>{
+const DetailCard: React.FC<{data: Product}> = ({data}) =>{
     const nodata = "No data"
     const [salesTotals, setSalesTotals ] = useState<{totalSales: number, totalUnits: number}>()
     const salesReport = useSelector((state: RootState) => state.salesReport);
-    // console.log(salesReport);
     
     useEffect(() =>{
         let totalSales = 0;
         let totalUnits = 0
-        salesReport.map((sales: {sales_items: [SalesProps]}) =>{
+        salesReport.map((sales) =>{
             sales.sales_items.map((details) =>{
-                if( details.stock_id === data.stock_id ){
+                if( details.product_id === data.product_id ){
                     totalSales += details.sub_total;
                     totalUnits += details.units_sold
                 }
@@ -35,21 +34,21 @@ const DetailCard: React.FC<Stock> = ({data}) =>{
             <div className="d-md-flex justify-content-between align-items-center">
                 <div className="card border-secondary mb-5 col-md-5" >
                     <div className="card-header d-flex justify-content-between align-items-center">
-                        <p className="text-poppins-semibold mb-0">Stock</p>
+                        <p className="text-poppins-semibold mb-0">Product</p>
                     </div>
 
                     <div className="d-flex justify-content-between card-body text-dark ">
                         <div className="col-6 text-left">
-                            <h5 className="card-title text-poppins-bold">{data.stock_name}</h5>
+                            <h5 className="card-title text-poppins-bold">{data.product_name}</h5>
                             <p className="card-text text-poppins">
-                                Stock name
+                                Product name
                             </p>
                         </div>
                         <div className="col-6 text-left">
                             <h5 className="card-title text-poppins-bold">
                                 {data.group_name}
                             </h5>
-                            <p className="card-text text-poppins">Stock Group</p>
+                            <p className="card-text text-poppins">Product Group</p>
                         </div>
                     </div>
                 </div>
@@ -96,19 +95,6 @@ const DetailCard: React.FC<Stock> = ({data}) =>{
                             <p className="card-text text-poppins">{data.instructions}</p>
                         </div>
                         
-                    </div>
-                </div>
-                <div className="card border-secondary mb-5 " >
-                    <div className="card-header d-flex justify-content-between align-items-center">
-                        <p className="text-poppins-semibold mb-0">Side Effects</p>
-                    </div>
-
-                    <div className="d-flex justify-content-between card-body text-dark ">
-                        <div className=" text-left">
-                            <p className="card-text text-poppins">
-                                {data.side_effect}
-                            </p>
-                        </div>
                     </div>
                 </div>
         </div>

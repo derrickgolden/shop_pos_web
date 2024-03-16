@@ -1,8 +1,8 @@
 import LandingPage from "./LandingPage";
 import PaymentReport from "./PaymentReport";
 import Inventory from "./Inventory";
-import InventoryMedicineGroup from "./InventoryMedicineGroup";
-import InventoryMedicineList from "./InventoryMedicineList";
+import InventoryProductGroup from "./InventoryProductGroup";
+import InventoryProductList from "./InventoryProductList";
 import SalesReport from "./SalesReport";
 import UserDashboard from "./UserDashboard";
 import SalesEntry from "./SalesEntry";
@@ -12,8 +12,8 @@ export {
     LandingPage,
     PaymentReport,
     Inventory,
-    InventoryMedicineGroup,
-    InventoryMedicineList,
+    InventoryProductGroup,
+    InventoryProductList,
     SalesReport,
     UserDashboard,
     SalesEntry,

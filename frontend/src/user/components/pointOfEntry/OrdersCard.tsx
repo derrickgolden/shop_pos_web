@@ -15,20 +15,20 @@ const OrdersCard: React.FC< OrdersCardProps > = (
     // Check if orderDetails is defined and filter orderDetail accordingly
     if (orderDetails) {
         orderDetail = orderDetails.find(orderDetail =>
-            orderDetail.medicine_id === order.medicine_id
+            orderDetail.product_id === order.product_id
         );
     }      
         
     return(
         <div onClick={() => handleEditOrder(order)}
             className={`p-2 order-display
-            ${activeCard === order?.medicine_id? "order-display-bg" : ""}`}>
+            ${activeCard === order?.product_id? "order-display-bg" : ""}`}>
                 <div 
                     className={`d-flex justify-content-between `}>
                         <div className="col-10">
                         <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             <span className="text-poppins-semibold" style={{ whiteSpace: 'nowrap',  }}>
-                                {order.medicine_name}
+                                {order.product_name}
                             </span>
                         </div>
                             <p className="mb-0"> 

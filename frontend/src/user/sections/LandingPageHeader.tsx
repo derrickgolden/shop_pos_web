@@ -10,15 +10,15 @@ import { MdDashboard, MdInventory, MdPayments, MdPointOfSale } from "react-icons
 import { TbReportMoney } from "react-icons/tb";
 import { FaLayerGroup, FaListAlt, FaSalesforce, FaShoppingCart } from 'react-icons/fa';
 import { RxAvatar } from 'react-icons/rx';
-import { getPharmacyDetailsApi } from './pharmacy/apiCalls/getPharmcyDetails';
+import { getShopDetailsApi } from './shop/apiCalls/getShopDetails';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPharmacyListDetails } from '../../redux/stockListDetails';
+import { setShopListDetails } from '../../redux/shopListDetails';
 import { RootState } from '../../redux/store';
 import { setRerender } from '../../redux/rerender';
 import { getSessionStorage } from '../controllers/getSessionStorage';
 import { server_baseurl } from '../../baseUrl';
 import { pharmLogo } from '../../assets/images';
-import { setActivePharmacy } from '../../redux/activeShop';
+import { setActiveShop } from '../../redux/activeShop';
 
 export default function LandingPageHeader() {
 
@@ -35,25 +35,25 @@ export default function LandingPageHeader() {
     const [headerNavManu, setheaderNavManu] = useState(true)
     const [toggleProfile, setToggleProfile] = useState(false)
     
-    const activePharmacy = useSelector((state: RootState) => state.activePharmacy); 
-    const pharmacyListDetails = useSelector((state: RootState) => state.pharmacyListDetailsList) 
+    const activeShop = useSelector((state: RootState) => state.activeShop); 
+    const shopListDetails = useSelector((state: RootState) => state.shopListDetailsList) 
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const userPharm = getSessionStorage();
-    const { user } = userPharm;
+    const userShop = getSessionStorage();
+    const { user } = userShop;
     
     useEffect(() =>{
-        const medicineList = getPharmacyDetailsApi()
-        medicineList.then(data =>{
-            if(!activePharmacy.pharmacy) {
-                sessionStorage.setItem("activepharmacy", JSON.stringify(data[0]));
-                dispatch(setActivePharmacy({pharmacy: data[0]}));
+        const productList = getShopDetailsApi()
+        productList.then(data =>{
+            if(!activeShop.shop && data !== undefined) {
+                sessionStorage.setItem("activeshop", JSON.stringify(data[0]));
+                dispatch(setActiveShop({shop: data[0]}));
             }
-            dispatch(setPharmacyListDetails(data));
+            dispatch(setShopListDetails(data));
         })
-    },[pharmacyListDetails.length === 0])
+    },[shopListDetails.length === 0])
 
     const headerTogglehandle = () => {
         setHeaderToggle(!headerToggle)
@@ -113,27 +113,27 @@ export default function LandingPageHeader() {
                     style={{cursor: "pointer"}}
                     className="d-flex align-items-center dropdown-toggle" data-bs-toggle="dropdown">
                         <span className="header_img"> <RxAvatar  size={32}/> </span> 
-                        <span className="ms-1">{user?.user?.first_name}({user?.user?.user_id})</span> 
+                        <span className="ms-1">{user?.first_name}({user?.user_id})</span> 
                     </div>
                 
                     <ul  className={`dropdown-menu droping position-absolute ${toggleProfile? ' show' : ''}`} 
                         style={{padding: '0, 2rem'}} aria-labelledby="dropdownMenuButton1" >
                         {
-                        pharmacyListDetails.map((data, i) =>(
+                        shopListDetails.map((data, i) =>(
                             <li key={i} onClick={() => {
-                                sessionStorage.setItem("activepharmacy", JSON.stringify(data));
-                                dispatch(setActivePharmacy({pharmacy: data}));
+                                sessionStorage.setItem("activeshop", JSON.stringify(data));
+                                dispatch(setActiveShop({shop: data}));
                                 toggleProfileClick();
                             }
                             }>
                                 <Link onClick={()=>toggleProfileClick()} className="dropdown-item" to="#">
-                                    {data?.pharmacy_name}
+                                    {data?.shop_name}
                                 </Link>
                             </li>
                         ))
                         }
                         <li><Link onClick={()=>toggleProfileClick()} 
-                        className="dropdown-item" to="/user/register-pharmacy">Register Pharmacy</Link></li>
+                        className="dropdown-item" to="/user/register-shop">Register Shop</Link></li>
                         <li className="dropdown-item" onClick={logoutHandle}>Log Out</li>
                     </ul>
             </header>
@@ -149,7 +149,7 @@ export default function LandingPageHeader() {
                                 <img src={`${pharmLogo}`} alt=""
                                 className='rounded' 
                                 style={{height: "30px", width:"30px"}}/>
-                                <span className="text-white ">{activePharmacy?.pharmacy?.pharmacy_name}</span> 
+                                <span className="text-white ">{activeShop?.shop?.shop_name}</span> 
                             </Link>
 
                             <div className="nav_list">
@@ -159,9 +159,7 @@ export default function LandingPageHeader() {
                                     <MdDashboard />
                                     <span className="nav_name ">Dashboard</span>
                                 </Link>
-                                <Link onClick={handleLinkClick} to={{ pathname: '/user/session',
-                                    state: { activePharmacy },
-                                  }}id='session'
+                                <Link onClick={handleLinkClick} to='/user/session'id='session'
                                 className={`${activeLink === 'session'? 'text-white font-weight-bold ' :"" }nav_link`}>
                                     <MdPointOfSale />
                                     <span className="nav_name ">Session</span>
@@ -180,13 +178,13 @@ export default function LandingPageHeader() {
                                         </p>
                                         <div id="paymentSystem" className="collapse " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                             <div className="accordion-body">
-                                                <Link onClick={handleLinkClick} to="/user/inventory/medicine-list" className={`nav_link ${pathname == "/mobailBank/bKash" && 'active'}`}>
+                                                <Link onClick={handleLinkClick} to="/user/inventory/product-list" className={`nav_link ${pathname == "/mobailBank/bKash" && 'active'}`}>
                                                     <FaListAlt />
-                                                    <span className="nav_name">List of Medicines</span>
+                                                    <span className="nav_name">List of Products</span>
                                                 </Link>
-                                                <Link onClick={handleLinkClick} to="/user/inventory/medicine-group" className={`nav_link ${pathname == "/manage-bankTransfer" && 'active'}`}>
+                                                <Link onClick={handleLinkClick} to="/user/inventory/product-group" className={`nav_link ${pathname == "/manage-bankTransfer" && 'active'}`}>
                                                     <FaLayerGroup style={{color: ""}}/>
-                                                    <span className="nav_name">Medicine Groups</span>
+                                                    <span className="nav_name">Product Groups</span>
                                                 </Link>
                                             </div>
                                         </div>

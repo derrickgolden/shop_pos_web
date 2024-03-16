@@ -1,6 +1,6 @@
 import { MdInventory } from "react-icons/md"
 import TopSummaryCard from "../components/userDashboard/TopSummaryCard"
-import { RiMedicineBottleLine } from "react-icons/ri"
+import { MdOutlineEventAvailable } from "react-icons/md";
 import { IoIosWarning } from "react-icons/io"
 
 import { IoAddOutline } from "react-icons/io5";
@@ -8,8 +8,8 @@ import { Outlet } from "react-router-dom";
 
 const upperDashboardData = [
     {icon:<MdInventory size={32}/>, status: "Good", totals: 123, caption: "Inventory Status", forCssDispaly: "success", footerCaption: "View detailed report"}, 
-    {icon:<RiMedicineBottleLine size={32}/>, status: "Good", totals: 123, caption: "Medicine Available", forCssDispaly: "info", footerCaption: "Visit inventory"},
-    {icon:<IoIosWarning size={32}/>, status: "Good", totals: 123, caption: "Medicines Shortage", forCssDispaly: "danger", footerCaption: "Resolve now"},
+    {icon:<MdOutlineEventAvailable size={32}/>, status: "Good", totals: 123, caption: "Product Available", forCssDispaly: "info", footerCaption: "Visit inventory"},
+    {icon:<IoIosWarning size={32}/>, status: "Good", totals: 123, caption: "Products Shortage", forCssDispaly: "danger", footerCaption: "Resolve now"},
 ]
 
 const Inventory = () =>{

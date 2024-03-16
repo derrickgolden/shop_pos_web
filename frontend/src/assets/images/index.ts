@@ -9,7 +9,7 @@ import google from "./google.png"
 import fb from "./fb.png"
 
 import desk from "./desk.jpg"
-import pharmacy from "./pharmacy.jpg"
+import shop from "./pharmacy.jpg"
 import pharmLogo from "./logo1.png"
 
 export {
@@ -22,6 +22,6 @@ export {
     google,
     fb,
     desk,
-    pharmacy,
+    shop,
     pharmLogo
 }

@@ -14,51 +14,63 @@ export interface DetailCardProps{
     }
 }
 
-export interface Stock {
-    item_id: number;
-    stock_name: string;
+export interface Product {
+    product_id: number;
+    product_name: string;
     img_path: string | null;
     group_name: string;
     stock_qty: number;
     action: string;
     containers: number;
     warning_limit: number;
-    last_stocked?: Date;
-    open_container_units?: number;
+    last_stocked: Date;
+    open_container_units: number;
     stock_id?: number;
     units_per_container: number;
-  }
+    instructions?: string;
+    side_effect?: string;
+}
 
 export interface StockDetails{
     containers: number;
     last_stocked: Date;
-    item_id: number;
-    stock_name: string;
+    product_id: number;
+    product_name: string;
     open_container_units: number;
     stock_id: number;
     units_per_container: number;
     warning_limit: number;
 }
 
-export interface StockDetailsProps{
+export interface ProductDetailsProps{
     onHandleActionDetails:{}, 
-    stockDetails: Stock,
+    productDetails: Product,
     setShowDetails: (showlist: string) => void
 }
 
-export interface StockListProps {
-    onHandleActionDetails: (row: Stock) => void;
-    onHandleUpdateStock: (row: Stock) => void;
-  }
+export interface ProductListProps {
+    onHandleActionDetails: (row: Product) => void;
+    onHandleUpdateStock: (row: Product) => void;
+}
 
-  export interface Stock {data:{
-    stock_id: number;
-    stock_code: string;
-    stock_name: string;
-    stock_qty: number;
+// export interface Product {data:{
+//     product_id: number;
+//     product_code: string;
+//     product_name: string;
+//     stock_qty: number;
+//     instructions: string;
+//     side_effect: string;
+//     group_id: number;
+//     group_name: string;
+//     description: string;
+// }}
+
+export interface NewProductDetailsProps {
+    group_id: number;
+    product_code: string;
+    product_name: string;
+    group_name: string;
     instructions: string;
     side_effect: string;
-    group_id: number;
-    group_name: string;
-    description: string;
-}}
+    img_path: File | null;
+}
