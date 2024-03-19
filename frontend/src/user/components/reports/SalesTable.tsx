@@ -14,6 +14,7 @@ export interface salesProps{
     sale_date: Date,
     sales_items: salesItemProps[],
     total_price: string,
+    total_profit: string,
     cashier: {cashier_f_name: string, cashier_l_name: string, cashier_id: number},
 }
 export interface salesDataProps{
@@ -28,12 +29,14 @@ interface subColumnsProps {
     product_name: string;
     sales_item_id: number;
     units_sold: number;
+    profit: number;
 }
 interface columnsProps {
     id: number;
     sale_id: number;
     sale_date: string;
     total_price: string;
+    total_profit: number;
     cashier: {
         cashier_f_name: string;
         cashier_l_name: string;
@@ -52,6 +55,7 @@ const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
     { name: 'Sale ID', selector: (row: columnsProps) => row.sale_id, sortable: true },
     { name: 'Sale Date', selector: (row: columnsProps) => row.sale_date, sortable: true },
     { name: 'Total Price', selector: (row: columnsProps) => row.total_price, sortable: true },
+    { name: 'Total Profit', selector: (row: columnsProps) => row.total_profit, sortable: true },
     { name: 'Cashier Name', selector: (row: columnsProps) => row.cashier.cashier_f_name, sortable: true },
     { name: 'Cashier Id', selector: (row: columnsProps) => row.cashier.cashier_id, sortable: true },
   ];
@@ -63,6 +67,7 @@ const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
     { name: 'Product Name', selector: (row: subColumnsProps) => row.product_name, sortable: true },
     { name: 'Units Sold', selector: (row: subColumnsProps) => row.units_sold, sortable: true },
     { name: 'Sub Total', selector: (row: subColumnsProps) => row.sub_total, sortable: true },
+    { name: 'Profit', selector: (row: subColumnsProps) => row.profit, sortable: true },
   ];
 
   // Map the sales data to match the main DataTable structure
@@ -71,6 +76,7 @@ const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
         sale_id: sale.sale_id,
         sale_date: new Date(sale.sale_date).toLocaleString(),
         total_price: `Ksh. ${parseFloat(sale.total_price).toFixed(2)}`,
+        total_profit: `Ksh. ${parseFloat(sale.total_profit).toFixed(2)}`,
         cashier: sale.cashier,
         children: sale.sales_items.map((item) => ({
             ...item,

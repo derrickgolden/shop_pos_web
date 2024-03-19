@@ -9,6 +9,7 @@ import { Dispatch, SetStateAction } from "react";
 interface handleAddGroupProps{
     orderDetails: OrderDetail[];
     totalPrice : number;
+    total_profit: number;
     setOrdersList: Dispatch<SetStateAction<Order[]>>;
     moneyTrans: {};
     updateStock: {}[];
@@ -18,10 +19,9 @@ interface handleAddGroupProps{
     shop_id: number;
     isOnline: boolean;
 }
-export const regiterSalesApi = ({
-    orderDetails, totalPrice, setOrdersList, moneyTrans, updateStock, payMethods, 
-    setEntryStep, setSaleRes, shop_id, isOnline
-}: handleAddGroupProps) =>{
+export const regiterSalesApi = ({ orderDetails, totalPrice, total_profit, 
+    setOrdersList, moneyTrans, updateStock, payMethods,  setEntryStep, setSaleRes, 
+    shop_id, isOnline }: handleAddGroupProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -36,16 +36,16 @@ export const regiterSalesApi = ({
         return
     }
 
-    if (!isOnline) {
-        Swal.fire({
-            title: "Network connection",
-            text: "Check your internet connection. Maybe disconnected or unstable",
-            icon: "warning"
-        });
-        return
-    } 
+    // if (!isOnline) {
+    //     Swal.fire({
+    //         title: "Network connection",
+    //         text: "Check your internet connection. Maybe disconnected or unstable",
+    //         icon: "warning"
+    //     });
+    //     return
+    // } 
 
-    let data = JSON.stringify({orderDetails, totalPrice, moneyTrans, updateStock, payMethods, shop_id});
+    let data = JSON.stringify({orderDetails, totalPrice, total_profit, moneyTrans, updateStock, payMethods, shop_id});
     
     const url = isOnline? `https://pharmabackend.karibuchakula.co.ke/user/sales/register-sales` : 
                 `http://localhost:5020/user/sales/register-sales`

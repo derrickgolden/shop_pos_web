@@ -1,9 +1,13 @@
 import { OrderDetail } from "../SalesEntry";
 
 export const calcTotalPrice = (orderDetails: OrderDetail[]) =>{
-    const newTotalPrice =  orderDetails.reduce((total, item) => {
-            return total + Number(item.sub_total);
-          }, 0) 
+  console.log(orderDetails)
+    let totalPrice  = 0;
+    let total_profit = 0;
+    orderDetails.map((item, i) => {
+      totalPrice += Number(item.sub_total);
+      total_profit += Number(item.profit);
+    }) 
        
-    return newTotalPrice;
+    return {totalPrice, total_profit};
 }

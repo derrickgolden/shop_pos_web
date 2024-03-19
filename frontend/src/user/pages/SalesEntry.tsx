@@ -13,30 +13,25 @@ import Swal from "sweetalert2";
 
 import { SaleRes } from "./types";
 
-export interface OrderDetail {
-  product_id: number;
-  product_name: string;
+export interface OrderDetail extends ProductDetails {
   units: number;
   sub_total: number;
-  price: number;
-  package_size: number;
-  stock_qty: number;
-  open_container_units: number;
   customer_note: string;
+  profit: number;
 }
 
 const SalesEntry = () =>{
-    const [activeCard, setActiveCard] = useState(0)
+    const [activeCard, setActiveCard] = useState(0);
     const [ordersList, setOrdersList] = useState<Order[]>([{ date: new Date().toLocaleString(), 
-      orderDetails: [], activeOrder: true, status: "inProgress" , totalPrice: 0
-    }])
-    const [totalPrice, setTotalPrice] = useState(0)
+      orderDetails: [], activeOrder: true, status: "inProgress" , totalPrice: 0, total_profit: 0,
+    }]);
+    const [totalPrice, setTotalPrice] = useState(0);
     const [entryStep, setEntryStep] = useState("inProgress");
-    const [payMethods, setPayMethods] = useState<string[]>([])
+    const [payMethods, setPayMethods] = useState<string[]>([]);
     const [saleRes, setSaleRes] = useState<SaleRes>();
     const [updateStock, setUpdateStock] = useState<UpdateStockProps[]>([]);
     const [isDigitClicked, setIsDigitClicked] = useState(false);
-    const [showInventoryOrders, setShowInventoryOrders] = useState("inventory")
+    const [showInventoryOrders, setShowInventoryOrders] = useState("inventory");
 
     const [isOnline, setIsOnline] = useState(window.navigator.onLine);
 
@@ -94,8 +89,8 @@ const SalesEntry = () =>{
                   return orderDetail
                 })
 
-                const totalPrice = calcTotalPrice(newDetails);
-                return {...order, orderDetails: newDetails, totalPrice }
+                const {totalPrice, total_profit} = calcTotalPrice(newDetails);
+                return {...order, orderDetails: newDetails, totalPrice, total_profit }
               }else{
                 return order;
               }
@@ -118,8 +113,8 @@ const SalesEntry = () =>{
                     return product;
                   }
                 });
-                const totalPrice = calcTotalPrice(newOrders);
-                return {...order, orderDetails: newOrders, totalPrice};
+                const{ totalPrice, total_profit }= calcTotalPrice(newOrders);
+                return {...order, orderDetails: newOrders, totalPrice, total_profit};
               }
               return order
             })            
@@ -243,7 +238,8 @@ const SalesEntry = () =>{
     };
             
     const handleNewOrderSelect = ( newOrder: ProductDetails ) => {
-          setOrdersList((arr) => {
+      setOrdersList((arr) => {
+            console.log(arr);
             return arr.map(order => {
               if(order.activeOrder){
                 const existingProduct = order.orderDetails.find(product => product.product_id === newOrder.product_id);
@@ -258,17 +254,17 @@ const SalesEntry = () =>{
                     }
                   });
                   
-                  const totalPrice = calcTotalPrice(newOrders);
-                  return { ...order, orderDetails: newOrders, totalPrice };
+                  const {totalPrice, total_profit} = calcTotalPrice(newOrders);
+                  return { ...order, orderDetails: newOrders, totalPrice, total_profit };
                 }else{
                   // calculate Remaining stock; 
                   const newUnits = 1; 
                   const useActiveCard = false;
-                  const orderDetail = {...newOrder, units: 1, sub_total: 0, customer_note: ""}
+                  const orderDetail = {...newOrder, units: 1, sub_total: 0, profit: 0, customer_note: ""}
                   const newUpdateDetails = handleUpdatingStock(orderDetail, setUpdateStock, activeCard, newUnits, useActiveCard)
                   const updatedOrderDetails = [...order.orderDetails, newUpdateDetails];
-                    const totalPrice = calcTotalPrice(updatedOrderDetails);
-                    return { ...order, orderDetails: updatedOrderDetails, totalPrice };
+                    const {totalPrice, total_profit} = calcTotalPrice(updatedOrderDetails);
+                    return { ...order, orderDetails: updatedOrderDetails, totalPrice, total_profit };
                 }
               }else{
                 return order;
@@ -289,9 +285,13 @@ const SalesEntry = () =>{
       const shop_id = localShop?.shop_id;
       const [activeOrder] = ordersList.filter(order => order.activeOrder);
       
+      console.log({
+        activeOrder, totalPrice, setOrdersList, moneyTrans, updateStock, 
+        payMethods, setEntryStep, setSaleRes, shop_id, isOnline
+      })
       if(shop_id !== undefined){
         regiterSalesApi({
-          orderDetails: activeOrder.orderDetails, totalPrice, setOrdersList,
+          orderDetails: activeOrder.orderDetails, totalPrice, total_profit: activeOrder.total_profit, setOrdersList,
           moneyTrans, updateStock, payMethods, setEntryStep, setSaleRes, shop_id, isOnline
         });
       };
@@ -329,7 +329,7 @@ const SalesEntry = () =>{
       setOrdersList(arr =>{
         const removeOrder = arr.filter(order => !order.activeOrder);
         return [...removeOrder, { date: new Date().toLocaleString(), 
-          orderDetails: [], activeOrder: true, status: "inProgress" , totalPrice: 0
+          orderDetails: [], activeOrder: true, status: "inProgress", totalPrice: 0
         }]
       })
       setPayMethods([]);
@@ -356,7 +356,7 @@ const SalesEntry = () =>{
                 {
                   ordersList.map((order, i) =>{
                     return order.activeOrder ? 
-                      <OrderDisplay 
+                      <OrderDisplay key={i}
                           activeCard = {activeCard}
                           handleEditOrder = {handleEditOrder}
                           orderDetails = {order.orderDetails}

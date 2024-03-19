@@ -2,6 +2,7 @@
 export interface RegisterSalesProp{
     orderDetails: [];
     totalPrice: number;
+    total_profit: number;
     moneyTrans: {
         customerGave: number, 
         change: {};

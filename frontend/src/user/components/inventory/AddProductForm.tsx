@@ -21,8 +21,8 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
         product_code: '', product_name: "", group_name: "", 
         instructions: "", side_effect: "", group_id: null, img_path: null
     })
-    const [pricingDetails, setPricingDetails] = useState({price: 0, unit_of_mesurement: 0, package_size: 0});
-    const [selectRows, setSelectRows] = useState(3)
+    const [pricingDetails, setPricingDetails] = useState({price: 0, package_cost: 0, package_size: 0});
+    const [selectRows, setSelectRows] = useState(3);
 
     useEffect(() =>{
         const filterNull = false;
@@ -48,6 +48,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
         const value = e.target.value;
 
         setPricingDetails((obj) =>({...obj, [name]: value}))
+        console.log(pricingDetails)
     }
 
     const handleAddProductSubmit: React.FormEventHandler<HTMLFormElement> = (e) =>{
@@ -63,11 +64,13 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
         }else{
             const newProductDetails = {...productDetails, group_id: group.group_id}
     
+            const {price} = pricingDetails
             const addProductDetails = {newProductDetails, pricingDetails};
             const shop_id = activeShop.shop?.shop_id;
             
-            shop_id ? 
-            addProductApi({addProductDetails, setShowDetails, shop_id}) : null
+            if(price && shop_id){
+                addProductApi({addProductDetails, setShowDetails, shop_id})
+            }
         }
     }
 

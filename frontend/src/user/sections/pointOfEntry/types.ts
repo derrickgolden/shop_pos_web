@@ -29,13 +29,13 @@ export interface ProductDetails {
   stock_qty: number;
   pricing_id: number;
   product_id: number;
-  side_effect: string;
   instructions: string;
   package_size: number;
   product_code: string;
   product_name: string;
   unit_of_measurement: string;
   open_container_units: number;
+  package_cost: number;
 }
 
 export interface Order{
@@ -44,4 +44,5 @@ export interface Order{
   activeOrder: boolean;
   status: string;
   totalPrice: number;
+  total_profit: number;
 }

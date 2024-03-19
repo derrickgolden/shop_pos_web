@@ -86,7 +86,7 @@ const DetailCard: React.FC<{data: Product}> = ({data}) =>{
             </div>
                 <div className="card border-secondary mb-5 " >
                     <div className="card-header d-flex justify-content-between align-items-center">
-                        <p className="text-poppins-semibold mb-0">How to Use</p>
+                        <p className="text-poppins-semibold mb-0">Instructions</p>
                     </div>
 
                     <div className="d-flex justify-content-between card-body text-dark ">

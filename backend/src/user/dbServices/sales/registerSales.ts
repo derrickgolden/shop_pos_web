@@ -5,12 +5,8 @@ const { pool } = require("../../../mysqlSetup");
 
 export const registerSales = async (saleDetails: RegisterSalesProp, user_id: number ): Promise<universalResponse> => {
 
-    // console.log(saleDetails);
-    const orderDetails = saleDetails.orderDetails;
-    const totalPrice = saleDetails.totalPrice;
-    const moneyTrans = saleDetails.moneyTrans;
-    const updateStock = saleDetails.updateStock;
-    const shop_id = saleDetails.shop_id;
+    console.log(saleDetails);
+    const {orderDetails, totalPrice, moneyTrans, updateStock, shop_id, total_profit} = saleDetails;
 
     const sale_date = new Date()
 
@@ -33,18 +29,18 @@ export const registerSales = async (saleDetails: RegisterSalesProp, user_id: num
 
             const {customerGave, change} = moneyTrans;
             var [res] = await connection.query(`
-                INSERT INTO sales (sale_date, total_price, change_amount, cashier, shop_id)
-                VALUES (?, ?, ?, ?, ?)
-            `, [sale_date, totalPrice, change, user_id, shop_id]);
+                INSERT INTO sales (sale_date, total_price, total_profit, change_amount, cashier, shop_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `, [sale_date, totalPrice, total_profit, change, user_id, shop_id]);
 
             const sale_id = res.insertId;
 
             orderDetails.map( async(details) =>{
-                const { product_id, units, sub_total } = details;
+                const { product_id, units, sub_total, profit } = details;
                 var [pricing_res] = await connection.query(`
-                    INSERT INTO sales_items (sale_id, product_id, units_sold, sub_total)
-                    VALUES (?, ?, ?, ?)
-                `, [sale_id, product_id, units, sub_total]);
+                    INSERT INTO sales_items (sale_id, product_id, units_sold, sub_total, profit)
+                    VALUES (?, ?, ?, ?, ?)
+                `, [sale_id, product_id, units, sub_total, profit]);
             })
             
             // insert paymentMethods

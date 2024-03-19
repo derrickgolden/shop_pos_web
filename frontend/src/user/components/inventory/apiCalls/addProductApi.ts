@@ -7,7 +7,7 @@ interface handleAddGroupProps{
     addProductDetails:{
         newProductDetails: NewProductDetailsProps;
         pricingDetails:{
-            price: number, unit_of_mesurement: number, package_size: number
+            price: number, package_cost: number, package_size: number
         };
     };
     setShowDetails: (component: string) =>void;
@@ -32,7 +32,7 @@ export const addProductApi = ({addProductDetails, setShowDetails, shop_id}: hand
     const formData = new FormData();
 
     const {product_code, product_name, group_name, img_path, side_effect, group_id, instructions} = addProductDetails.newProductDetails
-    const {price, unit_of_mesurement, package_size} = addProductDetails.pricingDetails
+    const {price, package_cost, package_size} = addProductDetails.pricingDetails
     // Append newProductDetails
     // formData.append('newProductDetails', addProductDetails.newProductDetails);
 
@@ -50,7 +50,7 @@ export const addProductApi = ({addProductDetails, setShowDetails, shop_id}: hand
     // Append pricingDetails
     formData.append('price', price.toString());
     formData.append('package_size', package_size.toString());
-    formData.append('unit_of_mesurement', unit_of_mesurement.toString());
+    formData.append('unit_of_mesurement', package_cost.toString());
 
     img_path ? formData.append('logo', img_path) : null;
     formData.append('shop_id', shop_id.toString());

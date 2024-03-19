@@ -36,14 +36,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const app = express();
-app.use(cors());
-// app.use(cors({origin: allowedDomains}))
+// app.use(cors());
+app.use(cors({origin: ["http://localhost:5173"]}))
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(compression())
 app.use(cookieParser())
 
-const port = process.env.SEVERPORT || 5020
+const port = process.env.SEVERPORT || 8080
 
 app.use("/js", express.static(path.join(__dirname, 'dist', 'assets', 'index-TSNK7VKS.js')));
 app.use(express.static(path.join(__dirname, 'dist')));
@@ -65,8 +65,7 @@ app.use('/uploads', express.static('uploads'));
 
 const serverInstance = app.listen(port, ()=>{
   console.log("Listening to port: ", port);
-})
+});
 export const server = () =>{
   return serverInstance;
-}
-console.log("hello");
+};

@@ -9,13 +9,13 @@ export interface UpdateStockProps{
 
 export const handleUpdatingStock = (product: OrderDetail, 
     setUpdateStock: Dispatch<SetStateAction<UpdateStockProps[]>>, 
-    activeCard: number, newUnits: number, 
-    useActiveCard = true) =>{
+    activeCard: number, newUnits: number, useActiveCard = true) =>{
 
+    const { package_size, stock_qty, open_container_units, package_cost, price} = product;
     const product2 = {
-    unitsPerContainer: product.package_size,
-    containersInStock: product.stock_qty,
-    openContainerUnits: product.open_container_units,
+        unitsPerContainer: package_size,
+        containersInStock: stock_qty,
+        openContainerUnits: open_container_units,
     };
 
     const { error, msg, remainingContainers, remainingUnits  } = calculateRemainingStock( product2, newUnits);
@@ -53,6 +53,8 @@ export const handleUpdatingStock = (product: OrderDetail,
             }
         })
     }
+
+    const profit = (price- (package_cost / package_size)) * newUnits;
     const customer_note = product.customer_note || "";
-    return { ...product, units: newUnits, sub_total: product.price * newUnits, customer_note };
+    return { ...product, units: newUnits, sub_total: product.price * newUnits, profit, customer_note };
 }

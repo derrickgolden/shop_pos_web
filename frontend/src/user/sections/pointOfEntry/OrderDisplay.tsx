@@ -14,8 +14,6 @@ const OrderDisplay: React.FC<CommonSalesEntryProps> = ({
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [activeCard]);
-
-    console.log(window.innerWidth);
     
     return(
         <div className={`${windowDisplay === "orders"? "h-100" : " "} position-relative col-12 px-0 mx-0 order-cards `}  >

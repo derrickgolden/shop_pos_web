@@ -1,14 +1,13 @@
-
+export interface pricingDetails {
+    price: number | undefined;
+    package_cost: number | undefined;
+    package_size: number | undefined;
+}
 interface PricingDetailsCardProps{
     handlePricingInput: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void; 
-    pricingDetails: {
-        price: number;
-        unit_of_mesurement: number;
-        package_size: number
-    }
+    pricingDetails: pricingDetails;
 }
 
-const units = ['tablet', 'capsule', 'milliliter', 'gram'];
 const PricingDetailsCard: React.FC<PricingDetailsCardProps> = ({handlePricingInput, pricingDetails}) =>{
     return(
         <div className="d-flex shadow-sm flex-wrap justify-content-between align-items-center p-5  bg-light mb-2">
@@ -18,19 +17,21 @@ const PricingDetailsCard: React.FC<PricingDetailsCardProps> = ({handlePricingInp
                         type="number" className="form-control" id="price" name="price"
                         placeholder="0.00" required/>
                 </div>
-                {/* <div className="form-group mb-3 col-10 col-sm-5">
-                        <label htmlFor="exampleFormControlSelect1">Unit of the Product</label>
-                        <select onChange={handlePricingInput} value={pricingDetails?.unit_of_mesurement}
+                <div className="form-group mb-3 col-10 col-sm-5">
+                        <label htmlFor="exampleFormControlSelect1">Cost per Package</label>
+                        <input onChange={handlePricingInput} value={pricingDetails.package_cost}
+                            type="number" className="form-control" id="package_cost" 
+                            name="package_cost" placeholder="0.00" required/>
+                        {/* <select onChange={handlePricingInput} value={pricingDetails?.unit_of_mesurement}
                         className="form-control" id="exampleFormControlSelect1" name="unit_of_mesurement">
                             <option>-select unit-</option>
                             {units.map((unit, i)=>(
                                 <option key={i} >{unit}</option>
                             ))}
-                        </select>
-                </div> */}
-
+                        </select> */}
+                </div>
                 <div className="form-group mb-3 col-10 col-sm-5">
-                    <label htmlFor="package_size">Units per container</label>
+                    <label htmlFor="package_size">Units per Package</label>
                     <input onChange={handlePricingInput} value={pricingDetails?.package_size}
                         type="number" className="form-control" id="package_size" name="package_size"
                         placeholder="How many units in 1 package" required/>

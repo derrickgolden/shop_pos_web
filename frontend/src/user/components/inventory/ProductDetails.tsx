@@ -28,9 +28,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({onHandleActionDetails, p
     
     return(
         <div className="px-2 px-md-5">
-            {<DetailCard 
+            {
+                <DetailCard 
                 key={1}
-                data ={productDetails}/>}
+                data ={productDetails}/>
+            }
             <div className="bg-white d-flex gap-4 align-items-center justify-content-between" >
                 <button type="button" 
                 onClick={() => handleProductDelete(productDetails?.product_id, productDetails.product_name)}

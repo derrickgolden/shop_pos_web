@@ -11,6 +11,7 @@ export const getSalesReport = async ( shop_id: number): Promise<universalRespons
                 s.sale_id,
                 s.sale_date,
                 s.total_price,
+                s.total_profit,
                 'cashier',
                 JSON_OBJECT(
                     'cashier_f_name', ud.first_name,
@@ -21,9 +22,10 @@ export const getSalesReport = async ( shop_id: number): Promise<universalRespons
                     JSON_OBJECT(
                         'sales_item_id', si.sales_item_id,
                         'product_id', si.product_id,
-                        'product_name', ml.product_name,
+                        'product_name', pl.product_name,
                         'units_sold', si.units_sold,
-                        'sub_total', si.sub_total
+                        'sub_total', si.sub_total,
+                        'profit', si.profit
                     )
                 ) AS sales_items
             FROM
@@ -33,7 +35,7 @@ export const getSalesReport = async ( shop_id: number): Promise<universalRespons
             JOIN
                 sales_items si ON s.sale_id = si.sale_id
             JOIN
-                product_list ml ON si.product_id = ml.product_id -- Join with product_list table
+                product_list pl ON si.product_id = pl.product_id -- Join with product_list table
             WHERE s.shop_id = ?
             GROUP BY
                 s.sale_id, s.sale_date, s.total_price;

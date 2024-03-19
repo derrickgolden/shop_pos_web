@@ -16,7 +16,7 @@ export interface productDetailsProp{
 }
 export interface productDetailsProps{
     price: number,
-    unit_of_mesurement: string, 
+    package_cost: string, 
     package_size: number,
     shop_id: number,
     product_code: string, 
