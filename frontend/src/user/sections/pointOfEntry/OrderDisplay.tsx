@@ -24,7 +24,7 @@ const OrderDisplay: React.FC<CommonSalesEntryProps> = ({
                     <h2>The Cart is Empty</h2>
                 </div>
             ):(
-                <div className="d-flex flex-column justify-content-between "
+                <div className="d-flex flex-column justify-content-between col-12"
                 style={windowDisplay === "orders" && window.innerWidth <= 575 ? {height: "90%"}: {height: "100%"}}>
                     <div ref={scrollRef}
                     className={`d-flex flex-column ordersCard border-3 flex-grow-1 px-1`}>

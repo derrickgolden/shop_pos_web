@@ -90,7 +90,7 @@ const getProductGroups = async (filterNull, shop_id) => {
                     'img_path', ml.img_path,
                     'pricing_id', p.pricing_id,
                     'price', p.price,
-                    'unit_of_measurement', p.unit_of_measurement,
+                    'package_cost', p.package_cost,
                     'stock_qty', s.containers,
                     'package_size', s.units_per_container,
                     'open_container_units', s.open_container_units

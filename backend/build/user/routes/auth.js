@@ -97,7 +97,6 @@ router.patch('/reset-password', async (req, res) => {
     const token = req.header('Authorization');
     try {
         const tokenResponce = await getLinkToken(token);
-        console.log(tokenResponce);
         if (tokenResponce.success) {
             const hash = await bcrypt.hash(password, 10);
             const response = await resetPassword(hash, email);

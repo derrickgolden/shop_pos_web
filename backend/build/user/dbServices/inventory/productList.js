@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProduct = exports.getProductList = exports.addProduct = void 0;
 const { pool } = require("../../../mysqlSetup");
 const addProduct = async (productDetails, img_file) => {
-    const { product_code, product_name, stock_qty, shop_id, instructions, side_effect, group_id, price, unit_of_mesurement, package_size } = productDetails;
+    const { product_code, product_name, stock_qty, shop_id, instructions, side_effect, group_id, price, package_cost, package_size } = productDetails;
     const path = img_file?.path || null;
     try {
         const connection = await pool.getConnection();
@@ -15,9 +15,9 @@ const addProduct = async (productDetails, img_file) => {
             `, [product_code, product_name, instructions, side_effect, group_id, path, shop_id]);
         const product_id = res.insertId;
         var [pricing_res] = await connection.query(`
-                INSERT INTO pricing (product_id, price, unit_of_measurement )
+                INSERT INTO pricing (product_id, price, package_cost )
                 VALUES (?, ?, ?)
-            `, [product_id, price, unit_of_mesurement]);
+            `, [product_id, price, package_cost]);
         var [stock_res] = await connection.query(`
                 INSERT INTO stock (product_id, containers, units_per_container, 
                     open_container_units, warning_limit)

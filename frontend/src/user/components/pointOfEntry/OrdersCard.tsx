@@ -21,11 +21,11 @@ const OrdersCard: React.FC< OrdersCardProps > = (
         
     return(
         <div onClick={() => handleEditOrder(order)}
-            className={`p-2 order-display
+            className={`p-2 order-display col-12
             ${activeCard === order?.product_id? "order-display-bg" : ""}`}>
                 <div 
                     className={`d-flex justify-content-between `}>
-                        <div className="col-10">
+                        <div>
                         <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             <span className="text-poppins-semibold" style={{ whiteSpace: 'nowrap',  }}>
                                 {order.product_name}
@@ -38,7 +38,7 @@ const OrdersCard: React.FC< OrdersCardProps > = (
                                 Units * {order.price} Ksh / Unit
                             </p>                          
                         </div>
-                        <div className="text-poppins-semibold col-2 pl-3">
+                        <div className="text-poppins-semibold pl-3">
                             Ksh.{orderDetail?.sub_total}
                         </div>
                 </div>

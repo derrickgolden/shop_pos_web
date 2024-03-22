@@ -25,7 +25,7 @@ const SalesEntry = () =>{
     const [ordersList, setOrdersList] = useState<Order[]>([{ date: new Date().toLocaleString(), 
       orderDetails: [], activeOrder: true, status: "inProgress" , totalPrice: 0, total_profit: 0,
     }]);
-    const [totalPrice, setTotalPrice] = useState(0);
+    // const [totalPrice, setTotalPrice] = useState(0);
     const [entryStep, setEntryStep] = useState("inProgress");
     const [payMethods, setPayMethods] = useState<string[]>([]);
     const [saleRes, setSaleRes] = useState<SaleRes>();
@@ -53,17 +53,17 @@ const SalesEntry = () =>{
       };
     }, []);
 
-    useEffect(() =>{
-      const newTotalPrice = ordersList.reduce((totalPrice, orders) =>{
-        if(orders.activeOrder){
-          return totalPrice + orders.orderDetails.reduce((total, item) => {
-            return total + Number(item.sub_total);
-          }, 0) 
-        }else return totalPrice 
-      }, 0);
+    // useEffect(() =>{
+    //   const newTotalPrice = ordersList.reduce((totalPrice, orders) =>{
+    //     if(orders.activeOrder){
+    //       return totalPrice + orders.orderDetails.reduce((total, item) => {
+    //         return total + Number(item.sub_total);
+    //       }, 0) 
+    //     }else return totalPrice 
+    //   }, 0);
 
-      setTotalPrice(newTotalPrice);
-    },[ordersList])
+    //   setTotalPrice(newTotalPrice);
+    // },[ordersList])
 
     const userShop = getSessionStorage();
     const localShop = userShop.localShop;
@@ -155,13 +155,16 @@ const SalesEntry = () =>{
                       return orderDetail;
                     }
                   })
-                  return { ...order, orderDetails: newDetails };
+
+                  const{ totalPrice, total_profit }= calcTotalPrice(newDetails);
+                  return { ...order, orderDetails: newDetails, totalPrice, total_profit };
                 }else{
                   setActiveCard(order.orderDetails[(order.orderDetails.length-2)]?.product_id);
                   setUpdateStock((stockArr) =>stockArr.filter(stock => stock?.product_id !== activeCard));
                   
                   const newOrderDetails =  order.orderDetails.filter(orderDetail => orderDetail?.product_id !== activeCard);
-                  return { ...order, orderDetails: newOrderDetails };
+                  const{ totalPrice, total_profit }= calcTotalPrice(newOrderDetails);
+                  return { ...order, orderDetails: newOrderDetails, totalPrice, total_profit };
                 }
               }
               return order;
@@ -223,7 +226,8 @@ const SalesEntry = () =>{
           });
         },
       
-        handlePayment: () => {          
+        handlePayment: () => { 
+          const totalPrice = (ordersList.filter(order => order.activeOrder))[0].totalPrice;        
           if(totalPrice > 0){
             setEntryStep("payment")
             setOrdersList(arr =>{
@@ -261,7 +265,8 @@ const SalesEntry = () =>{
                   const newUnits = 1; 
                   const useActiveCard = false;
                   const orderDetail = {...newOrder, units: 1, sub_total: 0, profit: 0, customer_note: ""}
-                  const newUpdateDetails = handleUpdatingStock(orderDetail, setUpdateStock, activeCard, newUnits, useActiveCard)
+                  const newUpdateDetails = handleUpdatingStock(orderDetail, setUpdateStock, activeCard,
+                     newUnits, useActiveCard)
                   const updatedOrderDetails = [...order.orderDetails, newUpdateDetails];
                     const {totalPrice, total_profit} = calcTotalPrice(updatedOrderDetails);
                     return { ...order, orderDetails: updatedOrderDetails, totalPrice, total_profit };
@@ -281,18 +286,15 @@ const SalesEntry = () =>{
     };
 
     const handleVilidateClick = (customerGave: {[key: string]: number}, change: {}) =>{
+      const [activeOrder] = ordersList.filter(order => order.activeOrder);
+      const {orderDetails, total_profit, totalPrice} = activeOrder;
       const moneyTrans = {...change, customerGave: customerGave || totalPrice};
       const shop_id = localShop?.shop_id;
-      const [activeOrder] = ordersList.filter(order => order.activeOrder);
-      
-      console.log({
-        activeOrder, totalPrice, setOrdersList, moneyTrans, updateStock, 
-        payMethods, setEntryStep, setSaleRes, shop_id, isOnline
-      })
+
       if(shop_id !== undefined){
         regiterSalesApi({
-          orderDetails: activeOrder.orderDetails, totalPrice, total_profit: activeOrder.total_profit, setOrdersList,
-          moneyTrans, updateStock, payMethods, setEntryStep, setSaleRes, shop_id, isOnline
+          orderDetails, totalPrice, total_profit, setOrdersList, moneyTrans, 
+          updateStock, payMethods, setEntryStep, setSaleRes, shop_id, isOnline
         });
       };
     };
@@ -304,7 +306,7 @@ const SalesEntry = () =>{
         arr.map((obj) =>{
           obj.activeOrder = false;
         })
-        return [...arr, { date, orderDetails:[], activeOrder: true, status: "inProgress", totalPrice: 0 }]
+        return [...arr, { date, orderDetails:[], activeOrder: true, status: "inProgress", totalPrice: 0, total_profit: 0 }]
       })
       setEntryStep("inProgress");
     }
@@ -321,14 +323,14 @@ const SalesEntry = () =>{
         }
         
         return [{ date: new Date().toLocaleString(), orderDetails:[], activeOrder: true, 
-          status: "inProgress", totalPrice: 0 }];
+          status: "inProgress", totalPrice: 0 , total_profit: 0}];
       });
     }
     
     const handleStartNewOrderClick = () =>{
       setOrdersList(arr =>{
         const removeOrder = arr.filter(order => !order.activeOrder);
-        return [...removeOrder, { date: new Date().toLocaleString(), 
+        return [...removeOrder, { date: new Date().toLocaleString(), total_profit: 0,
           orderDetails: [], activeOrder: true, status: "inProgress", totalPrice: 0
         }]
       })
@@ -355,6 +357,8 @@ const SalesEntry = () =>{
               flex-column col-12 justify-content-between col-md-5 p-0 grow-1`} >
                 {
                   ordersList.map((order, i) =>{
+                    const totalPrice = (ordersList.filter(order => order.activeOrder))[0].totalPrice;
+
                     return order.activeOrder ? 
                       <OrderDisplay key={i}
                           activeCard = {activeCard}
@@ -390,12 +394,12 @@ const SalesEntry = () =>{
           <div>
             <ValidateOrderNavbar 
               setEntryStep = {setEntryStep}
-              totalPrice = {totalPrice}
+              totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
               step = {{step: "payment"}}
             />
             <ValidateOrders 
               handleVilidateClick = {handleVilidateClick}
-              totalPrice = {totalPrice}
+              totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
               setPayMethods = {setPayMethods}
               payMethods = {payMethods}
             />
@@ -407,7 +411,7 @@ const SalesEntry = () =>{
             <div className="d-none d-md-block">
               <ValidateOrderNavbar 
                 setEntryStep = {setEntryStep}
-                totalPrice = {totalPrice}
+                totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
                 step = {{step: "receipt"}}
               />
             </div>
@@ -417,7 +421,7 @@ const SalesEntry = () =>{
                   <PrintReceipt 
                     orderDetails ={order.orderDetails}
                     handleStartNewOrderClick = {handleStartNewOrderClick}
-                    totalPrice = {totalPrice}
+                    totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
                     saleRes = {saleRes}
                   /> : null
               })
@@ -430,7 +434,7 @@ const SalesEntry = () =>{
             ordersList = {ordersList}
             setOrdersList = {setOrdersList}
             activeCard = {activeCard}
-            totalPrice = {totalPrice}
+            totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
             setEntryStep = {setEntryStep}
             handleNewCustomerOrder = {handleNewCustomerOrder}
             handleDeleteCustomerOrder = {handleDeleteCustomerOrder}

@@ -6,7 +6,6 @@ const signupUser = async (signupDetails, auth_with) => {
     const { email } = signupDetails;
     try {
         const connection = await pool.getConnection();
-        console.log(auth_with);
         // Check if the user already exists
         const [existingUser] = await connection.query(`
             SELECT * FROM user_details
@@ -149,7 +148,6 @@ const storeLinkToken = async (user_id, email, token) => {
         VALUES (?, ?, ?)
         `, [user_id, email, token,]);
         connection.release();
-        console.log(res);
         return { success: true, msg: "",
             details: [{ link_tokens_id: res.insertId, user_id, email }]
         };
