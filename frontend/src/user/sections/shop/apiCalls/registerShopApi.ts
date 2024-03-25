@@ -3,15 +3,16 @@ import { server_baseurl } from "../../../../baseUrl";
 import Swal from "sweetalert2";
 import { NavigateFunction } from "react-router-dom";
 
+export interface shopDetails {
+    shop_name: string;
+     location: string;
+     shop_email: string;
+     shop_tel: string;
+     extra_info: string;
+     logo: File | null;
+}
 interface handleAddGroupProps{
-    shopDetails: {
-        shop_name: string;
-         location: string;
-         shop_email: string;
-         shop_tel: string;
-         extra_info: string;
-         logo: string;
-    }
+    shopDetails: shopDetails;
     navigate: NavigateFunction   
 }
 export const regiterShopApi = ({shopDetails, navigate}: handleAddGroupProps) =>{
@@ -37,7 +38,7 @@ export const regiterShopApi = ({shopDetails, navigate}: handleAddGroupProps) =>{
     formData.append('shop_email', shop_email);
     formData.append('shop_tel', shop_tel);
     formData.append('extra_info', extra_info);
-    formData.append('logo', logo); 
+    logo? formData.append('logo', logo): null; 
     
     let config = {
         method: 'post',

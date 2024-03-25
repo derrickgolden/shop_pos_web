@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSalesReport = void 0;
 const { pool } = require("../../../mysqlSetup");
 const getSalesReport = async (shop_id) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         var [res] = await connection.query(`
             SELECT
                 s.sale_id,
@@ -49,6 +49,7 @@ const getSalesReport = async (shop_id) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: "Database Error", err: error.sqlMessage };
         }

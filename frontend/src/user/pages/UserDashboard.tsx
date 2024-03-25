@@ -113,6 +113,18 @@ const UserDashboard: React.FC = () =>{
                    )) : <h2>No data to display</h2> }
                 </div>
             </section>
+            {/* <section className="lower-section bg-white d-flex flex-row flex-wrap justify-content-around">
+                <div className="mb-4 col-5">
+                    <div className="card shadow-lg p-4 text-white bg-success">
+
+                        <div className="card-content clearfix">
+                            <p className="card-stats-title right card-title  wdt-lable">Today Profit</p>
+                            <h4 className="right panel-middle margin-b-0 wdt-lable">Ksh.4762</h4>
+                        </div>
+
+                    </div>
+                </div>
+            </section> */}
             <section className="lower-section bg-white d-flex flex-row flex-wrap justify-content-around">
                 {lowerDashboardData? Object.values(lowerDashboardData).map((value, i) =>(
                     <BottomSummaryCard 

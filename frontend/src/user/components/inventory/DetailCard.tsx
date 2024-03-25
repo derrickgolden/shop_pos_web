@@ -66,7 +66,7 @@ const DetailCard: React.FC<{data: Product}> = ({data}) =>{
                                 {salesTotals?.totalUnits || nodata}    
                             </h5>
                             <p className="card-text text-poppins">
-                                Lifetime Supply(units)
+                                Lifetime Unit Sales
                             </p>
                         </div>
                         <div className="col-3 text-left">
@@ -86,7 +86,7 @@ const DetailCard: React.FC<{data: Product}> = ({data}) =>{
             </div>
                 <div className="card border-secondary mb-5 " >
                     <div className="card-header d-flex justify-content-between align-items-center">
-                        <p className="text-poppins-semibold mb-0">Instructions</p>
+                        <p className="text-poppins-semibold mb-0">Information</p>
                     </div>
 
                     <div className="d-flex justify-content-between card-body text-dark ">

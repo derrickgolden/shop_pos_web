@@ -5,16 +5,16 @@ const { pool } = require("../../mysqlSetup");
 const registerShop = async ({ shopDetails, user, logo }) => {
     const { shop_name, location, shop_email, shop_tel, extra_info } = shopDetails;
     const { user_id } = user;
-    // const {path} = logo
+    const { filename } = logo;
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         await connection.beginTransaction();
         var [res] = await connection.query(`
                 INSERT INTO shop_details (
-                    user_id, shop_name, location, shop_email, shop_tel, extra_info
+                    user_id, shop_name, location, shop_email, shop_tel, logo_path, extra_info
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
-            `, [user_id, shop_name, location, shop_email, shop_tel, extra_info]);
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `, [user_id, shop_name, location, shop_email, shop_tel, filename, extra_info]);
         const shop_id = res.insertId;
         await connection.commit();
         connection.release();
@@ -26,6 +26,7 @@ const registerShop = async ({ shopDetails, user, logo }) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -36,8 +37,8 @@ const registerShop = async ({ shopDetails, user, logo }) => {
 };
 exports.registerShop = registerShop;
 const getShopListDetails = async (user_id) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         var [res] = await connection.query(`
                 SELECT * FROM shop_details 
                 WHERE user_id = ?
@@ -51,6 +52,7 @@ const getShopListDetails = async (user_id) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }

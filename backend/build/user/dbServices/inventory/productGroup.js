@@ -4,8 +4,8 @@ exports.shiftProductGroup = exports.getProductGroups = exports.updateProductDeta
 const { pool } = require("../../../mysqlSetup");
 const addProductGroup = async (productgroupDetails) => {
     const { group_name, description, shop_id } = productgroupDetails;
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         var [res] = await connection.query(`
                 INSERT INTO product_group (group_name, description, shop_id)
                 VALUES (?, ?, ?)
@@ -19,6 +19,7 @@ const addProductGroup = async (productgroupDetails) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -30,8 +31,8 @@ const addProductGroup = async (productgroupDetails) => {
 exports.addProductGroup = addProductGroup;
 const updateProductDetails = async (productgroupDetails) => {
     const { product_id, warning_limit, product_name } = productgroupDetails;
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         var [res] = await connection.query(`
                 UPDATE stock 
                 SET warning_limit = ?
@@ -62,6 +63,7 @@ const updateProductDetails = async (productgroupDetails) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -72,8 +74,8 @@ const updateProductDetails = async (productgroupDetails) => {
 };
 exports.updateProductDetails = updateProductDetails;
 const getProductGroups = async (filterNull, shop_id) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         // Organize SQL query for better readability
         const query = `
         SELECT
@@ -120,6 +122,7 @@ const getProductGroups = async (filterNull, shop_id) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: "Database Error", err: error.sqlMessage };
         }
@@ -131,8 +134,8 @@ const getProductGroups = async (filterNull, shop_id) => {
 exports.getProductGroups = getProductGroups;
 const shiftProductGroup = async (productgroupDetails) => {
     const { product_id, group_id } = productgroupDetails;
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         var [res] = await connection.query(`
                 UPDATE product_list 
                 SET group_id = ?
@@ -158,6 +161,7 @@ const shiftProductGroup = async (productgroupDetails) => {
     }
     catch (error) {
         console.error('Error: ', error);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }

@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import { FaAngleRight, FaRegCreditCard } from "react-icons/fa";
 import { MdAccountBalanceWallet, MdCancel } from "react-icons/md";
-import { PaymentObject } from "../../sections/pointOfEntry/ValidateOrders";
 import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChange";
 import Swal from "sweetalert2";
 import ChangeDisplay from "./ChangeDisplay";
 import { PaymentCalcProps } from "./PaymentCalc";
+import { ValidateOrdersProps } from "./types";
 
 const payments = [
     {icon:<BsCashCoin size={24}/>, method_name: "Cash", method: "cash", payment_method_id: 1},
@@ -15,15 +15,13 @@ const payments = [
     {icon:<MdAccountBalanceWallet size={24}/>, method_name: "Customer Account", method: "customer_acc", payment_method_id: 2},
 ]
 
-interface PaymentMethodProps extends PaymentCalcProps{
-    handleVilidateClick: (customerGave: {[key: string]: number}, change: {}) =>void;
-    setPayMethods: React.Dispatch<React.SetStateAction<string[]>>;
+interface PaymentMethodProps extends ValidateOrdersProps, PaymentCalcProps{
     activePayMethod: string;
-    customerGave: {[key: string]: number};
-    setCustomeGave: React.Dispatch<React.SetStateAction<PaymentObject>>;
     setActivePayMethod: React.Dispatch<React.SetStateAction<string>>;
+    setStartNewEntry: React.Dispatch<React.SetStateAction<boolean>>;
     setChange: React.Dispatch<React.SetStateAction<{ remaining: number; change: number; }>>; 
 }
+
 interface PaymentProps{
     icon: JSX.Element;
     method_name: string;
@@ -33,7 +31,7 @@ interface PaymentProps{
 
 const PaymentMethod: React.FC<PaymentMethodProps> = ({
     handleVilidateClick, setPayMethods, totalPrice, payMethods, activePayMethod, customerGave, 
-    change, setCustomeGave, setActivePayMethod, setChange, PaymentCalcHandles }) =>{
+    change, setCustomeGave, setActivePayMethod, setChange, PaymentCalcHandles, setStartNewEntry }) =>{
 
     const [ isValidateEnabled, setIsvalidateEnabled ] = useState(true)
     const currentWidth = window.innerWidth;
@@ -53,6 +51,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
     const handleRemovePayment = (method: string) =>{
         
         setPayMethods((arr) => (arr.filter((payMethod) => payMethod !== method)));
+        setStartNewEntry(true);
         setCustomeGave((obj) => {
             const removedMethod = method;
             const {[removedMethod]: removedKey, ...newObj} = obj;
@@ -137,7 +136,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
             justify-content-center text-center">
                 <button onClick={() =>{
                     setIsvalidateEnabled(false);
-                    handleVilidateClick(customerGave, change)
+                    handleVilidateClick(customerGave, change, setIsvalidateEnabled);
                 } } 
                 disabled={!change.remaining && payMethods.length && isValidateEnabled ? false : true}
                 className="btn btn-warning rounded-none flex-grow-1 font-weight-bold"> 

@@ -3,11 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerSales = void 0;
 const { pool } = require("../../../mysqlSetup");
 const registerSales = async (saleDetails, user_id) => {
-    console.log(saleDetails);
     const { orderDetails, totalPrice, moneyTrans, updateStock, shop_id, total_profit } = saleDetails;
     const sale_date = new Date();
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         await connection.beginTransaction();
         // var [update_res] = await connection.query(`
         //     SELECT * FROM update_online
@@ -58,6 +57,7 @@ const registerSales = async (saleDetails, user_id) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }

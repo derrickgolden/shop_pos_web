@@ -9,13 +9,13 @@ export interface PaymentCalcProps extends ChangeDisplayProps{
     handleDigitClick: (digit: number) => void;
     handleDeleteDigit: () => void;
     handleSetToQuantityChange: (digit: number) => void;
-};
+  };
 }
 
 const PaymentCalc: React.FC<PaymentCalcProps> = ({ totalPrice, payMethods, PaymentCalcHandles, change }) => {
   const renderDigitButtons = (digits: number[]) => {
     return digits.map((digit) => (
-      <button
+      <button disabled={payMethods.length ? false : true}
         className='btn btn-outline-secondary btn-calc col-4 flex-grow-1 h-100 rounded-0'
         key={digit}
         onClick={() => PaymentCalcHandles.handleDigitClick(digit)}
@@ -38,13 +38,13 @@ const PaymentCalc: React.FC<PaymentCalcProps> = ({ totalPrice, payMethods, Payme
           <div className='d-flex flex-grow-1'>{renderDigitButtons([4, 5, 6])}</div>
           <div className='d-flex flex-grow-1'>{renderDigitButtons([7, 8, 9])}</div>
           <div className='d-flex flex-grow-1'>
-            <button
+            <button disabled={payMethods.length ? false : true}
               className='btn btn-outline-secondary btn-calc col-4 rounded-0'
               // onClick={PaymentCalcHandles?.handleQuantityIncByOne}
             >
               +
             </button>
-            <button
+            <button disabled={payMethods.length ? false : true}
                 className='btn btn-outline-secondary btn-calc col-4 rounded-0'
                 // onClick={() => PaymentCalcHandles?.handleDigitClick(Number('.'))}
             >
@@ -55,7 +55,7 @@ const PaymentCalc: React.FC<PaymentCalcProps> = ({ totalPrice, payMethods, Payme
         </div>
         <div className='d-flex flex-column col-3'>
           {[10, 20, 50].map((figure, i) =>(
-            <button key={i}
+            <button key={i} disabled={payMethods.length ? false : true}
               onClick={() => PaymentCalcHandles?.handleSetToQuantityChange(figure)}
               className='btn btn-outline-secondary flex-grow-1 rounded-0'
             >

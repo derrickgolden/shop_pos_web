@@ -8,8 +8,8 @@ export const addProductGroup = async (productgroupDetails: productgroupDetails )
 
     const {group_name, description, shop_id} = productgroupDetails;
     
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
             var [res] = await connection.query(`
                 INSERT INTO product_group (group_name, description, shop_id)
@@ -25,6 +25,7 @@ export const addProductGroup = async (productgroupDetails: productgroupDetails )
         };
     } catch (error) {
         console.error('Error:', error.message);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
@@ -38,8 +39,8 @@ export const updateProductDetails = async (productgroupDetails:  updateProductDe
 
     const {product_id, warning_limit, product_name} = productgroupDetails;
     
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
             var [res] = await connection.query(`
                 UPDATE stock 
@@ -73,6 +74,7 @@ export const updateProductDetails = async (productgroupDetails:  updateProductDe
 
     } catch (error) {
         console.error('Error:', error.message);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
@@ -83,8 +85,8 @@ export const updateProductDetails = async (productgroupDetails:  updateProductDe
 };
 
 export const getProductGroups = async (filterNull: boolean, shop_id: number): Promise<universalResponse> => {
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
         // Organize SQL query for better readability
         const query = `
         SELECT
@@ -133,6 +135,7 @@ export const getProductGroups = async (filterNull: boolean, shop_id: number): Pr
         };
     } catch (error) {
         console.error('Error:', error.message);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: "Database Error", err: error.sqlMessage };
@@ -146,8 +149,8 @@ export const shiftProductGroup = async (productgroupDetails:  updateProductDetai
 
     const {product_id, group_id} = productgroupDetails;
     
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
             var [res] = await connection.query(`
                 UPDATE product_list 
                 SET group_id = ?
@@ -174,6 +177,7 @@ export const shiftProductGroup = async (productgroupDetails:  updateProductDetai
 
     } catch (error) {
         console.error('Error: ', error);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };

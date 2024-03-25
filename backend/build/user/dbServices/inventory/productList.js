@@ -4,9 +4,9 @@ exports.deleteProduct = exports.getProductList = exports.addProduct = void 0;
 const { pool } = require("../../../mysqlSetup");
 const addProduct = async (productDetails, img_file) => {
     const { product_code, product_name, stock_qty, shop_id, instructions, side_effect, group_id, price, package_cost, package_size } = productDetails;
-    const path = img_file?.path || null;
+    const path = img_file?.filename || null;
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         await connection.beginTransaction();
         var [res] = await connection.query(`
                 INSERT INTO product_list (product_code, product_name, 
@@ -33,6 +33,7 @@ const addProduct = async (productDetails, img_file) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -44,8 +45,8 @@ const addProduct = async (productDetails, img_file) => {
 exports.addProduct = addProduct;
 const getProductList = async (details) => {
     const { shop_id } = details;
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         var [res] = await connection.query(`
             SELECT
                 ml.product_id,
@@ -79,6 +80,7 @@ const getProductList = async (details) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: "Database Error", err: error.sqlMessage };
         }
@@ -89,12 +91,12 @@ const getProductList = async (details) => {
 };
 exports.getProductList = getProductList;
 const deleteProduct = async (product_id) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         var [res] = await connection.query(`
-                DELETE FROM product_list
-                WHERE product_id = ?;
-            `, [product_id]);
+            DELETE FROM product_list
+            WHERE product_id = ?;
+        `, [product_id]);
         connection.release();
         return {
             success: true,
@@ -104,6 +106,7 @@ const deleteProduct = async (product_id) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: "Database Error", err: error.sqlMessage };
         }

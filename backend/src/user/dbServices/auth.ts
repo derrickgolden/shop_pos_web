@@ -20,8 +20,8 @@ const signupUser = async (signupDetails: SignupDetails | GoogleUserProfileAdd,
     auth_with: string): Promise<SignupResponse> => {
 
     const {email} = signupDetails;
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         // Check if the user already exists
         const [existingUser] = await connection.query(`
@@ -96,6 +96,7 @@ const signupUser = async (signupDetails: SignupDetails | GoogleUserProfileAdd,
         };
     } catch (error) {
         console.error('Error:', error.message);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
@@ -106,8 +107,9 @@ const signupUser = async (signupDetails: SignupDetails | GoogleUserProfileAdd,
 };
 
 const loginUser = async(email: string, ): Promise<LoginResponse> => {
+
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         const [res]: [Array<LoginMysqlRes>] = await connection.query(`
             SELECT * FROM user_details
@@ -129,6 +131,8 @@ const loginUser = async(email: string, ): Promise<LoginResponse> => {
         }
     } catch (error) {
         console.log(error)
+        connection.release();
+
         if (error.sqlMessage) {
             return {userAvailable: false,
                 res:{success: false,  msg: error.sqlMessage} };
@@ -141,8 +145,9 @@ const loginUser = async(email: string, ): Promise<LoginResponse> => {
 
 const resetPassword = async(password:string, email: string
                         ): Promise<DBServicesRes> =>{
+                            
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         const [res]: [{affectedRows: number}] = await connection.query(`
         UPDATE user_details 
@@ -159,6 +164,7 @@ const resetPassword = async(password:string, email: string
         }
     } catch (error) {
         console.log(error)
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
@@ -172,8 +178,8 @@ const resetPassword = async(password:string, email: string
 const storeLinkToken = async( user_id: number, email: string, token: string
                         ): Promise<StoreLinkTokenRes> => {
 
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         const [res]: [{insertId: number}] = await connection.query(`
         INSERT INTO link_tokens (user_id, email, token)
@@ -187,6 +193,7 @@ const storeLinkToken = async( user_id: number, email: string, token: string
         };
     } catch (error) {
         console.log(error)
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
@@ -198,8 +205,9 @@ const storeLinkToken = async( user_id: number, email: string, token: string
 }
 
 const getLinkToken = async(token: string ): Promise<LinkTokenRes> => {
+
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         const [res]:[Array<
             {user_id: number, email: string, token: string, create_time: Date}
@@ -224,6 +232,8 @@ const getLinkToken = async(token: string ): Promise<LinkTokenRes> => {
         }
     } catch (error) {
         console.log(error)
+        connection.release();
+        
         if (error.sqlMessage) {
             return {success: false,  msg: error.sqlMessage };
           } else {

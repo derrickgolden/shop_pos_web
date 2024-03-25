@@ -29,24 +29,24 @@ export default function LandingPageHeader() {
     const [plus5, setPlus5] = useState(true)
     const [plus6, setPlus6] = useState(true)
     const pathname = window.location.pathname
-    const [render, setRender] = useState(true)
-    const [headerToggle, setHeaderToggle] = useState(false)
-    const [activeLink, setActiveLink] = useState("dashboard")
-    const [headerNavManu, setheaderNavManu] = useState(true)
-    const [toggleProfile, setToggleProfile] = useState(false)
+    const [render, setRender] = useState(true);
+    const [headerToggle, setHeaderToggle] = useState(false);
+    const [activeLink, setActiveLink] = useState("dashboard");
+    const [headerNavManu, setheaderNavManu] = useState(true);
+    const [toggleProfile, setToggleProfile] = useState(false);
     
     const activeShop = useSelector((state: RootState) => state.activeShop); 
-    const shopListDetails = useSelector((state: RootState) => state.shopListDetailsList) 
+    const shopListDetails = useSelector((state: RootState) => state.shopListDetailsList); 
 
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const userShop = getSessionStorage();
     const { user } = userShop;
     
     useEffect(() =>{
-        const productList = getShopDetailsApi()
-        productList.then(data =>{
+        const shopDetails = getShopDetailsApi()
+        shopDetails.then(data =>{
             if(!activeShop.shop && data !== undefined) {
                 sessionStorage.setItem("activeshop", JSON.stringify(data[0]));
                 dispatch(setActiveShop({shop: data[0]}));
@@ -101,6 +101,8 @@ export default function LandingPageHeader() {
           })
     }
 
+    const logo_url = activeShop.shop?.logo_path ? 
+                    `${server_baseurl}/uploads/${activeShop.shop?.logo_path}` : `${pharmLogo}`;
     return (
         <>
         <div >
@@ -137,18 +139,15 @@ export default function LandingPageHeader() {
                         <li className="dropdown-item" onClick={logoutHandle}>Log Out</li>
                     </ul>
             </header>
-            {/* <div>
-                <p></p>
-            </div> */}
  
             <div className="manubar">
                 <div className={`l-navbar menubar scroll-bar ${headerToggle ? "show" : ""}`} id="nav-bar">
                     <nav className="nav">
                         <div> 
                             <Link to="/user/dashboard" className="nav_logo"> 
-                                <img src={`${pharmLogo}`} alt=""
-                                className='rounded' 
-                                style={{height: "30px", width:"30px"}}/>
+                                <img src={logo_url} alt="" className='rounded' 
+                                    style={{height: "30px", width:"30px"}}
+                                />
                                 <span className="text-white ">{activeShop?.shop?.shop_name}</span> 
                             </Link>
 

@@ -4,8 +4,8 @@ var bcrypt = require('bcryptjs');
 const { pool } = require("../../mysqlSetup");
 const signupUser = async (signupDetails, auth_with) => {
     const { email } = signupDetails;
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         // Check if the user already exists
         const [existingUser] = await connection.query(`
             SELECT * FROM user_details
@@ -74,6 +74,7 @@ const signupUser = async (signupDetails, auth_with) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -83,8 +84,8 @@ const signupUser = async (signupDetails, auth_with) => {
     }
 };
 const loginUser = async (email) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const [res] = await connection.query(`
             SELECT * FROM user_details
             WHERE email = ?
@@ -103,6 +104,7 @@ const loginUser = async (email) => {
     }
     catch (error) {
         console.log(error);
+        connection.release();
         if (error.sqlMessage) {
             return { userAvailable: false,
                 res: { success: false, msg: error.sqlMessage } };
@@ -114,8 +116,8 @@ const loginUser = async (email) => {
     }
 };
 const resetPassword = async (password, email) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const [res] = await connection.query(`
         UPDATE user_details 
         SET password = ?
@@ -131,6 +133,7 @@ const resetPassword = async (password, email) => {
     }
     catch (error) {
         console.log(error);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -141,8 +144,8 @@ const resetPassword = async (password, email) => {
     }
 };
 const storeLinkToken = async (user_id, email, token) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const [res] = await connection.query(`
         INSERT INTO link_tokens (user_id, email, token)
         VALUES (?, ?, ?)
@@ -154,6 +157,7 @@ const storeLinkToken = async (user_id, email, token) => {
     }
     catch (error) {
         console.log(error);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -164,8 +168,8 @@ const storeLinkToken = async (user_id, email, token) => {
     }
 };
 const getLinkToken = async (token) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const [res] = await connection.query(`
         SELECT * FROM link_tokens
         WHERE token = ?
@@ -186,6 +190,7 @@ const getLinkToken = async (token) => {
     }
     catch (error) {
         console.log(error);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }

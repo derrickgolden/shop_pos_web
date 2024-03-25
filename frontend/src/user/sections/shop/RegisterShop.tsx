@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { useNavigate } from "react-router-dom";
-import { regiterShopApi } from "./apiCalls/registerShopApi";
+import { regiterShopApi, shopDetails } from "./apiCalls/registerShopApi";
 
 const inputDetails: {
     label: string;
@@ -10,17 +10,17 @@ const inputDetails: {
     placeholder: string;
     name: "shop_name" | "location" | "shop_email" | "shop_tel";
 }[] = [
-    {label: "Shop Name", type: "text", placeholder: "Pharma one", name: "shop_name"},
+    {label: "Shop Name", type: "text", placeholder: "Shop name", name: "shop_name"},
     {label: "Location", type: "text", placeholder: "Westlands Nairobi", name: "location"},
-    {label: "Shop Email", type: "email", placeholder: "pharmaone@gmail.com", name: "shop_email"},
+    {label: "Shop Email", type: "email", placeholder: "shop@gmail.com", name: "shop_email"},
     {label: "Shop Tel", type: "text", placeholder: "+2547147000000", name: "shop_tel"},
 ]
 
 const RegisterShop: React.FC = () =>{
     const navigate = useNavigate()
 
-    const [shopDetails, setShopDetails] = useState({
-        shop_name: "", location: "", shop_email: "", shop_tel: "", extra_info: "", logo: ""
+    const [shopDetails, setShopDetails] = useState<shopDetails>({
+        shop_name: "", location: "", shop_email: "", shop_tel: "", extra_info: "", logo: null
     })
     const [selectRows, setSelectRows] = useState(3)
 
@@ -31,6 +31,15 @@ const RegisterShop: React.FC = () =>{
         setShopDetails((obj) =>({...obj, [name]: value}))
     }
 
+    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) =>{
+        const value = e.target.files;
+        if(value){
+            setShopDetails((obj) =>({...obj, logo: value[0]}))
+        }else{
+            setShopDetails((obj) =>({...obj, logo: null}))
+        }
+    }
+
     const handleRegShopSubmit: React.FormEventHandler<HTMLFormElement> = (e) =>{
         e.preventDefault()
         
@@ -38,7 +47,7 @@ const RegisterShop: React.FC = () =>{
     }
 
     return(
-        <div className='body2 bg-white pb-5' style={{paddingTop: "2rem"}}>
+        <div className='body2  pb-5' style={{paddingTop: "2rem"}}>
             <section className="upper-section bg-light py-5 mb-5">
                 <div className="px-5">
                     <form onSubmit={handleRegShopSubmit} encType="multipart/form-data"
@@ -58,13 +67,12 @@ const RegisterShop: React.FC = () =>{
                                     </div>
                                 )})
                             }
-                                    {/* <div className="form-group mb-3 col-sm-5">
+                                    <div className="form-group mb-3 col-sm-5">
                                         <label htmlFor="exampleFormControlInput1">Upload your logo</label>
                                         <input type="file" name="logo" id="" 
-                                            onChange={(e)ShopDetails(
-                                            (obj) =>({...obj, logo: e.target.files[0]}))
-                                        } />   
-                                    </div> */}
+                                            onChange={handleLogoUpload}
+                                         />   
+                                    </div>
                         </div> 
                         <div className="form-group mb-3 ">
                             <label htmlFor="exampleFormControlTextarea1">Any Etra Info</label>
@@ -79,8 +87,8 @@ const RegisterShop: React.FC = () =>{
                                 Submit
                             </button>
                             <button onClick={() => navigate(-1)}
-                                type="button" className="btn btn-primary text-white">
-                                    Cancel
+                            type="button" className="btn btn-primary text-white">
+                                Cancel
                             </button>
                         </div> 
                     </form>

@@ -5,8 +5,11 @@ import { HiStatusOffline, HiStatusOnline } from "react-icons/hi";
 
 import { getSessionStorage } from "../../controllers/getSessionStorage";
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Order } from "../../sections/pointOfEntry/types";
+import { useDispatch, useSelector } from "react-redux";
+import { setRerender } from "../../../redux/rerender";
+import { RootState } from "../../../redux/store";
 
 interface POSnavbar{
   showInventoryOrders: string; 
@@ -19,9 +22,28 @@ interface POSnavbar{
 
 const POSnavbar: React.FC<POSnavbar> = ({
   showInventoryOrders, setShowInventoryOrders, entryStep, setEntryStep, isOnline, ordersList}) =>{
+    const [isShowImages, setIsShowImages] = useState(true);
+    const rerender = useSelector((state: RootState) => state.rerender); 
+    const dispatch = useDispatch();
 
     const userShop = getSessionStorage();
     const { localShop, user } = userShop;
+
+    const handleIsShowImages = (bol: boolean) =>{
+      try {
+        localStorage.removeItem("isShowImages")
+        localStorage.setItem("isShowImages", JSON.stringify({isShowImages: bol}));
+      } catch (error) {
+        localStorage.clear();
+        localStorage.setItem("isShowImages", JSON.stringify({isShowImages: bol}));
+      }
+      dispatch(setRerender());
+    }
+
+    useEffect(() =>{
+      const val = localStorage.getItem("isShowImages");
+      val ? setIsShowImages(JSON.parse(val).isShowImages): null;
+    }, [rerender]);
 
     return(
         <nav className="navbar navbar-expand z-30 navbar-light w-100 py-0"
@@ -62,7 +84,22 @@ const POSnavbar: React.FC<POSnavbar> = ({
                           }</span>
                         </Link>
                       </li>
-                      <li><Link className="dropdown-item" to="/user/dashboard">End Session</Link></li>
+                      <li>
+                        {isShowImages?
+                          <Link onClick={() => handleIsShowImages(false)} className="dropdown-item" to="#">
+                            Hide product images
+                          </Link> :
+                          <Link onClick={() => handleIsShowImages(true)} className="dropdown-item" to="#">
+                            Show product images
+                          </Link>
+                         }
+                      </li>
+                      <li><hr className="dropdown-divider"/></li>
+                      <li>
+                        <Link className="dropdown-item" to="/user/dashboard">
+                          End Session
+                        </Link>
+                      </li>
                     </ul>
                   </div>
                 </div>

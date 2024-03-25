@@ -7,8 +7,9 @@ export interface UserDetailsRes extends DBServicesRes{
 }
 
 const getUserDetailsByemail = async( email: string): Promise<UserDetailsRes> =>{
+
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         const [res]: [Array<{}>] = await connection.query(`
         SELECT * from user_details 
@@ -23,7 +24,8 @@ const getUserDetailsByemail = async( email: string): Promise<UserDetailsRes> =>{
             return {success: false, msg: "email unavaible"}
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
@@ -34,8 +36,9 @@ const getUserDetailsByemail = async( email: string): Promise<UserDetailsRes> =>{
     }
 }
 const getUserEmailById = async( user_id: number ) =>{
+
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
 
         const [res] = await connection.query(`
         SELECT first_name, last_name, email from user_details 
@@ -50,7 +53,8 @@ const getUserEmailById = async( user_id: number ) =>{
             return {success: false, msg: "email unavaible"}
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
@@ -61,8 +65,9 @@ const getUserEmailById = async( user_id: number ) =>{
     }
 }
 const getUserDetailsByid = async( user_id: number) =>{
+
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
 
         const [res] = await connection.query(`
             SELECT user_details.*, transaction_totals.total_deposit, transaction_totals.total_withdraw, transaction_totals.balance
@@ -81,7 +86,8 @@ const getUserDetailsByid = async( user_id: number) =>{
             return {success: false, msg: "User_id unavaible"}
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };

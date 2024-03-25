@@ -3,8 +3,8 @@ import { universalResponse } from "user/types/universalResponse";
 const { pool } = require("../../../mysqlSetup");
 
 export const getPayMethodsReport = async ( shop_id: number): Promise<universalResponse> => {    
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         var [res] = await connection.query(`
             SELECT
@@ -35,7 +35,8 @@ export const getPayMethodsReport = async ( shop_id: number): Promise<universalRe
         };
     } catch (error) {
         console.error('Error:', error.message);
-
+        connection.release();
+        
         if (error.sqlMessage) {
             return { success: false, msg: "Database Error", err: error.sqlMessage };
         } else {

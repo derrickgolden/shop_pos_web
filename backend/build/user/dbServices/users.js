@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const { pool } = require("../../mysqlSetup");
 const getUserDetailsByemail = async (email) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const [res] = await connection.query(`
         SELECT * from user_details 
         WHERE email = ?;
@@ -18,6 +18,7 @@ const getUserDetailsByemail = async (email) => {
     }
     catch (error) {
         console.log(error);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -28,8 +29,8 @@ const getUserDetailsByemail = async (email) => {
     }
 };
 const getUserEmailById = async (user_id) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const [res] = await connection.query(`
         SELECT first_name, last_name, email from user_details 
         WHERE user_id = ?;
@@ -44,6 +45,7 @@ const getUserEmailById = async (user_id) => {
     }
     catch (error) {
         console.log(error);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -54,8 +56,8 @@ const getUserEmailById = async (user_id) => {
     }
 };
 const getUserDetailsByid = async (user_id) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         const [res] = await connection.query(`
             SELECT user_details.*, transaction_totals.total_deposit, transaction_totals.total_withdraw, transaction_totals.balance
             FROM user_details
@@ -73,6 +75,7 @@ const getUserDetailsByid = async (user_id) => {
     }
     catch (error) {
         console.log(error);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }

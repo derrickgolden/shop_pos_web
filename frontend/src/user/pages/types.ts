@@ -54,3 +54,7 @@ export interface mappedPaymentProps{
         payment_method: "Cash" | "Bank" | "Customer account";
     }[];
 }
+
+export type PaymentObject = {
+    [key: string]: number;
+};

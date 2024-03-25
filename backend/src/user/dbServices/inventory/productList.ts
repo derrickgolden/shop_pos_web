@@ -4,14 +4,14 @@ import { universalResponse } from "user/types/universalResponse";
 const { pool } = require("../../../mysqlSetup");
 
 export const addProduct = async (productDetails: productDetailsProps, img_file: Express.Multer.File ): Promise<universalResponse> => {
-    
+
     const {product_code, product_name, stock_qty, shop_id,
     instructions, side_effect, group_id, price, package_cost, package_size} = productDetails;
 
-    const path = img_file?.path || null
+    const path = img_file?.filename || null;
     
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         await connection.beginTransaction();
 
@@ -45,7 +45,7 @@ export const addProduct = async (productDetails: productDetailsProps, img_file: 
         };
     } catch (error) {
         console.error('Error:', error.message);
-
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         } else {
@@ -57,8 +57,8 @@ export const addProduct = async (productDetails: productDetailsProps, img_file: 
 export const getProductList = async ( details: GetProductListProps ): Promise<universalResponse> => {    
     const {shop_id} = details;
     
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         var [res] = await connection.query(`
             SELECT
@@ -94,6 +94,7 @@ export const getProductList = async ( details: GetProductListProps ): Promise<un
         };
     } catch (error) {
         console.error('Error:', error.message);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: "Database Error", err: error.sqlMessage };
@@ -104,13 +105,13 @@ export const getProductList = async ( details: GetProductListProps ): Promise<un
 };
 
 export const deleteProduct = async (product_id: number ): Promise<universalResponse> => {    
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
-            var [res] = await connection.query(`
-                DELETE FROM product_list
-                WHERE product_id = ?;
-            `, [product_id]);
+        var [res] = await connection.query(`
+            DELETE FROM product_list
+            WHERE product_id = ?;
+        `, [product_id]);
 
         connection.release();
 
@@ -121,6 +122,7 @@ export const deleteProduct = async (product_id: number ): Promise<universalRespo
         };
     } catch (error) {
         console.error('Error:', error.message);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: "Database Error", err: error.sqlMessage };

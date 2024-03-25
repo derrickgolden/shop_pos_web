@@ -2,13 +2,12 @@ import axios from "axios";
 import { server_baseurl } from "../../../../baseUrl";
 import Swal from "sweetalert2";
 import { NewProductDetailsProps } from "../types";
+import { pricingDetails } from "../PricingDetailsCard";
 
 interface handleAddGroupProps{
     addProductDetails:{
         newProductDetails: NewProductDetailsProps;
-        pricingDetails:{
-            price: number, package_cost: number, package_size: number
-        };
+        pricingDetails: pricingDetails;
     };
     setShowDetails: (component: string) =>void;
     shop_id : number;
@@ -50,7 +49,7 @@ export const addProductApi = ({addProductDetails, setShowDetails, shop_id}: hand
     // Append pricingDetails
     formData.append('price', price.toString());
     formData.append('package_size', package_size.toString());
-    formData.append('unit_of_mesurement', package_cost.toString());
+    formData.append('package_cost', package_cost.toString());
 
     img_path ? formData.append('logo', img_path) : null;
     formData.append('shop_id', shop_id.toString());
@@ -76,18 +75,20 @@ export const addProductApi = ({addProductDetails, setShowDetails, shop_id}: hand
                 icon: "success"
             });
         }else{
+            const msg = response.data.msg || "Server side error"
             Swal.fire({
                 title: "Failed",
-                text: `${response.data.msg}`,
+                text: `${msg}`,
                 icon: "warning"
             });
         }
     })
     .catch((error) => {
         console.log(error);
+        const msg = error.response.data.msg || "Server side error"
         Swal.fire({
             title: "Oooops...",
-            text: `${error.response.data.msg}`,
+            text: `${msg}`,
             icon: "warning"
         });
     });   

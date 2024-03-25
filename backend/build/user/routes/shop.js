@@ -10,6 +10,7 @@ router.post('/register-shop', async (req, res) => {
     const shopDetails = req.body;
     const user = req.user;
     const logo = req.file;
+    // return res.status(302).json({success: false, msg: "sever side error"})
     if (user.added_by !== user.user_id) {
         return res.status(200).json({ success: false, msg: "Only user registered as owner is allowed to register a shop" });
     }

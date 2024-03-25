@@ -8,12 +8,12 @@ const router = express.Router();
 router.post('/add-product', async(req: Request, res: Response) =>{
     const body = req.body;
     const img_file = req.file;
-    
+
     try {
         const response:universalResponse = await addProduct(body, img_file)
         response.success ? 
             res.status(200).json(response):
-            res.status(302).json(response)
+            res.status(302).json(response);
         
     } catch (error) {
         console.log(error)
@@ -28,7 +28,7 @@ router.post('/get-product', async(req: Request, res: Response) =>{
         const response:universalResponse = await getProductList(body)
         response.success ? 
             res.status(200).json(response):
-            res.status(302).json(response)
+            res.status(302).json(response);
         
     } catch (error) {
         console.log(error)

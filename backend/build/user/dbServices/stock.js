@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateStockDetails = exports.getStockDetails = void 0;
 const { pool } = require("../../mysqlSetup");
 const getStockDetails = async (user_id, shop_id) => {
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         var [res] = await connection.query(`
                 SELECT product_list.product_name, stock.*
                 FROM product_list
@@ -20,6 +20,7 @@ const getStockDetails = async (user_id, shop_id) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         }
@@ -31,8 +32,8 @@ const getStockDetails = async (user_id, shop_id) => {
 exports.getStockDetails = getStockDetails;
 const updateStockDetails = async (newStockDetails) => {
     const { totalStock, product_id } = newStockDetails;
+    const connection = await pool.getConnection();
     try {
-        const connection = await pool.getConnection();
         var [res] = await connection.query(`
                 UPDATE stock 
                 SET containers = ?
@@ -58,6 +59,7 @@ const updateStockDetails = async (newStockDetails) => {
     }
     catch (error) {
         console.error('Error:', error.message);
+        connection.release();
         if (error.sqlMessage) {
             return { err: true, success: false, msg: error.sqlMessage };
         }

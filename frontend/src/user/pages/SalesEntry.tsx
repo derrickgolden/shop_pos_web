@@ -11,7 +11,7 @@ import { calcTotalPrice } from "./calculations/calcTotalPrice";
 import { regiterSalesApi } from "./apiCalls/registerSales";
 import Swal from "sweetalert2";
 
-import { SaleRes } from "./types";
+import { PaymentObject, SaleRes } from "./types";
 
 export interface OrderDetail extends ProductDetails {
   units: number;
@@ -25,13 +25,14 @@ const SalesEntry = () =>{
     const [ordersList, setOrdersList] = useState<Order[]>([{ date: new Date().toLocaleString(), 
       orderDetails: [], activeOrder: true, status: "inProgress" , totalPrice: 0, total_profit: 0,
     }]);
-    // const [totalPrice, setTotalPrice] = useState(0);
     const [entryStep, setEntryStep] = useState("inProgress");
     const [payMethods, setPayMethods] = useState<string[]>([]);
     const [saleRes, setSaleRes] = useState<SaleRes>();
     const [updateStock, setUpdateStock] = useState<UpdateStockProps[]>([]);
     const [isDigitClicked, setIsDigitClicked] = useState(false);
     const [showInventoryOrders, setShowInventoryOrders] = useState("inventory");
+    const [customerGave, setCustomeGave] = useState<PaymentObject>({})
+    const [activePayMethod, setActivePayMethod] = useState("");
 
     const [isOnline, setIsOnline] = useState(window.navigator.onLine);
 
@@ -243,7 +244,6 @@ const SalesEntry = () =>{
             
     const handleNewOrderSelect = ( newOrder: ProductDetails ) => {
       setOrdersList((arr) => {
-            console.log(arr);
             return arr.map(order => {
               if(order.activeOrder){
                 const existingProduct = order.orderDetails.find(product => product.product_id === newOrder.product_id);
@@ -285,7 +285,8 @@ const SalesEntry = () =>{
       setIsDigitClicked(false);
     };
 
-    const handleVilidateClick = (customerGave: {[key: string]: number}, change: {}) =>{
+    const handleVilidateClick = (customerGave: {[key: string]: number}, change: {},
+       setIsvalidateEnabled: React.Dispatch<React.SetStateAction<boolean>> ) =>{
       const [activeOrder] = ordersList.filter(order => order.activeOrder);
       const {orderDetails, total_profit, totalPrice} = activeOrder;
       const moneyTrans = {...change, customerGave: customerGave || totalPrice};
@@ -294,7 +295,8 @@ const SalesEntry = () =>{
       if(shop_id !== undefined){
         regiterSalesApi({
           orderDetails, totalPrice, total_profit, setOrdersList, moneyTrans, 
-          updateStock, payMethods, setEntryStep, setSaleRes, shop_id, isOnline
+          updateStock, payMethods, setEntryStep, setSaleRes, shop_id, isOnline,
+          setIsvalidateEnabled
         });
       };
     };
@@ -402,6 +404,10 @@ const SalesEntry = () =>{
               totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
               setPayMethods = {setPayMethods}
               payMethods = {payMethods}
+              customerGave = {customerGave}
+              setCustomeGave = {setCustomeGave}
+              activePayMethod = {activePayMethod} 
+              setActivePayMethod = {setActivePayMethod}
             />
           </div>
         }

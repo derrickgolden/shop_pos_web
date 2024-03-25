@@ -2,7 +2,7 @@
 const client_baseurl = "http://localhost:5173"
 
 const server_baseurl = "http://localhost:8080"
-// const server_baseurl = "https://pharmabackend.karibuchakula.co.ke"
+// const server_baseurl = "https://shopposbackend.karibuchakula.co.ke"
 
 export {
     client_baseurl,

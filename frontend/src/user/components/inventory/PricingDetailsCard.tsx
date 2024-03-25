@@ -1,7 +1,7 @@
 export interface pricingDetails {
-    price: number | undefined;
-    package_cost: number | undefined;
-    package_size: number | undefined;
+    price: string;
+    package_cost: string;
+    package_size: string;
 }
 interface PricingDetailsCardProps{
     handlePricingInput: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void; 
@@ -34,7 +34,7 @@ const PricingDetailsCard: React.FC<PricingDetailsCardProps> = ({handlePricingInp
                     <label htmlFor="package_size">Units per Package</label>
                     <input onChange={handlePricingInput} value={pricingDetails?.package_size}
                         type="number" className="form-control" id="package_size" name="package_size"
-                        placeholder="How many units in 1 package" required/>
+                        placeholder="How many units are in 1 package" required/>
                 </div>
        
         </div>

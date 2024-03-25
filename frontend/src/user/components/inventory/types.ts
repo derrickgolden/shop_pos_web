@@ -53,18 +53,6 @@ export interface ProductListProps {
     onHandleUpdateStock: (row: Product) => void;
 }
 
-// export interface Product {data:{
-//     product_id: number;
-//     product_code: string;
-//     product_name: string;
-//     stock_qty: number;
-//     instructions: string;
-//     side_effect: string;
-//     group_id: number;
-//     group_name: string;
-//     description: string;
-// }}
-
 export interface NewProductDetailsProps {
     group_id: number;
     product_code: string;

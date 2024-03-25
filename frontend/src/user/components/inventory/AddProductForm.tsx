@@ -6,6 +6,7 @@ import { getProductGroupList } from "./productGroup/apiCalls/getProductGroupList
 import { setGroupList } from "../../../redux/groupList";
 import PricingDetailsCard from "./PricingDetailsCard";
 import Swal from "sweetalert2";
+import { NewProductDetailsProps } from "./types";
 
 interface AddProductFormProps{
     setShowDetails: (showDetails: string) => void
@@ -17,11 +18,11 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
 
     const dispatch = useDispatch();
 
-    const [productDetails, setProductDetails] = useState({
+    const [productDetails, setProductDetails] = useState<NewProductDetailsProps>({
         product_code: '', product_name: "", group_name: "", 
-        instructions: "", side_effect: "", group_id: null, img_path: null
+        instructions: "", side_effect: "", group_id: 0, img_path: null
     })
-    const [pricingDetails, setPricingDetails] = useState({price: 0, package_cost: 0, package_size: 0});
+    const [pricingDetails, setPricingDetails] = useState({price: '', package_cost: '', package_size: ''});
     const [selectRows, setSelectRows] = useState(3);
 
     useEffect(() =>{
@@ -48,7 +49,14 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
         const value = e.target.value;
 
         setPricingDetails((obj) =>({...obj, [name]: value}))
-        console.log(pricingDetails)
+    }
+    const handleImageInput  = (e: React.ChangeEvent<HTMLInputElement> )=>{
+        const value = e.target.files;
+        if(value){
+            setProductDetails((obj) =>({...obj, img_path: value[0]}));
+        }else{
+            setProductDetails((obj) =>({...obj, img_path: null}));
+        }
     }
 
     const handleAddProductSubmit: React.FormEventHandler<HTMLFormElement> = (e) =>{
@@ -57,6 +65,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
         const [group] = groupList.filter(group => 
             group.group_name.trim() === productDetails.group_name.trim()
         )
+
         if(!group){
             Swal.fire({
                 title: "Select a group or add new one first."
@@ -69,6 +78,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
             const shop_id = activeShop.shop?.shop_id;
             
             if(price && shop_id){
+                console.log(addProductDetails);
                 addProductApi({addProductDetails, setShowDetails, shop_id})
             }
         }
@@ -101,13 +111,12 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
                             ))}
                         </select>
                     </div>
-                    {/* <div className="form-group mb-3 col-sm-5">
-                        <label htmlFor="exampleFormControlInput1">Product Image</label>
+                    <div className="form-group mb-3 col-sm-5">
+                        <label htmlFor="exampleFormControlInput1">Product Image</label> <br />
                             <input type="file" name="logo" id="" 
-                                onChange={(e) => setProductDetails(
-                                (obj) =>({...obj, img_path: e.target.files[0]}))
-                        } />   
-                    </div> */}
+                                onChange={ handleImageInput } 
+                            />   
+                    </div>
                 </div> 
 
                 <PricingDetailsCard 
@@ -116,7 +125,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
                 />
 
                 <div className="form-group mb-3 ">
-                    <label htmlFor="exampleFormControlTextarea1">Instructions</label>
+                    <label htmlFor="exampleFormControlTextarea1">Information</label>
                     <textarea onChange={handleFormInput} value={productDetails.instructions}
                     className="form-control" id="exampleFormControlTextarea1" required name="instructions"
                         aria-required rows={selectRows}></textarea>

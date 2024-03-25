@@ -18,10 +18,11 @@ interface handleAddGroupProps{
     setSaleRes: (saleRes: SaleRes) =>void;
     shop_id: number;
     isOnline: boolean;
+    setIsvalidateEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const regiterSalesApi = ({ orderDetails, totalPrice, total_profit, 
     setOrdersList, moneyTrans, updateStock, payMethods,  setEntryStep, setSaleRes, 
-    shop_id, isOnline }: handleAddGroupProps) =>{
+    shop_id, isOnline , setIsvalidateEnabled}: handleAddGroupProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -75,6 +76,7 @@ export const regiterSalesApi = ({ orderDetails, totalPrice, total_profit,
                 text: `${response.data.msg}`,
                 icon: "warning"
             });
+            setIsvalidateEnabled(true);
         }
     })
     .catch((error) => {
@@ -84,5 +86,6 @@ export const regiterSalesApi = ({ orderDetails, totalPrice, total_profit,
             text: `Server side error`,
             icon: "warning"
         });
+        setIsvalidateEnabled(true);
     });   
 }

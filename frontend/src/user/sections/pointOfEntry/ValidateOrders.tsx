@@ -1,26 +1,33 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomerInvoice from "../../components/pointOfEntry/CustomerInvoice";
 import PaymentCalc from "../../components/pointOfEntry/PaymentCalc"
 import PaymentMethod from "../../components/pointOfEntry/PaymentMethod";
 import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChange";
+import { ValidateOrdersProps } from "../../components/pointOfEntry/types";
 
-interface ValidateOrdersProps{
-    handleVilidateClick: (customerGave: {[key: string]: number}, change: {}) => void;
+interface ValidateOrdersProps2 extends ValidateOrdersProps{
     totalPrice: number;
-    setPayMethods: Dispatch<SetStateAction<string[]>>;
-    payMethods: string[]
+    payMethods: string[];
+    activePayMethod: string;
+    setActivePayMethod: React.Dispatch<React.SetStateAction<string>>;
 }
-export type PaymentObject = {
-    [key: string]: number;
-};
 
-const ValidateOrders: React.FC<ValidateOrdersProps> = (
-    {handleVilidateClick, totalPrice, setPayMethods, payMethods }) =>{
+const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, totalPrice, 
+    setPayMethods, payMethods, customerGave, setCustomeGave, activePayMethod, setActivePayMethod }) =>{
 
-    const [customerGave, setCustomeGave] = useState<PaymentObject>({})
-    const [change, setChange] = useState({remaining: 0.00, change: 0.00})
-    const [activePayMethod, setActivePayMethod] = useState("")
+    const [change, setChange] = useState({remaining: 0.00, change: 0.00});
     const [startNewEntry, setStartNewEntry] = useState(true);
+
+    useEffect(() =>{
+        if(payMethods.length){
+            setCustomeGave((obj) => {
+                const totals = Number(Object.values(obj).reduce((acc, curr) => acc + curr, 0));
+    
+                calcAndSetChange(totals, totalPrice, setChange);
+                return obj;
+            });
+        }
+    }, []);
 
     const PaymentCalcHandles = {
         handleDigitClick: (digit: number) =>{
@@ -90,6 +97,7 @@ const ValidateOrders: React.FC<ValidateOrdersProps> = (
                 setCustomeGave = {setCustomeGave}
                 setActivePayMethod = {setActivePayMethod}
                 setChange = {setChange}
+                setStartNewEntry = {setStartNewEntry}
                 PaymentCalcHandles = {PaymentCalcHandles}
             />
             <PaymentCalc 

@@ -23,6 +23,7 @@ export interface RegisterShopProps{
         user_id: number
     }
     logo: {
-        path: string
+        path: string;
+        filename : string;
     }
 }

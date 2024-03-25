@@ -4,8 +4,9 @@ import { RegisterShopProps } from "./types";
 const { pool } = require("../../mysqlSetup");
 
 export const getStockDetails = async (user_id: number, shop_id: number) => {
+
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
             var [res] = await connection.query(`
                 SELECT product_list.product_name, stock.*
@@ -23,6 +24,7 @@ export const getStockDetails = async (user_id: number, shop_id: number) => {
         };
     } catch (error) {
         console.error('Error:', error.message);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
@@ -35,8 +37,8 @@ export const getStockDetails = async (user_id: number, shop_id: number) => {
 export const updateStockDetails = async (newStockDetails: {totalStock: number, product_id: number}) => {
     const {totalStock, product_id} = newStockDetails;
 
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
             var [res] = await connection.query(`
                 UPDATE stock 
@@ -64,6 +66,7 @@ export const updateStockDetails = async (newStockDetails: {totalStock: number, p
 
     } catch (error) {
         console.error('Error:', error.message);
+        connection.release();
 
         if (error.sqlMessage) {
             return { err: true, success: false, msg: error.sqlMessage };

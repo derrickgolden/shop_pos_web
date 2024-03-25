@@ -7,18 +7,18 @@ export const registerShop = async ({shopDetails, user, logo}: RegisterShopProps 
 
     const {shop_name, location, shop_email, shop_tel, extra_info} = shopDetails;
     const {user_id} = user;
-    // const {path} = logo
+    const {filename} = logo
     
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         await connection.beginTransaction();
             var [res] = await connection.query(`
                 INSERT INTO shop_details (
-                    user_id, shop_name, location, shop_email, shop_tel, extra_info
+                    user_id, shop_name, location, shop_email, shop_tel, logo_path, extra_info
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
-            `, [user_id, shop_name, location, shop_email, shop_tel, extra_info ]);
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `, [user_id, shop_name, location, shop_email, shop_tel, filename, extra_info ]);
 
             const shop_id = res.insertId;
                 
@@ -33,6 +33,7 @@ export const registerShop = async ({shopDetails, user, logo}: RegisterShopProps 
         };
     } catch (error) {
         console.error('Error:', error.message);
+        connection.release();
 
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
@@ -43,8 +44,9 @@ export const registerShop = async ({shopDetails, user, logo}: RegisterShopProps 
 };
 
 export const getShopListDetails = async (user_id: number) => {
+
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
             var [res] = await connection.query(`
                 SELECT * FROM shop_details 
@@ -60,7 +62,8 @@ export const getShopListDetails = async (user_id: number) => {
         };
     } catch (error) {
         console.error('Error:', error.message);
-
+        connection.release();
+        
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         } else {

@@ -5,13 +5,12 @@ const { pool } = require("../../../mysqlSetup");
 
 export const registerSales = async (saleDetails: RegisterSalesProp, user_id: number ): Promise<universalResponse> => {
 
-    console.log(saleDetails);
     const {orderDetails, totalPrice, moneyTrans, updateStock, shop_id, total_profit} = saleDetails;
 
     const sale_date = new Date()
 
+    const connection: RowDataPacket = await pool.getConnection();
     try {
-        const connection: RowDataPacket = await pool.getConnection();
 
         await connection.beginTransaction();
 
@@ -72,7 +71,8 @@ export const registerSales = async (saleDetails: RegisterSalesProp, user_id: num
         };
     } catch (error) {
         console.error('Error:', error.message);
-
+        connection.release();
+        
         if (error.sqlMessage) {
             return { success: false, msg: error.sqlMessage };
         } else {
