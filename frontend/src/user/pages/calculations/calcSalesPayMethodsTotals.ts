@@ -6,13 +6,13 @@ export interface PayMethodResult {
         day: string;
         Cash: number; 
         Bank: number; 
-        Customer_account: number;
+        Mpesa: number;
     }[];
     transPerMethod:{
         day: string;
         Cash: number; 
         Bank: number; 
-        Customer_account: number;
+        Mpesa: number;
     }[];
     sortedPayments: paymentProps[]
 }
@@ -32,7 +32,7 @@ export function calcSalesPayMethodTotals({data, date, keyType}: calculateTotalSa
     const salesByDate: Record<string, { 
         Cash: { amt: number; trans: number; }; 
         Bank: { amt: number; trans: number; }; 
-        Customer_account: { amt: number; trans: number; } }> = data.reduce((acc, sale) => {
+        Mpesa: { amt: number; trans: number; } }> = data.reduce((acc, sale) => {
             
         const saleDate = new Date(sale.sale_date);
 
@@ -43,7 +43,8 @@ export function calcSalesPayMethodTotals({data, date, keyType}: calculateTotalSa
             });
             
             if (!acc[saleDate]) {
-                acc[saleDate] = { Cash: {amt: 0, trans: 0}, Bank: {amt: 0, trans: 0}, Customer_account: {amt: 0, trans: 0} };
+                acc[saleDate] = { Cash: {amt: 0, trans: 0}, Bank: {amt: 0, trans: 0}, 
+                    Mpesa: {amt: 0, trans: 0} };
             }
 
             // Update Cash and Bank for each sale
@@ -65,7 +66,7 @@ export function calcSalesPayMethodTotals({data, date, keyType}: calculateTotalSa
         return acc;
     }, {} as Record<string, {   Cash: { amt: number; trans: number; }; 
                                 Bank: { amt: number; trans: number; }; 
-                                Customer_account: { amt: number; trans: number; }  }>); // Explicitly type the accumulator
+                                Mpesa: { amt: number; trans: number; }  }>); // Explicitly type the accumulator
 
     // Convert grouped data to the desired format
     for (const date in salesByDate) {
@@ -73,13 +74,13 @@ export function calcSalesPayMethodTotals({data, date, keyType}: calculateTotalSa
             day: date,
             Cash: salesByDate[date].Cash.amt,
             Bank: salesByDate[date].Bank.amt,
-            Customer_account: salesByDate[date].Customer_account.trans,
+            Mpesa: salesByDate[date].Mpesa.trans,
         });
         transPerMethod.push({
             day: date,
             Cash: salesByDate[date].Cash.trans,
             Bank: salesByDate[date].Bank.trans,
-            Customer_account: salesByDate[date].Customer_account.trans,
+            Mpesa: salesByDate[date].Mpesa.trans,
         });
     }
     return {amtPerMethod, transPerMethod, sortedPayments};

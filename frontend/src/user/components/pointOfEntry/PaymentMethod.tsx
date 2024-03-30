@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import { FaAngleRight, FaRegCreditCard } from "react-icons/fa";
-import { MdAccountBalanceWallet, MdCancel } from "react-icons/md";
+import { MdAccountBalanceWallet, MdCancel, MdOutlinePhoneAndroid } from "react-icons/md";
 import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChange";
 import Swal from "sweetalert2";
 import ChangeDisplay from "./ChangeDisplay";
@@ -12,7 +12,8 @@ import { ValidateOrdersProps } from "./types";
 const payments = [
     {icon:<BsCashCoin size={24}/>, method_name: "Cash", method: "cash", payment_method_id: 1},
     {icon:<FaRegCreditCard size={24}/>, method_name: "Bank", method: "bank", payment_method_id: 3},
-    {icon:<MdAccountBalanceWallet size={24}/>, method_name: "Customer Account", method: "customer_acc", payment_method_id: 2},
+    {icon:<MdOutlinePhoneAndroid size={24}/>, method_name: "Mpesa", method: "mpesa", payment_method_id: 4},
+    // {icon:<MdAccountBalanceWallet size={24}/>, method_name: "Customer Account", method: "customer_acc", payment_method_id: 2},
 ]
 
 interface PaymentMethodProps extends ValidateOrdersProps, PaymentCalcProps{
@@ -103,7 +104,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
                     payments.map((payment, i)=>(
                         <button  key={i} onClick={() =>  handlePaymentMethod(payment)}
                         className="d-flex p-2 btn border gap-3 cursor-pointer col-12">
-                            {/* {payment.icon} */}
+                            {payment.icon}
                             <h6>{payment.method_name}</h6>
                         </button>
                     ))

@@ -2,7 +2,7 @@ import '../../assets/css/layouts/layouts.css';
 import 'boxicons';
 import Swal from 'sweetalert2'
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, MouseEvent } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft, faChevronDown, faFileInvoice, faGear, faBars,faX
     } from '@fortawesome/free-solid-svg-icons'
@@ -32,8 +32,9 @@ export default function LandingPageHeader() {
     const [render, setRender] = useState(true);
     const [headerToggle, setHeaderToggle] = useState(false);
     const [activeLink, setActiveLink] = useState("dashboard");
-    const [headerNavManu, setheaderNavManu] = useState(true);
     const [toggleProfile, setToggleProfile] = useState(false);
+
+    const menuRef = useRef<HTMLDivElement>(null);
     
     const activeShop = useSelector((state: RootState) => state.activeShop); 
     const shopListDetails = useSelector((state: RootState) => state.shopListDetailsList); 
@@ -55,31 +56,45 @@ export default function LandingPageHeader() {
         })
     },[shopListDetails.length === 0])
 
-    const headerTogglehandle = () => {
-        setHeaderToggle(!headerToggle)
-        setheaderNavManu(!headerNavManu)
-    }
-    const toggleProfileClick = () =>{        
-        setToggleProfile(!toggleProfile);
-    }
-
     useEffect(() => {
         const headerSection = document.getElementById('header');
         if ( headerSection !== null) {
-            headerToggle && headerSection.classList.add('body-pd')
-            headerToggle !== true && headerSection.classList.remove('body-pd')
+            headerToggle && headerSection.classList.add('body-pd');
+            headerToggle !== true && headerSection.classList.remove('body-pd');
         }
-    }, [headerToggle])
+        const handleOutsideClick: EventListener = (event: Event ) => {
+            // Check if the click occurred outside of the menu component
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setHeaderToggle(false); // Close the menu
+            }
+        };
+      
+          // Attach event listener when the menu is open
+          if (headerToggle) {
+            document.addEventListener('click', handleOutsideClick);
+        }
+        
+        // Clean up the event listener when the component unmounts or the menu closes
+        return () => {
+            document.removeEventListener('click', handleOutsideClick);
+          };
+    }, [headerToggle]);
 
     const handleLinkClick: React.MouseEventHandler<HTMLAnchorElement>= (e) =>{
         setRender(!render); 
         const target = e.currentTarget as HTMLAnchorElement;
 
         const value = target.id;
-        setActiveLink(value) 
-        setHeaderToggle(false)
-        setheaderNavManu(false)        
-    }
+        setActiveLink(value); 
+        setHeaderToggle(false);
+    };
+
+    const headerTogglehandle = () => {
+        setHeaderToggle(!headerToggle)
+    };
+    const toggleProfileClick = () =>{        
+        setToggleProfile(!toggleProfile);
+    };
 
     const logoutHandle=()=>{
         Swal.fire({
@@ -105,11 +120,11 @@ export default function LandingPageHeader() {
                     `${server_baseurl}/uploads/${activeShop.shop?.logo_path}` : `${pharmLogo}`;
     return (
         <>
-        <div >
+        <div ref={menuRef}>
             <header 
             className="header mb-4 dropdown body-pd border-bottom border " id="header">
                 <div onClick={headerTogglehandle} className="header_toggle" id="header-toggle">
-                    {headerNavManu ? <FontAwesomeIcon icon={faBars} /> : <FontAwesomeIcon icon={faX} />}
+                    {headerToggle ? <FontAwesomeIcon icon={faX} /> : <FontAwesomeIcon icon={faBars} /> }
                 </div>
                     <div onClick={toggleProfileClick}
                     style={{cursor: "pointer"}}

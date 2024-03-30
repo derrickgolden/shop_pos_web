@@ -286,17 +286,19 @@ const SalesEntry = () =>{
     };
 
     const handleVilidateClick = (customerGave: {[key: string]: number}, change: {},
-       setIsvalidateEnabled: React.Dispatch<React.SetStateAction<boolean>> ) =>{
+      setIsvalidateEnabled: React.Dispatch<React.SetStateAction<boolean>> ) =>{
+
       const [activeOrder] = ordersList.filter(order => order.activeOrder);
       const {orderDetails, total_profit, totalPrice} = activeOrder;
       const moneyTrans = {...change, customerGave: customerGave || totalPrice};
       const shop_id = localShop?.shop_id;
+      const sale_date = new Date();
 
       if(shop_id !== undefined){
         regiterSalesApi({
           orderDetails, totalPrice, total_profit, setOrdersList, moneyTrans, 
           updateStock, payMethods, setEntryStep, setSaleRes, shop_id, isOnline,
-          setIsvalidateEnabled
+          sale_date, setIsvalidateEnabled
         });
       };
     };

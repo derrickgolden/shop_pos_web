@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, CSSProperties } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
 import { handleAddGroup } from "./apiCalls/handleAddGroup";
 import { useNavigate } from "react-router-dom";
 import { getSessionStorage } from "../../../controllers/getSessionStorage";
@@ -8,6 +9,8 @@ interface AddGroupFormProps{
     setShowDetails: (showDetails: string) => void;
 }
 const AddGroupForm: React.FC<AddGroupFormProps> = ({ setShowDetails}) =>{
+    const [isLoading, setIsLoading] = useState(false)
+
     const navigate = useNavigate();
     const [groupDetails, setGroupDetails] = useState({
         group_name: "", description: ""
@@ -37,7 +40,8 @@ const AddGroupForm: React.FC<AddGroupFormProps> = ({ setShowDetails}) =>{
 
     const handleAddGroupSubmit: React.FormEventHandler<HTMLFormElement> = (e) =>{
         e.preventDefault()
-        handleAddGroup({groupDetails, setShowDetails});
+        setIsLoading(true);
+        handleAddGroup({groupDetails, setShowDetails, setIsLoading});
     }
 
     return(
@@ -61,8 +65,22 @@ const AddGroupForm: React.FC<AddGroupFormProps> = ({ setShowDetails}) =>{
                         aria-required rows={selectRows} ></textarea>
                 </div>
                 <div className="bg-white d-flex align-items-center justify-content-between " >
-                    <button type="submit" className="btn btn-outline-danger">
-                        Submit
+                    <button type="submit" disabled ={isLoading} 
+                    className="btn btn-outline-danger d-flex gap-2 align-items-center">
+                    <span>Submit</span>
+                    <span>
+                        <BeatLoader 
+                            color="#dc3545"
+                            loading={isLoading}
+                            cssOverride={{
+                                display: "flex",
+                                margin: "0 auto"
+                            }}
+                            size={16}
+                            aria-label="Loading Spinner"
+                            data-testid="loader"
+                        />
+                    </span>
                     </button>
                     <button onClick={() => setShowDetails("list")}
                         type="button" className="btn btn-primary text-white">

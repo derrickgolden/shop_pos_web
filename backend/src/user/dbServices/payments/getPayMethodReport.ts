@@ -23,7 +23,8 @@ export const getPayMethodsReport = async ( shop_id: number): Promise<universalRe
                 sale_payments sp ON s.sale_id = sp.sale_id
             WHERE shop_id = ?
             GROUP BY
-                s.sale_id, s.sale_date, s.total_price;
+                s.sale_id, s.sale_date, s.total_price
+            ORDER BY s.sale_id DESC;
         `, [shop_id]);
 
         connection.release();

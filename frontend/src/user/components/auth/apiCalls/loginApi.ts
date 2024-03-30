@@ -19,12 +19,15 @@ const loginApi = ({ data, dispatch, setUserDetails, navigate, setLoginDetails }:
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': 'no-cors'
         },
         body: data
         })
-        .then(response => response.json())
+        .then(response =>{
+            console.log(response)
+            return response.json();
+        } )
         .then(data => {
+            console.log(data)
             if(data.success){
                 sessionStorage.setItem("user", JSON.stringify(data?.details[0]));
                 sessionStorage.setItem("userToken", JSON.stringify(data?.token));

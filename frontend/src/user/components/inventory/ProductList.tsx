@@ -34,18 +34,23 @@ const ProductList: React.FC<ProductListProps> = ({onHandleActionDetails}) =>{
             sortable: true
         },
         {
-            name: "Product Name",
-            selector: (row: Product) => row.product_name,
-            sortable: true
-        },
-        {
             name: "Group Name",
             selector: (row: Product) => row.group_name,
             sortable: true
         },
         {
-            name: "Stock in Qty",
+            name: "Product Name",
+            selector: (row: Product) => row.product_name,
+            sortable: true
+        },
+        {
+            name: "Closed Stock",
             selector: (row: Product) => row.stock_qty | 0,
+            sortable: true
+        },
+        {
+            name: "Open Stock",
+            selector: (row: Product) => row.open_container_units | 0,
             sortable: true
         },
         {

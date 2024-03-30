@@ -9,10 +9,10 @@ import { editProductDetailsApi } from './apiCalls/editProductDetails';
 import { setCallApi } from '../../../redux/callApi';
 
 interface update_modal_data_props{
-    product_id: number;
     product_name: string;
     group_name: string;
     stock_qty: number;
+    last_stocked_date: string;
 }
 interface Add_data_modal_Props {
     select_data: Product;
@@ -37,9 +37,10 @@ const Add_data_modal: React.FC<Add_data_modal_Props> = ({ select_data, open_upda
     const [totalStock, setTotalStock] = useState<number>(stock);
  
     useEffect(() => {
-        const {product_name, product_id, group_name, warning_limit} = select_data
+        const {product_name, last_stocked, group_name, warning_limit} = select_data;
+        const last_stocked_date = new Date(last_stocked).toLocaleDateString();
         setUpdate_modal_data({
-            group_name, product_id, product_name, stock_qty: stock
+            group_name, product_name, last_stocked_date, stock_qty: stock
         });
 
         setNewStock(undefined);

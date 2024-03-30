@@ -1,6 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProduct = exports.getProductList = exports.addProduct = void 0;
+const fs_1 = __importDefault(require("fs"));
 const { pool } = require("../../../mysqlSetup");
 const addProduct = async (productDetails, img_file) => {
     const { product_code, product_name, stock_qty, shop_id, instructions, side_effect, group_id, price, package_cost, package_size } = productDetails;
@@ -8,21 +12,42 @@ const addProduct = async (productDetails, img_file) => {
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
-        var [res] = await connection.query(`
-                INSERT INTO product_list (product_code, product_name, 
-                    instructions, side_effect, group_id, img_path, shop_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            `, [product_code, product_name, instructions, side_effect, group_id, path, shop_id]);
-        const product_id = res.insertId;
-        var [pricing_res] = await connection.query(`
-                INSERT INTO pricing (product_id, price, package_cost )
-                VALUES (?, ?, ?)
-            `, [product_id, price, package_cost]);
-        var [stock_res] = await connection.query(`
-                INSERT INTO stock (product_id, containers, units_per_container, 
-                    open_container_units, warning_limit)
-                VALUES (?, ?, ?, ?, ?)
-            `, [product_id, stock_qty, package_size, 0, 20]);
+        var [products] = await connection.query(`
+                SELECT product_name FROM product_list
+                WHERE shop_id = ?
+            `, [shop_id]);
+        const productExists = products.some(product => product.product_name === product_name);
+        if (productExists) {
+            if (img_file) {
+                fs_1.default.unlink(img_file.path, (err) => {
+                    if (err) {
+                        console.error(`Error deleting file ${img_file.originalname}:`, err);
+                    }
+                });
+            }
+            return {
+                success: false,
+                msg: `${product_name} is already registered.`,
+                details: []
+            };
+        }
+        else {
+            var [res] = await connection.query(`
+                    INSERT INTO product_list (product_code, product_name, 
+                        instructions, side_effect, group_id, img_path, shop_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                `, [product_code, product_name, instructions, side_effect, group_id, path, shop_id]);
+            const product_id = res.insertId;
+            var [pricing_res] = await connection.query(`
+                    INSERT INTO pricing (product_id, price, package_cost )
+                    VALUES (?, ?, ?)
+                `, [product_id, price, package_cost]);
+            var [stock_res] = await connection.query(`
+                    INSERT INTO stock (product_id, containers, units_per_container, 
+                        open_container_units, warning_limit)
+                    VALUES (?, ?, ?, ?, ?)
+                `, [product_id, stock_qty, package_size, 0, 20]);
+        }
         await connection.commit();
         connection.release();
         return {

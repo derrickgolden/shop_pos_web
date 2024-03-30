@@ -5,8 +5,9 @@ import Swal from "sweetalert2";
 interface handleAddGroupProps{
     groupDetails: {group_name: string, description: string}
     setShowDetails: (component: string) =>void
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export const handleAddGroup = ({groupDetails, setShowDetails}: handleAddGroupProps) =>{
+export const handleAddGroup = ({groupDetails, setShowDetails, setIsLoading}: handleAddGroupProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
     
@@ -20,7 +21,7 @@ export const handleAddGroup = ({groupDetails, setShowDetails}: handleAddGroupPro
             text: "Try to login Again then add the group.",
             icon: "warning"
         });
-        return
+        return setIsLoading(false);
     }
 
     let data = JSON.stringify(groupDetails);
@@ -53,6 +54,7 @@ export const handleAddGroup = ({groupDetails, setShowDetails}: handleAddGroupPro
                 icon: "warning"
             });
         }
+        setIsLoading(false);
     })
     .catch((error) => {
         console.log(error);
@@ -61,5 +63,6 @@ export const handleAddGroup = ({groupDetails, setShowDetails}: handleAddGroupPro
             text: `Server side error`,
             icon: "warning"
         });
+        setIsLoading(false);
     });   
 }

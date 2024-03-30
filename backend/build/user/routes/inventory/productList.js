@@ -5,8 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const productList_1 = require("../../dbServices/inventory/productList");
+const resizeImage_1 = require("../../middlewares/resizeImage");
 const router = express_1.default.Router();
-router.post('/add-product', async (req, res) => {
+router.post('/add-product', resizeImage_1.resizeImages, async (req, res) => {
     const body = req.body;
     const img_file = req.file;
     try {

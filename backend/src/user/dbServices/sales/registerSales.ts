@@ -7,6 +7,7 @@ export const registerSales = async (saleDetails: RegisterSalesProp, user_id: num
 
     const {orderDetails, totalPrice, moneyTrans, updateStock, shop_id, total_profit} = saleDetails;
 
+    // console.log(sale_date);
     const sale_date = new Date()
 
     const connection: RowDataPacket = await pool.getConnection();

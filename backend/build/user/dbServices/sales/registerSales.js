@@ -4,6 +4,7 @@ exports.registerSales = void 0;
 const { pool } = require("../../../mysqlSetup");
 const registerSales = async (saleDetails, user_id) => {
     const { orderDetails, totalPrice, moneyTrans, updateStock, shop_id, total_profit } = saleDetails;
+    // console.log(sale_date);
     const sale_date = new Date();
     const connection = await pool.getConnection();
     try {

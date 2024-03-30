@@ -37,7 +37,8 @@ const getSalesReport = async (shop_id) => {
                 product_list pl ON si.product_id = pl.product_id -- Join with product_list table
             WHERE s.shop_id = ?
             GROUP BY
-                s.sale_id, s.sale_date, s.total_price;
+                s.sale_id, s.sale_date, s.total_price
+            ORDER BY sale_id DESC;
 
             `, [shop_id]);
         connection.release();

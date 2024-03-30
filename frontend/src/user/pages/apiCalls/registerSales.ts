@@ -18,11 +18,12 @@ interface handleAddGroupProps{
     setSaleRes: (saleRes: SaleRes) =>void;
     shop_id: number;
     isOnline: boolean;
+    sale_date: Date;
     setIsvalidateEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const regiterSalesApi = ({ orderDetails, totalPrice, total_profit, 
     setOrdersList, moneyTrans, updateStock, payMethods,  setEntryStep, setSaleRes, 
-    shop_id, isOnline , setIsvalidateEnabled}: handleAddGroupProps) =>{
+    shop_id, isOnline, sale_date, setIsvalidateEnabled}: handleAddGroupProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -46,7 +47,8 @@ export const regiterSalesApi = ({ orderDetails, totalPrice, total_profit,
     //     return
     // } 
 
-    let data = JSON.stringify({orderDetails, totalPrice, total_profit, moneyTrans, updateStock, payMethods, shop_id});
+    let data = JSON.stringify({orderDetails, totalPrice, total_profit, moneyTrans, 
+        updateStock, payMethods, shop_id, sale_date});
 
     const url = isOnline? `https://pharmabackend.karibuchakula.co.ke/user/sales/register-sales` : 
                 `http://localhost:5020/user/sales/register-sales`

@@ -9,6 +9,7 @@ export interface RegisterSalesProp{
     };
     updateStock: {product_id: number, remainingContainers: number, remainingUnits: number}[];
     shop_id: number;
+    sale_date: Date;
 }
 
 export interface RegisterShopProps{

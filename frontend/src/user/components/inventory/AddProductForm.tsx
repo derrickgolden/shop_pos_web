@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, CSSProperties } from "react";
+import BeatLoader from "react-spinners/BeatLoader";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { addProductApi } from "./apiCalls/addProductApi";
@@ -13,6 +14,7 @@ interface AddProductFormProps{
 }
 
 const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
+    const [isLoading, setIsLoading] = useState(false)
     const groupList = useSelector((state: RootState) => state.groupList)
     const activeShop = useSelector((state: RootState) => state.activeShop);
 
@@ -78,8 +80,8 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
             const shop_id = activeShop.shop?.shop_id;
             
             if(price && shop_id){
-                console.log(addProductDetails);
-                addProductApi({addProductDetails, setShowDetails, shop_id})
+                setIsLoading(true);
+                addProductApi({addProductDetails, setShowDetails, setIsLoading, shop_id})
             }
         }
     }
@@ -125,9 +127,9 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
                 />
 
                 <div className="form-group mb-3 ">
-                    <label htmlFor="exampleFormControlTextarea1">Information</label>
+                    <label htmlFor="exampleFormControlTextarea1">Information(optional)</label>
                     <textarea onChange={handleFormInput} value={productDetails.instructions}
-                    className="form-control" id="exampleFormControlTextarea1" required name="instructions"
+                    className="form-control" id="exampleFormControlTextarea1" name="instructions"
                         aria-required rows={selectRows}></textarea>
                 </div>
                 {/* <div className="form-group mb-3">
@@ -137,8 +139,19 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ setShowDetails}) =>{
                         aria-required rows={selectRows}></textarea>
                 </div> */}
                 <div className="bg-white d-flex align-items-center justify-content-between " >
-                    <button type="submit" className="btn btn-outline-danger">
-                        Submit
+                    <button type="submit" disabled ={isLoading} 
+                    className="btn btn-outline-danger d-flex gap-2 h-100 align-items-center">
+                        <span>Submit</span>
+                        <span>
+                            <BeatLoader 
+                                color="#dc3545"
+                                loading={isLoading}
+                                cssOverride={{ display: "flex", margin: "0 auto" }}
+                                size={16}
+                                aria-label="Loading Spinner"
+                                data-testid="loader"
+                            />
+                        </span>
                     </button>
                     <button onClick={() => setShowDetails("list")}
                         type="button" className="btn btn-primary text-white">

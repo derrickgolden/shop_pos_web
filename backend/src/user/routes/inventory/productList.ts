@@ -1,11 +1,12 @@
 import express, {Request, Response} from 'express';
 import { universalResponse } from 'user/types/universalResponse';
 import { addProduct, deleteProduct, getProductList } from '../../dbServices/inventory/productList';
+import { resizeImages } from '../../middlewares/resizeImage';
 
 const router = express.Router();
 
 
-router.post('/add-product', async(req: Request, res: Response) =>{
+router.post('/add-product', resizeImages, async(req: Request, res: Response) =>{
     const body = req.body;
     const img_file = req.file;
 

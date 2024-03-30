@@ -16,7 +16,6 @@ const SummaryDetails = () =>{
     }
 
     const { data, caption, color } = useLocation().state;
-    console.log(data);
 
     const [search, setSearch] = useState('product_name');
     const [searchType, setSearchType] = useState('product_name');
@@ -99,8 +98,8 @@ const SummaryDetails = () =>{
                     btn_type = "update" 
                 />
             }
-            <div ref={componentRef} className="container-fluid px-5" >
-                <div className="pt-3">
+            <div ref={componentRef} className="container-fluid px-2 px-md-5" >
+                <div className="pt-3 px-3 px-md-4">
                     <button type="button" onClick={() => navigate("/user/dashboard")}
                     className='btn btn-secondary'>Back to Dashboard</button>
                 </div>

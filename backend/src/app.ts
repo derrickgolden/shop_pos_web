@@ -40,8 +40,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const app = express();
-// app.use(cors());
 app.use(cors({origin: ["https://shoppos.netlify.app", "http://localhost:5173"]}))
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//   next();
+// });
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.use(compression())

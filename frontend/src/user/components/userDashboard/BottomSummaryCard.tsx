@@ -33,7 +33,7 @@ const BottomSummaryCard: React.FC<{data: BottomSummaryCardValueProps}> = ({data}
   };
 
     return(
-        <div className="card border-secondary mb-5 col-sm-5 p-0" >
+        <div className="card border-secondary mb-5 col-11 col-sm-5 p-0" >
             <div className="card-header d-flex justify-content-between align-items-center">
             <p className="text-poppins-semibold mb-0">{data.title}</p>
             {!data.display_date_picker &&

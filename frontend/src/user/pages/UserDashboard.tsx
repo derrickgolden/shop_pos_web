@@ -14,6 +14,7 @@ import { getProductGroupList } from "../components/inventory/productGroup/apiCal
 import { getSalesReportApi } from "./apiCalls/getSalesReport";
 import { setSalesReportList } from "../../redux/salesReport";
 import { BottomSummaryCardProps } from "../components/userDashboard/types";
+import ProfitCard from "../components/userDashboard/ProfitCard";
 
 // {title: "My Shop", side_title_link: "#", side_title_link_caption: "Go to Configuration", left_totals: 18, left_totals_caption: "Total no of Suppliers", right_totals: 14, right_totals_caption: "Total no of Users", display_date_picker: false},
 // {title: "Customers", side_title_link: "#", side_title_link_caption: "Go to Customer Page", left_totals: 298, left_totals_caption: "Total no of Customers", right_totals: 24, freq_bought_item:"Adalimumab", right_totals_caption: "Frequently bought item", display_date_picker: false}
@@ -92,7 +93,7 @@ const UserDashboard: React.FC = () =>{
    
     return(
         <div  className='body2 bg-white' style={{paddingTop: "2rem"}}>
-            <section className="upper-section px-0 px-sm-5 bg-light py-5 mb-5">
+            <section className="upper-section px-0 px-sm-5 bg-light py-5 mb-3">
                 <div className="d-flex justify-content-between align-items-center px-5 px-sm-0">
                     <div>
                         <h3 className="font-family-poppins font-weight-700 font-size-24 line-height-24 text-dark">
@@ -113,18 +114,7 @@ const UserDashboard: React.FC = () =>{
                    )) : <h2>No data to display</h2> }
                 </div>
             </section>
-            {/* <section className="lower-section bg-white d-flex flex-row flex-wrap justify-content-around">
-                <div className="mb-4 col-5">
-                    <div className="card shadow-lg p-4 text-white bg-success">
-
-                        <div className="card-content clearfix">
-                            <p className="card-stats-title right card-title  wdt-lable">Today Profit</p>
-                            <h4 className="right panel-middle margin-b-0 wdt-lable">Ksh.4762</h4>
-                        </div>
-
-                    </div>
-                </div>
-            </section> */}
+            <ProfitCard />
             <section className="lower-section bg-white d-flex flex-row flex-wrap justify-content-around">
                 {lowerDashboardData? Object.values(lowerDashboardData).map((value, i) =>(
                     <BottomSummaryCard 

@@ -31,7 +31,7 @@ const DetailCard: React.FC<{data: Product}> = ({data}) =>{
     }, [data])
     return(
         <div>
-            <div className="d-md-flex justify-content-between align-items-center">
+            <div className="d-md-flex justify-content-between ">
                 <div className="card border-secondary mb-5 col-md-5" >
                     <div className="card-header d-flex justify-content-between align-items-center">
                         <p className="text-poppins-semibold mb-0">Product</p>
@@ -84,6 +84,7 @@ const DetailCard: React.FC<{data: Product}> = ({data}) =>{
                     </div>
                 </div>
             </div>
+            {data.instructions && 
                 <div className="card border-secondary mb-5 " >
                     <div className="card-header d-flex justify-content-between align-items-center">
                         <p className="text-poppins-semibold mb-0">Information</p>
@@ -97,6 +98,7 @@ const DetailCard: React.FC<{data: Product}> = ({data}) =>{
                         
                     </div>
                 </div>
+            }
         </div>
     )
 }

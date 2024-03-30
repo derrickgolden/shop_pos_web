@@ -10,10 +10,11 @@ interface handleAddGroupProps{
         pricingDetails: pricingDetails;
     };
     setShowDetails: (component: string) =>void;
+    setIsLoading : React.Dispatch<React.SetStateAction<boolean>>;
     shop_id : number;
 }
 
-export const addProductApi = ({addProductDetails, setShowDetails, shop_id}: handleAddGroupProps) =>{
+export const addProductApi = ({addProductDetails, setShowDetails, setIsLoading, shop_id}: handleAddGroupProps) =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -82,14 +83,16 @@ export const addProductApi = ({addProductDetails, setShowDetails, shop_id}: hand
                 icon: "warning"
             });
         }
+        setIsLoading(false)
     })
     .catch((error) => {
         console.log(error);
-        const msg = error.response.data.msg || "Server side error"
+        const msg = error.response.data.msg || "Error, try again"
         Swal.fire({
-            title: "Oooops...",
+            title: "Failed",
             text: `${msg}`,
             icon: "warning"
         });
+        setIsLoading(false)
     });   
 }
