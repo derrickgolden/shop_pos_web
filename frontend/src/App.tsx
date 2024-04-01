@@ -5,7 +5,7 @@ import { Inventory, InventoryProductGroup, InventoryProductList,
   PaymentReport, SalesEntry, SalesReport, Session, UserDashboard } from './user/pages';
 import { ALogin } from './admin/components';
 import LandingPageHeader from './user/sections/LandingPageHeader';
-import RegisterPhamacy from './user/sections/shop/RegisterShop';
+import RegisterShop from './user/sections/shop/RegisterShop';
 import SummaryDetails from './user/components/inventory/SummaryDetails';
 import ChangePassword from './user/pages/ChangePassword';
 import { useEffect } from 'react';
@@ -21,7 +21,7 @@ function App() {
           <Route path='/user' element={<LandingPageHeader />}>
             <Route path='dashboard' element={<UserDashboard />} />
             <Route path='dashboard/details' element={<SummaryDetails />} />
-            <Route path='register-shop' element={<RegisterPhamacy />} />
+            <Route path='register-shop' element={<RegisterShop />} />
             <Route path='session' element={<Session />} />
             <Route path='change-pass' element={<ChangePassword />} />
             <Route path='inventory'>

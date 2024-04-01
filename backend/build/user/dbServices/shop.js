@@ -5,7 +5,7 @@ const { pool } = require("../../mysqlSetup");
 const registerShop = async ({ shopDetails, user, logo }) => {
     const { shop_name, location, shop_email, shop_tel, extra_info } = shopDetails;
     const { user_id } = user;
-    const { filename } = logo;
+    const filename = logo?.filename || null;
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();

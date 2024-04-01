@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { InventorySelect, OrderDisplay, PosEntry, ValidateOrders, PrintReceipt, 
+import { InventorySelect, OrderDisplay, POEcalc, ValidateOrders, PrintReceipt, 
   ListOfOrders, ProductDetails, Order } from "../sections";
 import ValidateOrderNavbar from "../components/pointOfEntry/ValidateOrderNavbar";
 import POSnavbar from "../components/pointOfEntry/POSnavbar";
@@ -160,11 +160,13 @@ const SalesEntry = () =>{
                   const{ totalPrice, total_profit }= calcTotalPrice(newDetails);
                   return { ...order, orderDetails: newDetails, totalPrice, total_profit };
                 }else{
-                  setActiveCard(order.orderDetails[(order.orderDetails.length-2)]?.product_id);
                   setUpdateStock((stockArr) =>stockArr.filter(stock => stock?.product_id !== activeCard));
                   
                   const newOrderDetails =  order.orderDetails.filter(orderDetail => orderDetail?.product_id !== activeCard);
+                  setActiveCard(newOrderDetails[(newOrderDetails.length - 1)]?.product_id);
+                  
                   const{ totalPrice, total_profit }= calcTotalPrice(newOrderDetails);
+
                   return { ...order, orderDetails: newOrderDetails, totalPrice, total_profit };
                 }
               }
@@ -341,6 +343,7 @@ const SalesEntry = () =>{
       setPayMethods([]);
       setUpdateStock([]);
       setEntryStep("inProgress");
+      setShowInventoryOrders("inventory");
     };
    
     return(
@@ -372,7 +375,7 @@ const SalesEntry = () =>{
                       /> : null
                   })
                 }
-                  <PosEntry 
+                  <POEcalc 
                       PoeCalcHandles= {PoeCalcHandles}
                   />
               </div>
@@ -387,6 +390,7 @@ const SalesEntry = () =>{
                           orderDetails = {order.orderDetails}
                           handlePayment= {PoeCalcHandles.handlePayment}
                           setShowInventoryOrders = {setShowInventoryOrders}
+                          activeCard = {activeCard}
                       /> : null
                   })
                 }
@@ -395,7 +399,7 @@ const SalesEntry = () =>{
         }
         {
           entryStep === "payment" && 
-          <div>
+          <div className="">
             <ValidateOrderNavbar 
               setEntryStep = {setEntryStep}
               totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}

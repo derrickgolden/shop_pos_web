@@ -5,10 +5,10 @@ import { RxAvatar } from 'react-icons/rx';
 import { HiOutlineReceiptRefund } from 'react-icons/hi';
 import { PoeCalcHandles } from './types';
 
-interface PosEntryProps{
+interface PosCalcProps{
     PoeCalcHandles: PoeCalcHandles
 }
-const PosEntry: React.FC<PosEntryProps> = ({ PoeCalcHandles }) => {
+const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles }) => {
   const renderDigitButtons = (digits: number[]) => {
     return digits.map((digit) => (
       <button
@@ -104,4 +104,4 @@ const PosEntry: React.FC<PosEntryProps> = ({ PoeCalcHandles }) => {
   );
 };
 
-export default PosEntry;
+export default POEcalc;

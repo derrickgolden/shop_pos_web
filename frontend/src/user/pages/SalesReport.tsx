@@ -20,6 +20,7 @@ const SalesReport = () =>{
         startDate:  thirtyDaysAgo,
         endDate: new Date(),
     });
+    const [graphWidth, setGraphWidth] = useState(window.innerWidth);
 
     const dispatch = useDispatch()
     const sales = useSelector((state: RootState) => state.salesReport)
@@ -41,6 +42,15 @@ const SalesReport = () =>{
         setSortedSalesByDateSelect(sortedSalesByDate);
     }, [sales, activeShop])
 
+    useEffect(() =>{
+        const screenWidth = window.innerWidth;
+        if(screenWidth > 992){
+            setGraphWidth((screenWidth/2) * 0.8)
+        }else{
+            setGraphWidth(screenWidth * 0.97)
+        }
+    }, []);
+
     const handleRegenerateGraph = (date: SelectedDate) =>{
         if(date.endDate === null){
             date.endDate = new Date();
@@ -51,7 +61,7 @@ const SalesReport = () =>{
 
     return(
         <div className='body2 bg-white pb-5' style={{paddingTop: "2rem"}}>
-        <div className="upper-section bg-light mb-5 ">
+        <div className="upper-section bg-light mb-5">
             <ReportHeader 
                 handleRegenerateGraph = {handleRegenerateGraph}
                 salesData={sortedSalesByDateSelect?.sortedSales}
@@ -65,11 +75,11 @@ const SalesReport = () =>{
                     Show/Hide sales graph
                 </button>
            </div>
-            <div className="collapse" id="collapseExample">
-                <div className='d-lg-flex flex-row  gap-4 px-5 pb-4'>
-                    <div>
-                        <h4>Unit Solid and Clients Served per Day</h4>
-                        <LineChart width={400} height={300} data={sortedSalesByDateSelect?.accumulatedSales}>
+            <div className="collapse w-100 " id="collapseExample">
+                <div className='d-flex flex-column flex-lg-row gap-4 px-md-5 pb-4'>
+                    <div >
+                        <h4 className='px-2 '>Unit Solid and Clients Served per Day</h4>
+                        <LineChart width={graphWidth} height={300} data={sortedSalesByDateSelect?.accumulatedSales}>
                             <Line type="monotone" dataKey="Clients" stroke="#8884d8" />
                             <Line type="monotone" dataKey="units_sold" stroke="#0004d8" />
                             <CartesianGrid stroke="#ccc" strokeDasharray="5 5"/>
@@ -79,8 +89,8 @@ const SalesReport = () =>{
                         </LineChart>
                     </div>
                     <div>
-                    <h4>Daily Total Sales(Ksh) </h4>
-                        <LineChart width={400} height={300} data={sortedSalesByDateSelect?.accumulatedSales}>
+                        <h4 className='px-2 '>Daily Total Sales(Ksh) </h4>
+                        <LineChart width={graphWidth} height={300} data={sortedSalesByDateSelect?.accumulatedSales}>
                             <Line type="monotone" dataKey="day_sales" stroke="#8884d8" />
                             <CartesianGrid stroke="#ccc" strokeDasharray="5 5"/>
                             <XAxis dataKey="day" />

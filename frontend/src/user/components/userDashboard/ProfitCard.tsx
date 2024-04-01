@@ -24,7 +24,6 @@ const ProfitCard = () =>{
 
 
     const profits = calcProfits(sales)
-   console.log(profits);
 
     return(
         <section className="lower-section bg-white d-flex flex-row flex-wrap justify-content-around mb-5">

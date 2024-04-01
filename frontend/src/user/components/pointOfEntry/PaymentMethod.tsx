@@ -133,7 +133,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
                     ))
                 }
             </div>
-            <div className="d-flex flex-grow-1 border 
+            <div className="d-flex flex-grow-1 border sticky-bottom
             justify-content-center text-center">
                 <button onClick={() =>{
                     setIsvalidateEnabled(false);

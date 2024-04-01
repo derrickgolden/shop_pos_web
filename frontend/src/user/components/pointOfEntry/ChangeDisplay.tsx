@@ -2,7 +2,7 @@ import { ChangeDisplayProps } from "./types";
 
 const ChangeDisplay: React.FC<ChangeDisplayProps> = ({payMethods, totalPrice, change}) =>{
     return(
-        <div className='border' style={{height: "22vh"}}>
+        <div className='border' style={{height: "22dvh"}}>
         {!payMethods.length && (
           <div className='d-flex flex-column justify-content-center text-center h-100'>
             <h1 className='text-primary'>{totalPrice} Ksh</h1>

@@ -13,8 +13,7 @@ const Session = () =>{
 
     return(
         <div className='body2 bg-white' style={{paddingTop: "2rem"}}>
-            <div className="h-100 bg-light px-5 py-5 " 
-            style={{minHeight: "100vh"}}>
+            <div className="h-100 bg-light px-5 py-5 fullscreen" >
                 <h2>Start new Session</h2>
                 <h3>ActiveShop: <b className="text-secondary">
                     {activeShop.shop? activeShop?.shop?.shop_name : "Select a ShopactiveShop before proceding"}

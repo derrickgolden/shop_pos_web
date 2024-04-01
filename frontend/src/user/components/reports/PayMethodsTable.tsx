@@ -23,7 +23,6 @@ export interface salesDataProps{
 }
 
 const PayMethodTable: React.FC<salesDataProps> = ({ paymentData, activeShop }: salesDataProps) => {
-    
     // Define columns for the main DataTable
     const columns = [
         { name: 'Sale ID', selector: (row: mappedPaymentProps) => row.sale_id, sortable: true },
@@ -31,10 +30,10 @@ const PayMethodTable: React.FC<salesDataProps> = ({ paymentData, activeShop }: s
         { name: 'Payment Method', selector: (row: mappedPaymentProps) => {
             return row.payment_methods.map(method => method.payment_method).join(', ');
         }, sortable: true},
-        { name: 'Amount', selector: (row: mappedPaymentProps) => {
+        { name: 'Amount Purchased', selector: (row: mappedPaymentProps) => row.total_price, sortable: true },
+        { name: 'Amount Paid', selector: (row: mappedPaymentProps) => {
             return row.payment_methods.map(method => method.amount).join(', ');
         }, sortable: true },
-        { name: 'Total Price', selector: (row: mappedPaymentProps) => row.total_price, sortable: true },
     ];
 
   // Map the sales data to match the main DataTable structure

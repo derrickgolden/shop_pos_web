@@ -85,7 +85,7 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
         }
     }
     return(
-        <div className="d-flex " style={{height: "82dvh"}}>
+        <div className="d-flex payment-step" >
             <PaymentMethod 
                 handleVilidateClick = {handleVilidateClick}
                 setPayMethods = {setPayMethods}

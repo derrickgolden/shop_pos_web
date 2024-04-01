@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import React, { useState } from "react";
+import { useDispatch,  } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { regiterShopApi, shopDetails } from "./apiCalls/registerShopApi";
 
@@ -17,7 +16,8 @@ const inputDetails: {
 ]
 
 const RegisterShop: React.FC = () =>{
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [shopDetails, setShopDetails] = useState<shopDetails>({
         shop_name: "", location: "", shop_email: "", shop_tel: "", extra_info: "", logo: null
@@ -43,12 +43,12 @@ const RegisterShop: React.FC = () =>{
     const handleRegShopSubmit: React.FormEventHandler<HTMLFormElement> = (e) =>{
         e.preventDefault()
         
-        regiterShopApi({shopDetails, navigate})         
+        regiterShopApi({shopDetails, navigate})
     }
 
     return(
-        <div className='body2  pb-5' style={{paddingTop: "2rem"}}>
-            <section className="upper-section bg-light py-5 mb-5">
+        <div className='body2 bg-light' style={{paddingTop: "2rem"}}>
+            <section className="upper-section  py-5 fullscreen" >
                 <div className="px-5">
                     <form onSubmit={handleRegShopSubmit} encType="multipart/form-data"
                     className="col-sm-10"> 
@@ -82,7 +82,7 @@ const RegisterShop: React.FC = () =>{
                                 
                             </textarea>
                         </div>
-                        <div className="bg-white d-flex align-items-center justify-content-between " >
+                        <div className="d-flex align-items-center justify-content-between " >
                             <button type="submit" className="btn btn-outline-danger">
                                 Submit
                             </button>

@@ -14,8 +14,10 @@ const PaymentReport = () =>{
     const [sortedPaymentsByDateSelect, setSortedPaymentsByDateSelect] = useState<PayMethodResult>({
         amtPerMethod: [], transPerMethod: [], sortedPayments: []
     });
+    const [graphWidth, setGraphWidth] = useState(window.innerWidth);
+
     const activeShop = useSelector((state: RootState) => state.activeShop);
-// console.log(sortedPaymentsByDateSelect);
+
     useEffect(() =>{
         if(activeShop.shop){
             const url = "pay-method/get-report";
@@ -31,6 +33,15 @@ const PaymentReport = () =>{
             })
         }
     }, [activeShop]);
+
+    useEffect(() =>{
+        const screenWidth = window.innerWidth;
+        if(screenWidth > 992){
+            setGraphWidth((screenWidth/2) * 0.8)
+        }else{
+            setGraphWidth(screenWidth * 0.97)
+        }
+    }, []);
 
     const handleRegenerateGraph = (date: SelectedDate) =>{
         if(date.endDate === null){
@@ -53,11 +64,11 @@ const PaymentReport = () =>{
                         Show/Hide Payment Methods Graph
                     </button>
             </div>
-                <div className="collapse col-12" id="collapseExample">
-                    <div className='d-lg-flex flex-row  gap-4 px-5 pb-4 col-12'>
-                        <div>
-                            <h4 className="col-12">Total amount(Ksh) per payment method</h4>
-                            <LineChart width={400} height={300} data={sortedPaymentsByDateSelect?.amtPerMethod}>
+                <div className="collapse w-100" id="collapseExample">
+                    <div className='d-lg-flex flex-row  gap-4 px-md-5 pb-4 col-12'>
+                        <div className="mb-2">
+                            <h4 className="px-2">Total amount(Ksh) per payment method</h4>
+                            <LineChart width={graphWidth} height={300} data={sortedPaymentsByDateSelect?.amtPerMethod}>
                                 <Line type="monotone" dataKey="Cash" stroke="#8884d8" />
                                 <Line type="monotone" dataKey="Bank" stroke="#0004d8" />
                                 <Line type="monotone" dataKey="Customer_account" stroke="#0004d8" />
@@ -68,8 +79,8 @@ const PaymentReport = () =>{
                             </LineChart>
                         </div>
                         <div>
-                        <h4>Total Transactions per payment method </h4>
-                            <LineChart width={400} height={300} data={sortedPaymentsByDateSelect?.transPerMethod}>
+                            <h4 className="px-2">Total Transactions per payment method </h4>
+                            <LineChart width={graphWidth} height={300} data={sortedPaymentsByDateSelect?.transPerMethod}>
                                 <Line type="monotone" dataKey="Cash" stroke="#8884d8" />
                                 <Line type="monotone" dataKey="Bank" stroke="#0004d8" />
                                 <CartesianGrid stroke="#ccc" strokeDasharray="5 5"/>

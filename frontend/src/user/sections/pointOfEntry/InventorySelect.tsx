@@ -17,9 +17,12 @@ interface InventorySelectProps {
     handleEditOrder: (order: OrderDetail) => void;
     handlePayment: () => void;
     setShowInventoryOrders: (orders: string) => void;
-}
-const InventorySelect: React.FC<InventorySelectProps> = ({
-    handleNewOrderSelect, handleEditOrder, orderDetails, handlePayment, setShowInventoryOrders }) =>{
+    activeCard: number;
+};
+
+const InventorySelect: React.FC<InventorySelectProps> = ({ handleNewOrderSelect, 
+    handleEditOrder, orderDetails, handlePayment, setShowInventoryOrders, activeCard }) =>{
+
     const [groupNames, setGroupNames] = useState<string[]>([])
     const [showGroup, setShowGroup] = useState("All")
     const [searchProduct, setSearchProduct] = useState("")
@@ -29,6 +32,7 @@ const InventorySelect: React.FC<InventorySelectProps> = ({
 
     const userShop = getSessionStorage();
     const { localShop } = userShop;
+    const order = orderDetails.find(item => item.product_id === activeCard)
     
     useEffect(()=>{
         const groupNames: string[] = productGroup.map((group) => {
@@ -74,11 +78,11 @@ const InventorySelect: React.FC<InventorySelectProps> = ({
             </div>
             <div className="fixed-bottom d-md-none bg-light">
                 {
-                    orderDetails.length > 0 ? (
+                    order ? (
                         <OrdersCard 
                             key={0}
-                            order = {orderDetails[orderDetails.length - 1]} 
-                            activeCard={0}
+                            order = {order} 
+                            activeCard={activeCard}
                             handleEditOrder= {handleEditOrder} 
                             orderDetails = {orderDetails}
                         />

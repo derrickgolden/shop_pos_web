@@ -35,8 +35,8 @@ const PrintReceipt: React.FC<PrintReceiptProps> = (
     });
 
     return(
-        <div className="d-flex " >
-            <div className="col-12 col-md-8 d-flex flex-column justify-content-between print-receipt"
+        <div className="d-flex print-receipt" >
+            <div className="col-12 col-md-8 d-flex flex-column justify-content-between "
             >
                 <div className="px-4" >
                     <div className="py-3 text-center">
@@ -71,7 +71,7 @@ const PrintReceipt: React.FC<PrintReceiptProps> = (
                     </button>
                 </div>
             </div>
-            <div className='d-none d-md-block col-4' style={{height: "82vh"}}>
+            <div className='d-none d-md-block col-4 print-receipt' >
                 <Receipt 
                     componentRef={componentRef} 
                     saleRes ={saleRes} 

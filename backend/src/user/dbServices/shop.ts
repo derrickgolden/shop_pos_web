@@ -7,7 +7,7 @@ export const registerShop = async ({shopDetails, user, logo}: RegisterShopProps 
 
     const {shop_name, location, shop_email, shop_tel, extra_info} = shopDetails;
     const {user_id} = user;
-    const {filename} = logo
+    const filename = logo?.filename || null;
     
     const connection: RowDataPacket = await pool.getConnection();
     try {

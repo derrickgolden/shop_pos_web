@@ -83,8 +83,12 @@
     cursor: pointer;
   }
 
-  /* point of entry */
+  /* :fullscreen */
+.fullscreen{
+  min-height: calc(100dvh - 2rem);
+}
 
+  /* point of entry */
   .dropdown-menu.dropdown-menu-right{
     right: 0 !important;
     left: auto !important;
@@ -120,7 +124,7 @@
   }
   .inventory-select{
     height: calc(100dvh - 5.8rem);
-    background-color: #808080;
+    background-color: #858585;
     overflow-y: auto;
   }
   .order-cards{
@@ -138,19 +142,16 @@
   }
 
   @media (max-width: 768px) {
-    /* .order-cards{
-      height: calc(100vh - 15rem);
-    } */
     .inventory-select{
       height: calc(100dvh - 14rem);
     }
   }
   .inventory-select::-webkit-scrollbar {
-    width: 8px; /* adjust the width as needed */
+    width: 8px !important; /* adjust the width as needed */
   }
 
   .inventory-select::-webkit-scrollbar-thumb {
-    background-color: #3f3f3f; /* color of the scrollbar thumb */
+    background-color: #413f3f !important; /* color of the scrollbar thumb */
     border-radius: 4px; /* round the corners of the thumb */
   }
 
@@ -179,6 +180,11 @@
     background-color: #615d75; /* color of the scrollbar thumb */
     border-radius: 4px; /* round the corners of the thumb */
   }
+
+.payment-step{
+  height: calc(100dvh - 7rem);
+    /* background-color: #858585; */
+}
  
 .print-receipt{
   height: calc(100dvh - 3rem);
@@ -186,7 +192,7 @@
 
 @media (min-width: 768px) {
   .print-receipt{
-    height: calc(82dvh);
+    height: calc(100dvh - 7rem);
   }
 }
 

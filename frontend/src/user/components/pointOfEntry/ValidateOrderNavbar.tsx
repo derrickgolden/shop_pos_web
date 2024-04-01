@@ -8,7 +8,8 @@ interface ValidateOrderNavbarProps{
 
 const ValidateOrderNavbar: React.FC<ValidateOrderNavbarProps> = ({ setEntryStep, totalPrice, step }) => {
     return (
-        <nav className="d-flex justify-content-between navbar navbar-light bg-light px-3">
+        <nav className="d-flex justify-content-between navbar navbar-light bg-light px-3"
+        style={{height: "4rem"}}>
             <div>
                 {
                 step.step ===  "payment" && (

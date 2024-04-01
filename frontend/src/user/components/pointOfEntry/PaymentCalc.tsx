@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaDeleteLeft } from 'react-icons/fa6';
 import ChangeDisplay from './ChangeDisplay';
 import { ChangeDisplayProps } from './types';
-import { PoeCalcHandles } from '../../sections/pointOfEntry/types';
 
 export interface PaymentCalcProps extends ChangeDisplayProps{
   PaymentCalcHandles: {
@@ -32,7 +31,7 @@ const PaymentCalc: React.FC<PaymentCalcProps> = ({ totalPrice, payMethods, Payme
         totalPrice = {totalPrice} 
         change = {change}
       />
-      <div className='d-flex flex-grow-1 'style={{height: "60dvh"}} >
+      <div className='d-flex flex-grow-1 'style={{height: "59.2dvh"}} >
         <div className='d-flex flex-column col-9 ' >
           <div className='d-flex flex-grow-1'>{renderDigitButtons([1, 2, 3])}</div>
           <div className='d-flex flex-grow-1'>{renderDigitButtons([4, 5, 6])}</div>

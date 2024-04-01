@@ -13,7 +13,7 @@ export interface shopDetails {
 }
 interface handleAddGroupProps{
     shopDetails: shopDetails;
-    navigate: NavigateFunction   
+    navigate: NavigateFunction;
 }
 export const regiterShopApi = ({shopDetails, navigate}: handleAddGroupProps) =>{
 
@@ -59,9 +59,11 @@ export const regiterShopApi = ({shopDetails, navigate}: handleAddGroupProps) =>{
                 icon: "success",
                 confirmButtonText: "Ok",
               }).then((result) => {
-                navigate(-1)
+                navigate(-1);
+                setTimeout(() =>{
+                    window.location.reload();
+                }, 400);
               });
-            console.log(response.data);  
         }else{
             Swal.fire({
                 title: "Failed",

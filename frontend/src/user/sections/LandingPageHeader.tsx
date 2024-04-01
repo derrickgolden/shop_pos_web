@@ -14,7 +14,6 @@ import { getShopDetailsApi } from './shop/apiCalls/getShopDetails';
 import { useDispatch, useSelector } from 'react-redux';
 import { setShopListDetails } from '../../redux/shopListDetails';
 import { RootState } from '../../redux/store';
-import { setRerender } from '../../redux/rerender';
 import { getSessionStorage } from '../controllers/getSessionStorage';
 import { server_baseurl } from '../../baseUrl';
 import { pharmLogo } from '../../assets/images';
