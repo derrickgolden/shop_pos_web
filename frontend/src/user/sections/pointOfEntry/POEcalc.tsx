@@ -4,11 +4,13 @@ import { FaChevronRight } from 'react-icons/fa';
 import { RxAvatar } from 'react-icons/rx';
 import { HiOutlineReceiptRefund } from 'react-icons/hi';
 import { PoeCalcHandles } from './types';
+import { Customer } from '../../components/customers/types';
 
 interface PosCalcProps{
-    PoeCalcHandles: PoeCalcHandles
+    PoeCalcHandles: PoeCalcHandles;
+    selectCustomer: Customer | undefined;
 }
-const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles }) => {
+const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles, selectCustomer }) => {
   const renderDigitButtons = (digits: number[]) => {
     return digits.map((digit) => (
       <button
@@ -39,8 +41,8 @@ const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles }) => {
       </div>
       <div className='d-flex '>
         <div className='d-flex flex-column col-4 p-0'>
-          <button
-            className='btn btn-outline-secondary col-12 rounded-0'
+          <button 
+            className={`${selectCustomer ? "btn-secondary" : "btn-outline-secondary "} btn col-12 rounded-0`}
             onClick={PoeCalcHandles.handleCustomer}
           >
             <RxAvatar /> Customer

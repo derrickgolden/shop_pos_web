@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { InventorySelect, OrderDisplay, POEcalc, ValidateOrders, PrintReceipt, 
   ListOfOrders, ProductDetails, Order } from "../sections";
@@ -12,6 +12,8 @@ import { regiterSalesApi } from "./apiCalls/registerSales";
 import Swal from "sweetalert2";
 
 import { PaymentObject, SaleRes } from "./types";
+import CustomerList from "../sections/CustomerList";
+import { Customer } from "../components/customers/types";
 
 export interface OrderDetail extends ProductDetails {
   units: number;
@@ -19,6 +21,20 @@ export interface OrderDetail extends ProductDetails {
   customer_note: string;
   profit: number;
 }
+
+interface CustomerContextType {
+  selectCustomer: Customer | undefined;
+  setSendInvoice: React.Dispatch<React.SetStateAction<boolean>>;
+  sendInvoice: boolean;
+}
+
+// Create the context
+const CustomerContext = createContext<CustomerContextType>({
+  selectCustomer: undefined, setSendInvoice: () =>{}, sendInvoice: false
+});
+
+// Create a custom hook to consume the context
+export const useCustomerContext = () => useContext(CustomerContext);
 
 const SalesEntry = () =>{
     const [activeCard, setActiveCard] = useState(0);
@@ -33,6 +49,8 @@ const SalesEntry = () =>{
     const [showInventoryOrders, setShowInventoryOrders] = useState("inventory");
     const [customerGave, setCustomeGave] = useState<PaymentObject>({})
     const [activePayMethod, setActivePayMethod] = useState("");
+    const [selectCustomer, setSelectCustomer] = useState<Customer>();
+    const [sendInvoice, setSendInvoice] = useState(false);
 
     const [isOnline, setIsOnline] = useState(window.navigator.onLine);
 
@@ -53,18 +71,6 @@ const SalesEntry = () =>{
         window.removeEventListener('offline', handleOffline);
       };
     }, []);
-
-    // useEffect(() =>{
-    //   const newTotalPrice = ordersList.reduce((totalPrice, orders) =>{
-    //     if(orders.activeOrder){
-    //       return totalPrice + orders.orderDetails.reduce((total, item) => {
-    //         return total + Number(item.sub_total);
-    //       }, 0) 
-    //     }else return totalPrice 
-    //   }, 0);
-
-    //   setTotalPrice(newTotalPrice);
-    // },[ordersList])
 
     const userShop = getSessionStorage();
     const localShop = userShop.localShop;
@@ -240,7 +246,8 @@ const SalesEntry = () =>{
         },
 
         handleCustomer: () => {
-            console.log("Handling Customer");           
+            console.log("Handling Customer");
+            setEntryStep('customerList');           
         }
     };
             
@@ -287,23 +294,31 @@ const SalesEntry = () =>{
       setIsDigitClicked(false);
     };
 
-    const handleVilidateClick = (customerGave: {[key: string]: number}, change: {},
+    const handleVilidateClick = async(customerGave: {[key: string]: number}, change: {},
       setIsvalidateEnabled: React.Dispatch<React.SetStateAction<boolean>> ) =>{
+        if(sendInvoice && !selectCustomer){
+          await Swal.fire({
+            text: "Select a Customer to generating invoice for!",
+            showCancelButton: true,
+          }).then(value =>{
+            value.isConfirmed ? setEntryStep("customerList") : null;
+          });
+          return;
+        }
+        const [activeOrder] = ordersList.filter(order => order.activeOrder);
+        const {orderDetails, total_profit, totalPrice} = activeOrder;
+        const moneyTrans = {...change, customerGave: customerGave || totalPrice};
+        const shop_id = localShop?.shop_id;
+        const sale_date = new Date();
 
-      const [activeOrder] = ordersList.filter(order => order.activeOrder);
-      const {orderDetails, total_profit, totalPrice} = activeOrder;
-      const moneyTrans = {...change, customerGave: customerGave || totalPrice};
-      const shop_id = localShop?.shop_id;
-      const sale_date = new Date();
-
-      if(shop_id !== undefined){
-        regiterSalesApi({
-          orderDetails, totalPrice, total_profit, setOrdersList, moneyTrans, 
-          updateStock, payMethods, setEntryStep, setSaleRes, shop_id, isOnline,
-          sale_date, setIsvalidateEnabled
-        });
+        if(shop_id !== undefined){
+          regiterSalesApi({
+            orderDetails, totalPrice, total_profit, setOrdersList, moneyTrans, 
+            updateStock, payMethods, setEntryStep, setSaleRes, shop_id, isOnline,
+            sale_date, setIsvalidateEnabled
+          });
+        };
       };
-    };
 
     const handleNewCustomerOrder = ({date}: {date: string}) =>{
       setOrdersList((arr) =>{
@@ -344,6 +359,8 @@ const SalesEntry = () =>{
       setUpdateStock([]);
       setEntryStep("inProgress");
       setShowInventoryOrders("inventory");
+      setSelectCustomer(undefined);
+      setSendInvoice(false);
     };
    
     return(
@@ -377,6 +394,7 @@ const SalesEntry = () =>{
                 }
                   <POEcalc 
                       PoeCalcHandles= {PoeCalcHandles}
+                      selectCustomer = {selectCustomer}
                   />
               </div>
               <div className={`${showInventoryOrders === "inventory" ? "" : "d-none"} 
@@ -385,6 +403,7 @@ const SalesEntry = () =>{
                   ordersList.map((order, i) =>{
                     return order.activeOrder ? 
                       <InventorySelect 
+                          key={i}
                           handleNewOrderSelect = {handleNewOrderSelect}
                           handleEditOrder = {handleEditOrder}
                           orderDetails = {order.orderDetails}
@@ -405,16 +424,19 @@ const SalesEntry = () =>{
               totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
               step = {{step: "payment"}}
             />
-            <ValidateOrders 
-              handleVilidateClick = {handleVilidateClick}
-              totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
-              setPayMethods = {setPayMethods}
-              payMethods = {payMethods}
-              customerGave = {customerGave}
-              setCustomeGave = {setCustomeGave}
-              activePayMethod = {activePayMethod} 
-              setActivePayMethod = {setActivePayMethod}
-            />
+            <CustomerContext.Provider value={{ selectCustomer, setSendInvoice, sendInvoice }}>
+              <ValidateOrders 
+                handleVilidateClick = {handleVilidateClick}
+                totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
+                setPayMethods = {setPayMethods}
+                payMethods = {payMethods}
+                customerGave = {customerGave}
+                setCustomeGave = {setCustomeGave}
+                activePayMethod = {activePayMethod} 
+                setActivePayMethod = {setActivePayMethod}
+                setEntryStep = {setEntryStep}
+              />
+            </CustomerContext.Provider>
           </div>
         }
         {
@@ -431,6 +453,7 @@ const SalesEntry = () =>{
               ordersList.map((order, i) =>{
                 return order.activeOrder && saleRes !== undefined ? 
                   <PrintReceipt 
+                    key={i}
                     orderDetails ={order.orderDetails}
                     handleStartNewOrderClick = {handleStartNewOrderClick}
                     totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
@@ -450,6 +473,14 @@ const SalesEntry = () =>{
             setEntryStep = {setEntryStep}
             handleNewCustomerOrder = {handleNewCustomerOrder}
             handleDeleteCustomerOrder = {handleDeleteCustomerOrder}
+          />
+        }
+        {
+          entryStep === "customerList" && 
+          <CustomerList 
+            setEntryStep = {setEntryStep}
+            selectCustomer = {selectCustomer}
+            setSelectCustomer = {setSelectCustomer}
           />
         }
       </>

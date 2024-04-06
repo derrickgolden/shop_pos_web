@@ -5,7 +5,6 @@ const callApiSlice = createSlice({
   initialState: false,
   reducers: {
     setCallApi: (state, action) => {
-        console.log("state", state)
         return !state
     }
   }  

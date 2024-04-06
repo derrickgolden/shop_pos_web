@@ -10,9 +10,10 @@ interface ValidateOrdersProps2 extends ValidateOrdersProps{
     payMethods: string[];
     activePayMethod: string;
     setActivePayMethod: React.Dispatch<React.SetStateAction<string>>;
+    setEntryStep: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, totalPrice, 
+const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, totalPrice, setEntryStep,
     setPayMethods, payMethods, customerGave, setCustomeGave, activePayMethod, setActivePayMethod }) =>{
 
     const [change, setChange] = useState({remaining: 0.00, change: 0.00});
@@ -106,7 +107,9 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
                 payMethods = {payMethods}
                 PaymentCalcHandles = {PaymentCalcHandles}
             />
-            <CustomerInvoice />
+            <CustomerInvoice 
+                setEntryStep = {setEntryStep}
+            />
         </div>
     )
 }
