@@ -1,17 +1,36 @@
+import { useEffect, useState } from 'react';
 
 import { RxAvatar } from 'react-icons/rx';
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import { useCustomerContext } from '../../pages/SalesEntry';
+import { getPaymentDetails } from '../apiCalls/getApiCalls';
+import { getSessionStorage } from '../../controllers/getSessionStorage';
+import { setPaymentDetails } from '../../../redux/paymentDetails';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
-interface CustomerInvoiceProps{
-    setEntryStep: React.Dispatch<React.SetStateAction<string>>;
-};
+const CustomerInvoice = () =>{
+    const dispatch = useDispatch();
+    const { selectCustomer, setSendInvoice, sendInvoice, setEntryStep } = useCustomerContext();
+    const paymentDetails = useSelector((state: RootState) => state.paymentDetails);
 
-const CustomerInvoice: React.FC<CustomerInvoiceProps> = ({setEntryStep}) =>{
-    const { selectCustomer, setSendInvoice, sendInvoice } = useCustomerContext();
+    useEffect(() =>{
+        if(sendInvoice){
+            const userShop = getSessionStorage();
+            const { localShop } = userShop;
+            if(localShop){
+                const shop_id = localShop.shop_id;
+                const data = JSON.stringify({shop_id});
+                getPaymentDetails(data).then((data) =>{
+                    dispatch(setPaymentDetails(data));
+                });
+            };
+        }
+    }, [sendInvoice]);
+
     return(
         <div className="d-none d-md-flex flex-column col-3" >
-            <button onClick={() => setEntryStep("customerList")}
+            <button onClick={() => setEntryStep({current: "customerList", prev: "payment"})}
             className={`${selectCustomer? "btn-info" : "btn-outline-info "} btn border flex-row-1 py-3`}>
                 <h5><RxAvatar /> {selectCustomer?.full_name || "Customer"}</h5>
             </button>
@@ -21,7 +40,13 @@ const CustomerInvoice: React.FC<CustomerInvoiceProps> = ({setEntryStep}) =>{
             </button>
             <div className='flex-grow-1'
             style={{backgroundColor: "#e6e9e9"}}>
-
+                {
+                    paymentDetails.map((payment, i) =>(
+                        <div key={payment.payment_detail_id}>
+                            {payment.payment_name}
+                        </div>
+                    ))
+                }
             </div>
         </div>
     )

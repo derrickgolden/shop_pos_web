@@ -1,23 +1,21 @@
 import { FaAngleLeft } from "react-icons/fa6";
 import AddCustomerForm from "./AddCustomerForm";
+import { EntryStepTypes } from "../../pages/types";
 
 interface ValidateOrderNavbarProps {
-  setEntryStep: (step: string) => void;
-  step: { step: string };
+  setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
 }
 
-const CustomerListNavbar: React.FC<ValidateOrderNavbarProps> = ({
-  setEntryStep, step, }) => {
-    console.log(step)
+const CustomerListNavbar: React.FC<ValidateOrderNavbarProps> = ({ setEntryStep }) => {
   return (
     <>
       <nav className="d-flex justify-content-between navbar navbar-light bg-light px-3"
         style={{ height: "4rem" }}
       >
         <div>
-          {step.step === "payment" && (
+          { (
             <button
-              onClick={() => setEntryStep("inProgress")}
+              onClick={() => setEntryStep(obj => ({...obj, current: obj.prev}))}
               className="navbar-brand pl-2 btn btn-outline-secondary"
             >
               &nbsp;

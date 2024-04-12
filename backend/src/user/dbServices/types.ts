@@ -4,12 +4,18 @@ export interface RegisterSalesProp{
     totalPrice: number;
     total_profit: number;
     moneyTrans: {
-        customerGave: number, 
-        change: {};
+        customerGave: {}, 
+        change: number;
+        remaining: number;
+        payment_status: 'Paid'|'Pending'|'Overdue'|'Partially Paid'|'Cancelled'|'Refunded';
     };
     updateStock: {product_id: number, remainingContainers: number, remainingUnits: number}[];
     shop_id: number;
     sale_date: Date;
+    invoiceDetails: {
+        sendInvoice: boolean;
+        customer_id: number | undefined;
+    }
 }
 
 export interface RegisterShopProps{
@@ -28,3 +34,4 @@ export interface RegisterShopProps{
         filename : string;
     }
 }
+

@@ -45,14 +45,13 @@ const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles, selectCustomer }) => 
             className={`${selectCustomer ? "btn-secondary" : "btn-outline-secondary "} btn col-12 rounded-0`}
             onClick={PoeCalcHandles.handleCustomer}
           >
-            <RxAvatar /> Customer
+            <RxAvatar /> {selectCustomer?.full_name || "Customer"}
           </button>
           <button
             className='btn btn-warning payment flex-grow-1 col-12 rounded-0'
             onClick={PoeCalcHandles.handlePayment}
           >
-            <FaChevronRight /> <br />
-            Payment
+            <FaChevronRight /> <br /> Payment
           </button>
         </div>
         <div className='d-flex flex-column col-6 p-0 m-0'>

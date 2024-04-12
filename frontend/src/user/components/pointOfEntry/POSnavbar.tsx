@@ -7,6 +7,7 @@ import { getSessionStorage } from "../../controllers/getSessionStorage";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Order } from "../../sections/pointOfEntry/types";
+import { EntryStepTypes } from "../../pages/types";
 import { useDispatch, useSelector } from "react-redux";
 import { setRerender } from "../../../redux/rerender";
 import { RootState } from "../../../redux/store";
@@ -14,8 +15,8 @@ import { RootState } from "../../../redux/store";
 interface POSnavbar{
   showInventoryOrders: string; 
   setShowInventoryOrders: React.Dispatch<React.SetStateAction<string>>; 
-  entryStep: string; 
-  setEntryStep: React.Dispatch<React.SetStateAction<string>>, 
+  entryStep: EntryStepTypes; 
+  setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>, 
   isOnline: boolean; 
   ordersList: Order[];
 }
@@ -51,7 +52,7 @@ const POSnavbar: React.FC<POSnavbar> = ({
               <div className="container-fluid"  style={{backgroundColor: "#f2f2f3"}}>
                 <div>
                   {
-                    showInventoryOrders !== "inventory" && entryStep === "inProgress" && (
+                    showInventoryOrders !== "inventory" && entryStep.current === "inProgress" && (
                       <button type="button" onClick={() => setShowInventoryOrders("inventory")}
                         className="btn btn-outline-link d-md-none">Inventory <FaAnglesRight />
                       </button>
@@ -77,7 +78,7 @@ const POSnavbar: React.FC<POSnavbar> = ({
                     </button>
                     <ul className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1">
                       <li>
-                        <Link onClick={() => setEntryStep("ordersList")}
+                        <Link onClick={() => setEntryStep(obj => ({...obj, current: "ordersList"}))}
                         className="dropdown-item" to="#"> Orders &nbsp;
                           <span className="bg-info px-1 rounded-circle text-white">{
                             ordersList.length
@@ -100,7 +101,7 @@ const POSnavbar: React.FC<POSnavbar> = ({
                           End Session
                         </Link>
                       </li>
-                    </ul>
+                    </ul> 
                   </div>
                 </div>
               </div>

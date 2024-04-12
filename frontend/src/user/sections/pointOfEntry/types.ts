@@ -1,4 +1,5 @@
 import { OrderDetail } from "../../pages/SalesEntry";
+import { PaymentObject } from "../../pages/types";
 
 export interface PoeCalcHandles {
     handleDigitClick: (digit: number) => void;
@@ -45,4 +46,10 @@ export interface Order{
   status: string;
   totalPrice: number;
   total_profit: number;
+}
+
+export interface PaymentDetails{ 
+  remaining: number; 
+  change: number;
+  payment_status: 'Paid'|'Pending'|'Overdue'|'Partially Paid'|'Cancelled'|'Refunded';
 }

@@ -6,12 +6,13 @@ import { FaDeleteLeft } from "react-icons/fa6";
 import { Order } from "./types";
 
 import { FaPlus } from "react-icons/fa";
+import { EntryStepTypes } from "../../pages/types";
 
 interface ListOfOrdersProps {
     ordersList: Order[];
     activeCard: number; 
     totalPrice: number;
-    setEntryStep: React.Dispatch<React.SetStateAction<string>>;
+    setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
     handleNewCustomerOrder: ({date}: {date: string}) => void;
     handleDeleteCustomerOrder: (e: React.MouseEvent<HTMLTableDataCellElement, MouseEvent>, order: Order) => void;
     setOrdersList:  React.Dispatch<React.SetStateAction<Order[]>>
@@ -45,15 +46,12 @@ const ListOfOrders: React.FC<ListOfOrdersProps> = ({ordersList, activeCard, tota
 
     const handleEntryStep = () =>{
         ordersList.map(orders =>{
+            console.log(orders)
             if(orders.activeOrder){
-                setEntryStep(orders.status);
+                setEntryStep(obj =>({...obj, current: orders.status}));
             };
         });
     };
-
-    const handleReviewOrder = () =>{
-
-    }
 
     const handleEditOrder = (order: OrderDetail) =>{
     }

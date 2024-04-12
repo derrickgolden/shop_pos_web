@@ -1,7 +1,8 @@
 import { FaAngleLeft } from "react-icons/fa6";
+import { EntryStepTypes } from "../../pages/types";
 
 interface ValidateOrderNavbarProps{
-    setEntryStep: (step: string) =>void;
+    setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
     totalPrice: number;
     step: {step: string}
 }
@@ -13,7 +14,7 @@ const ValidateOrderNavbar: React.FC<ValidateOrderNavbarProps> = ({ setEntryStep,
             <div>
                 {
                 step.step ===  "payment" && (
-                    <button onClick={() => setEntryStep("inProgress")}
+                    <button onClick={() => setEntryStep(obj =>({...obj, current: "inProgress"}))}
                         className="navbar-brand pl-2 btn btn-outline-secondary">
                             &nbsp;<FaAngleLeft /> Back
                     </button>

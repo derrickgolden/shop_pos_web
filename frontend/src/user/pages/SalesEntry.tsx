@@ -11,9 +11,10 @@ import { calcTotalPrice } from "./calculations/calcTotalPrice";
 import { regiterSalesApi } from "./apiCalls/registerSales";
 import Swal from "sweetalert2";
 
-import { PaymentObject, SaleRes } from "./types";
+import { EntryStepTypes, PaymentObject, SaleRes } from "./types";
 import CustomerList from "../sections/CustomerList";
 import { Customer } from "../components/customers/types";
+import { PaymentDetails } from "../sections/pointOfEntry/types";
 
 export interface OrderDetail extends ProductDetails {
   units: number;
@@ -26,11 +27,13 @@ interface CustomerContextType {
   selectCustomer: Customer | undefined;
   setSendInvoice: React.Dispatch<React.SetStateAction<boolean>>;
   sendInvoice: boolean;
+  setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
 }
 
 // Create the context
 const CustomerContext = createContext<CustomerContextType>({
-  selectCustomer: undefined, setSendInvoice: () =>{}, sendInvoice: false
+  selectCustomer: undefined, setSendInvoice: () =>{}, sendInvoice: false, 
+  setEntryStep: () =>({current: "inProgress", prev: ""})
 });
 
 // Create a custom hook to consume the context
@@ -41,14 +44,19 @@ const SalesEntry = () =>{
     const [ordersList, setOrdersList] = useState<Order[]>([{ date: new Date().toLocaleString(), 
       orderDetails: [], activeOrder: true, status: "inProgress" , totalPrice: 0, total_profit: 0,
     }]);
-    const [entryStep, setEntryStep] = useState("inProgress");
-    const [payMethods, setPayMethods] = useState<string[]>([]);
+    const [entryStep, setEntryStep] = useState({current: "inProgress", prev: ""});
+
+    const [customerGave, setCustomeGave] = useState<PaymentObject>({});
+    const [activePayMethod, setActivePayMethod] = useState("");
+    const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
+        remaining: 0, change: 0.00, payment_status: "Pending"
+    });
+    const [startNewEntry, setStartNewEntry] = useState(true);
+
     const [saleRes, setSaleRes] = useState<SaleRes>();
     const [updateStock, setUpdateStock] = useState<UpdateStockProps[]>([]);
     const [isDigitClicked, setIsDigitClicked] = useState(false);
     const [showInventoryOrders, setShowInventoryOrders] = useState("inventory");
-    const [customerGave, setCustomeGave] = useState<PaymentObject>({})
-    const [activePayMethod, setActivePayMethod] = useState("");
     const [selectCustomer, setSelectCustomer] = useState<Customer>();
     const [sendInvoice, setSendInvoice] = useState(false);
 
@@ -238,7 +246,7 @@ const SalesEntry = () =>{
         handlePayment: () => { 
           const totalPrice = (ordersList.filter(order => order.activeOrder))[0].totalPrice;        
           if(totalPrice > 0){
-            setEntryStep("payment")
+            setEntryStep({current: "payment", prev: "inProgress"})
             setOrdersList(arr =>{
               return arr.map(order => order.activeOrder? {...order, status: "payment"} : order)
             })
@@ -246,8 +254,8 @@ const SalesEntry = () =>{
         },
 
         handleCustomer: () => {
-            console.log("Handling Customer");
-            setEntryStep('customerList');           
+            // console.log("Handling Customer");
+            setEntryStep({current: 'customerList', prev:"inProgress"});           
         }
     };
             
@@ -294,32 +302,6 @@ const SalesEntry = () =>{
       setIsDigitClicked(false);
     };
 
-    const handleVilidateClick = async(customerGave: {[key: string]: number}, change: {},
-      setIsvalidateEnabled: React.Dispatch<React.SetStateAction<boolean>> ) =>{
-        if(sendInvoice && !selectCustomer){
-          await Swal.fire({
-            text: "Select a Customer to generating invoice for!",
-            showCancelButton: true,
-          }).then(value =>{
-            value.isConfirmed ? setEntryStep("customerList") : null;
-          });
-          return;
-        }
-        const [activeOrder] = ordersList.filter(order => order.activeOrder);
-        const {orderDetails, total_profit, totalPrice} = activeOrder;
-        const moneyTrans = {...change, customerGave: customerGave || totalPrice};
-        const shop_id = localShop?.shop_id;
-        const sale_date = new Date();
-
-        if(shop_id !== undefined){
-          regiterSalesApi({
-            orderDetails, totalPrice, total_profit, setOrdersList, moneyTrans, 
-            updateStock, payMethods, setEntryStep, setSaleRes, shop_id, isOnline,
-            sale_date, setIsvalidateEnabled
-          });
-        };
-      };
-
     const handleNewCustomerOrder = ({date}: {date: string}) =>{
       setOrdersList((arr) =>{
         if(arr.find(arr => arr.date === date)) return arr;
@@ -329,7 +311,7 @@ const SalesEntry = () =>{
         })
         return [...arr, { date, orderDetails:[], activeOrder: true, status: "inProgress", totalPrice: 0, total_profit: 0 }]
       })
-      setEntryStep("inProgress");
+      setEntryStep(obj => ({...obj, current: "inProgress"}));
     }
 
     const handleDeleteCustomerOrder = (event: React.MouseEvent<HTMLTableDataCellElement, MouseEvent>, order: Order) =>{
@@ -355,12 +337,39 @@ const SalesEntry = () =>{
           orderDetails: [], activeOrder: true, status: "inProgress", totalPrice: 0
         }]
       })
-      setPayMethods([]);
+      // setCustomeGave({});
       setUpdateStock([]);
-      setEntryStep("inProgress");
+      setEntryStep(obj => ({current: "inProgress", prev: ""}));;
       setShowInventoryOrders("inventory");
       setSelectCustomer(undefined);
       setSendInvoice(false);
+    };
+
+    const handleVilidateClick = async( customerGave: {[key: string]: number;}, paymentDetails: PaymentDetails,
+      setIsvalidateEnabled: React.Dispatch<React.SetStateAction<boolean>> ) =>{
+        if(sendInvoice && !selectCustomer){
+          await Swal.fire({
+            text: "Select a Customer you want to generate invoice for!",
+            showCancelButton: true,
+          }).then(value =>{
+            value.isConfirmed? setEntryStep({current: "customerList", prev: "payment"}) : null;
+          });
+          return setIsvalidateEnabled(true);
+        };
+        console.log(customerGave)
+        const [activeOrder] = ordersList.filter(order => order.activeOrder);
+        const {orderDetails, total_profit, totalPrice} = activeOrder;
+        const moneyTrans = {...paymentDetails, customerGave: customerGave};
+        const shop_id = localShop?.shop_id;
+        const sale_date = new Date();
+        const invoiceDetails = {sendInvoice, customer_id: selectCustomer?.customer_id};
+
+        if(shop_id !== undefined){
+          regiterSalesApi({
+            orderDetails, totalPrice, total_profit, setOrdersList, moneyTrans, updateStock, 
+            setEntryStep, setSaleRes, shop_id, isOnline, sale_date, setIsvalidateEnabled, invoiceDetails
+          });
+        };
     };
    
     return(
@@ -374,9 +383,8 @@ const SalesEntry = () =>{
             showInventoryOrders={showInventoryOrders}
           />
         {
-          entryStep === "inProgress" && 
-          <div className="sales-entry-container d-flex flex-column flex-md-row col-12" 
-            >
+          entryStep.current === "inProgress" && 
+            <div className="sales-entry-container d-flex flex-column flex-md-row col-12" >
               <div className={`${showInventoryOrders === "orders" ? "" : "d-none "} d-md-flex 
               flex-column col-12 justify-content-between col-md-5 p-0 grow-1`} >
                 {
@@ -414,33 +422,34 @@ const SalesEntry = () =>{
                   })
                 }
               </div>
-          </div>
+            </div>
         }
         {
-          entryStep === "payment" && 
+          entryStep.current === "payment" && 
           <div className="">
             <ValidateOrderNavbar 
               setEntryStep = {setEntryStep}
               totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
               step = {{step: "payment"}}
             />
-            <CustomerContext.Provider value={{ selectCustomer, setSendInvoice, sendInvoice }}>
+            <CustomerContext.Provider value={{ selectCustomer, setSendInvoice, sendInvoice, setEntryStep }}>
               <ValidateOrders 
                 handleVilidateClick = {handleVilidateClick}
                 totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
-                setPayMethods = {setPayMethods}
-                payMethods = {payMethods}
-                customerGave = {customerGave}
-                setCustomeGave = {setCustomeGave}
                 activePayMethod = {activePayMethod} 
                 setActivePayMethod = {setActivePayMethod}
-                setEntryStep = {setEntryStep}
+                customerGave = {customerGave} 
+                setCustomeGave = {setCustomeGave}
+                paymentDetails = {paymentDetails}  
+                setPaymentDetails = {setPaymentDetails}
+                startNewEntry = {startNewEntry} 
+                setStartNewEntry = {setStartNewEntry}
               />
             </CustomerContext.Provider>
           </div>
         }
         {
-          entryStep === "receipt" &&
+          entryStep.current === "receipt" &&
           <div >
             <div className="d-none d-md-block">
               <ValidateOrderNavbar 
@@ -458,13 +467,14 @@ const SalesEntry = () =>{
                     handleStartNewOrderClick = {handleStartNewOrderClick}
                     totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
                     saleRes = {saleRes}
+                    selectCustomer = {selectCustomer}
                   /> : null
               })
             }
           </div>
         }
         {
-          entryStep === "ordersList" && 
+          entryStep.current === "ordersList" && 
           <ListOfOrders 
             ordersList = {ordersList}
             setOrdersList = {setOrdersList}
@@ -476,7 +486,7 @@ const SalesEntry = () =>{
           />
         }
         {
-          entryStep === "customerList" && 
+          entryStep.current === "customerList" && 
           <CustomerList 
             setEntryStep = {setEntryStep}
             selectCustomer = {selectCustomer}

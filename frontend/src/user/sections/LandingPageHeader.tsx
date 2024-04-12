@@ -2,22 +2,18 @@ import '../../assets/css/layouts/layouts.css';
 import 'boxicons';
 import Swal from 'sweetalert2'
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef, MouseEvent } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft, faChevronDown, faFileInvoice, faGear, faBars,faX
-    } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft, faChevronDown, faFileInvoice, faGear } from '@fortawesome/free-solid-svg-icons'
 import { MdDashboard, MdInventory, MdPayments, MdPointOfSale } from "react-icons/md";
 import { TbReportMoney } from "react-icons/tb";
-import { FaLayerGroup, FaListAlt, FaSalesforce, FaShoppingCart } from 'react-icons/fa';
-import { RxAvatar } from 'react-icons/rx';
-import { getShopDetailsApi } from './shop/apiCalls/getShopDetails';
-import { useDispatch, useSelector } from 'react-redux';
-import { setShopListDetails } from '../../redux/shopListDetails';
+import { FaLayerGroup, FaListAlt, FaSalesforce } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { getSessionStorage } from '../controllers/getSessionStorage';
 import { server_baseurl } from '../../baseUrl';
 import { pharmLogo } from '../../assets/images';
-import { setActiveShop } from '../../redux/activeShop';
+import DashboardHeader from '../components/userDashboard/DashboardHeader';
+import AddPaymentDetails from '../components/userDashboard/AddPaymentDetails';
 
 export default function LandingPageHeader() {
 
@@ -31,30 +27,12 @@ export default function LandingPageHeader() {
     const [render, setRender] = useState(true);
     const [headerToggle, setHeaderToggle] = useState(false);
     const [activeLink, setActiveLink] = useState("dashboard");
-    const [toggleProfile, setToggleProfile] = useState(false);
+
+    const activeShop = useSelector((state: RootState) => state.activeShop); 
+    const navigate = useNavigate();
 
     const menuRef = useRef<HTMLDivElement>(null);
     
-    const activeShop = useSelector((state: RootState) => state.activeShop); 
-    const shopListDetails = useSelector((state: RootState) => state.shopListDetailsList); 
-
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-
-    const userShop = getSessionStorage();
-    const { user } = userShop;
-    
-    useEffect(() =>{
-        const shopDetails = getShopDetailsApi()
-        shopDetails.then(data =>{
-            if(!activeShop.shop && data !== undefined) {
-                sessionStorage.setItem("activeshop", JSON.stringify(data[0]));
-                dispatch(setActiveShop({shop: data[0]}));
-            }
-            dispatch(setShopListDetails(data));
-        })
-    },[shopListDetails.length === 0])
-
     useEffect(() => {
         const headerSection = document.getElementById('header');
         if ( headerSection !== null) {
@@ -88,13 +66,6 @@ export default function LandingPageHeader() {
         setHeaderToggle(false);
     };
 
-    const headerTogglehandle = () => {
-        setHeaderToggle(!headerToggle)
-    };
-    const toggleProfileClick = () =>{        
-        setToggleProfile(!toggleProfile);
-    };
-
     const logoutHandle=()=>{
         Swal.fire({
             icon: 'warning',
@@ -120,40 +91,12 @@ export default function LandingPageHeader() {
     return (
         <>
         <div ref={menuRef}>
-            <header 
-            className="header mb-4 dropdown body-pd border-bottom border " id="header">
-                <div onClick={headerTogglehandle} className="header_toggle" id="header-toggle">
-                    {headerToggle ? <FontAwesomeIcon icon={faX} /> : <FontAwesomeIcon icon={faBars} /> }
-                </div>
-                    <div onClick={toggleProfileClick}
-                    style={{cursor: "pointer"}}
-                    className="d-flex align-items-center dropdown-toggle" data-bs-toggle="dropdown">
-                        <span className="header_img"> <RxAvatar  size={32}/> </span> 
-                        <span className="ms-1">{user?.first_name}({user?.user_id})</span> 
-                    </div>
-                
-                    <ul  className={`dropdown-menu droping position-absolute ${toggleProfile? ' show' : ''}`} 
-                        style={{padding: '0, 2rem'}} aria-labelledby="dropdownMenuButton1" >
-                        {
-                        shopListDetails.map((data, i) =>(
-                            <li key={i} onClick={() => {
-                                sessionStorage.setItem("activeshop", JSON.stringify(data));
-                                dispatch(setActiveShop({shop: data}));
-                                toggleProfileClick();
-                            }
-                            }>
-                                <Link onClick={()=>toggleProfileClick()} className="dropdown-item" to="#">
-                                    {data?.shop_name}
-                                </Link>
-                            </li>
-                        ))
-                        }
-                        <li><Link onClick={()=>toggleProfileClick()} 
-                        className="dropdown-item" to="/user/register-shop">Register Shop</Link></li>
-                        <li className="dropdown-item" onClick={logoutHandle}>Log Out</li>
-                    </ul>
-            </header>
- 
+            <DashboardHeader 
+                setHeaderToggle = {setHeaderToggle} 
+                headerToggle = {headerToggle} 
+                logoutHandle = {logoutHandle}
+            />
+            <AddPaymentDetails />
             <div className="manubar">
                 <div className={`l-navbar menubar scroll-bar ${headerToggle ? "show" : ""}`} id="nav-bar">
                     <nav className="nav">
@@ -165,8 +108,7 @@ export default function LandingPageHeader() {
                                 <span className="text-white ">{activeShop?.shop?.shop_name}</span> 
                             </Link>
 
-                            <div className="nav_list">
-                                
+                            <div className="nav_list">  
                                 <Link onClick={handleLinkClick} id='dashboard' to= "/user/dashboard"
                                 className={`${activeLink === 'dashboard'? 'text-white font-weight-bold ' :"" }nav_link`}>
                                     <MdDashboard />

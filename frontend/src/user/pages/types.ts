@@ -32,6 +32,7 @@ export interface SaleRes {
     change: number;
     remaining: number;
     customerGave: { [key: string]: number };
+    invoice_id: number;
 }
 
 export interface paymentProps{
@@ -43,7 +44,8 @@ export interface paymentProps{
             amount: number,
             payment_method: "Bank" | "Cash" | "Customer account"
         }[]
-}
+};
+
 export interface mappedPaymentProps{
     id: number;
     sale_id: number;
@@ -53,8 +55,13 @@ export interface mappedPaymentProps{
         amount: number;
         payment_method: "Cash" | "Bank" | "Customer account";
     }[];
-}
+};
 
 export type PaymentObject = {
     [key: string]: number;
 };
+
+export type EntryStepTypes = {
+    current: string;
+    prev: string;
+}

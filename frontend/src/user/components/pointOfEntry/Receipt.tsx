@@ -2,16 +2,9 @@ import { server_baseurl } from "../../../baseUrl";
 import { getSessionStorage } from "../../controllers/getSessionStorage";
 import OrdersCard from "./OrdersCard";
 import calculateVAT from "../../controllers/calculations/calculateVAT";
-import { OrderDetail } from "../../pages/SalesEntry";
-import { SaleRes } from "../../pages/types";
+import { ReceiptInvoiceProps } from "./types";
 
-interface ReceiptProps{
-    orderDetails: OrderDetail[]; 
-    totalPrice: number; 
-    componentRef: React.MutableRefObject<HTMLDivElement | null>;
-    saleRes: SaleRes;
-}
-const Receipt:React.FC<ReceiptProps> =({componentRef, saleRes, orderDetails, totalPrice}) =>{
+const Receipt:React.FC<ReceiptInvoiceProps> =({componentRef, saleRes, orderDetails, totalPrice, selectCustomer}) =>{
     const userShop = getSessionStorage();
     const { localShop, user } = userShop;
 

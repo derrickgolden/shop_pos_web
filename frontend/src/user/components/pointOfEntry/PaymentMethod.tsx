@@ -2,12 +2,15 @@
 import React, { useState } from "react";
 import { BsCashCoin } from "react-icons/bs";
 import { FaAngleRight, FaRegCreditCard } from "react-icons/fa";
-import { MdAccountBalanceWallet, MdCancel, MdOutlinePhoneAndroid } from "react-icons/md";
+import { MdCancel, MdOutlinePhoneAndroid } from "react-icons/md";
 import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChange";
 import Swal from "sweetalert2";
 import ChangeDisplay from "./ChangeDisplay";
 import { PaymentCalcProps } from "./PaymentCalc";
-import { ValidateOrdersProps } from "./types";
+import { PaymentMethodProps, ValidateOrdersProps } from "./types";
+import { useCustomerContext } from "../../pages/SalesEntry";
+import { PaymentDetails } from "../../sections/pointOfEntry/types";
+import { PaymentObject } from "../../pages/types";
 
 const payments = [
     {icon:<BsCashCoin size={24}/>, method_name: "Cash", method: "cash", payment_method_id: 1},
@@ -16,13 +19,6 @@ const payments = [
     // {icon:<MdAccountBalanceWallet size={24}/>, method_name: "Customer Account", method: "customer_acc", payment_method_id: 2},
 ]
 
-interface PaymentMethodProps extends ValidateOrdersProps, PaymentCalcProps{
-    activePayMethod: string;
-    setActivePayMethod: React.Dispatch<React.SetStateAction<string>>;
-    setStartNewEntry: React.Dispatch<React.SetStateAction<boolean>>;
-    setChange: React.Dispatch<React.SetStateAction<{ remaining: number; change: number; }>>; 
-}
-
 interface PaymentProps{
     icon: JSX.Element;
     method_name: string;
@@ -30,19 +26,25 @@ interface PaymentProps{
     payment_method_id: number;
 }
 
-const PaymentMethod: React.FC<PaymentMethodProps> = ({
-    handleVilidateClick, setPayMethods, totalPrice, payMethods, activePayMethod, customerGave, 
-    change, setCustomeGave, setActivePayMethod, setChange, PaymentCalcHandles, setStartNewEntry }) =>{
+const PaymentMethod: React.FC<PaymentMethodProps> = ({ handleVilidateClick,  
+    totalPrice, activePayMethod, customerGave, paymentDetails, setCustomeGave, 
+    setActivePayMethod, setPaymentDetails, PaymentCalcHandles, setStartNewEntry }) =>{
 
-    const [ isValidateEnabled, setIsvalidateEnabled ] = useState(true)
-    const currentWidth = window.innerWidth;
-
+        const { sendInvoice } = useCustomerContext();
+        const [ isValidateEnabled, setIsvalidateEnabled ] = useState(true)
+        const currentWidth = window.innerWidth;
+        const isDisableBtn = sendInvoice && isValidateEnabled || 
+                            !paymentDetails.remaining && Object.keys(customerGave).length && isValidateEnabled
+        
     const handlePaymentMethod = (payment: PaymentProps) =>{
-        if (!payMethods.includes(payment.method_name)) {
-            setPayMethods([...payMethods, payment.method_name]);
+        if (!(Object.keys(customerGave).includes(payment.method_name))) {
             setCustomeGave((obj) => {
-                obj[payment.method_name] = payMethods.length? 0 : totalPrice;
-                payMethods.length? null : setChange({change: 0.00, remaining: 0.00})
+                if((Object.keys(customerGave).length) > 0){
+                    obj[payment.method_name] = 0;
+                }else{
+                    setPaymentDetails({change: 0.00, remaining: 0.00, payment_status: "Paid"});
+                    obj[payment.method_name] = totalPrice;
+                }
                 return obj;
             });
             setActivePayMethod(payment.method_name)
@@ -50,8 +52,6 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
     }
 
     const handleRemovePayment = (method: string) =>{
-        
-        setPayMethods((arr) => (arr.filter((payMethod) => payMethod !== method)));
         setStartNewEntry(true);
         setCustomeGave((obj) => {
             const removedMethod = method;
@@ -59,13 +59,14 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
             
             const totals = Object.values(newObj).reduce((acc, curr) => acc + curr, 0);
 
-            calcAndSetChange(totals, totalPrice, setChange);
+            const details = calcAndSetChange(totals, totalPrice);
+            setPaymentDetails(details);
             
-            const newActiveMethod = payMethods.find((payMethod) => payMethod !== method) || '';
-            setActivePayMethod(newActiveMethod);
-
             return newObj;
         });
+
+        const newActiveMethod = Object.keys(customerGave).find((payMethod) => payMethod !== method) || '';
+        setActivePayMethod(newActiveMethod);
     }
 
     const handleChangeAmount = async(method: string) =>{
@@ -91,9 +92,9 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
             {
                 currentWidth < 768 && 
                 <ChangeDisplay 
-                    payMethods = {payMethods} 
+                    customerGave = {customerGave} 
                     totalPrice = {totalPrice} 
-                    change = {change}
+                    paymentDetails = {paymentDetails}
                 />
             }
             <div className="p-2">
@@ -113,7 +114,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
                     <h4>Summary</h4>
                 </div>
                 {
-                    payMethods.map((method, i) =>(
+                    Object.keys(customerGave).map((method, i) =>(
                         <div key={i}
                         className={`${activePayMethod === method? "bg-light ": ""} d-flex py-4 px-2 border col-12
                         justify-content-between`}>
@@ -137,9 +138,9 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
             justify-content-center text-center">
                 <button onClick={() =>{
                     setIsvalidateEnabled(false);
-                    handleVilidateClick(customerGave, change, setIsvalidateEnabled);
+                    handleVilidateClick(customerGave, paymentDetails, setIsvalidateEnabled);
                 } } 
-                disabled={!change.remaining && payMethods.length && isValidateEnabled ? false : true}
+                disabled={isDisableBtn ? false : true}
                 className="btn btn-warning rounded-none flex-grow-1 font-weight-bold"> 
                     <FaAngleRight size={24}/> 
                     <p style={{fontSize: "24px"}}>Validate</p>

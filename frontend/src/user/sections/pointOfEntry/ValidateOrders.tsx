@@ -3,30 +3,37 @@ import CustomerInvoice from "../../components/pointOfEntry/CustomerInvoice";
 import PaymentCalc from "../../components/pointOfEntry/PaymentCalc"
 import PaymentMethod from "../../components/pointOfEntry/PaymentMethod";
 import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChange";
-import { ValidateOrdersProps } from "../../components/pointOfEntry/types";
+import { PaymentMethodProps, ValidateOrdersProps } from "../../components/pointOfEntry/types";
+import { PaymentDetails } from "./types";
+import { PaymentObject } from "../../pages/types";
 
 interface ValidateOrdersProps2 extends ValidateOrdersProps{
     totalPrice: number;
-    payMethods: string[];
     activePayMethod: string;
     setActivePayMethod: React.Dispatch<React.SetStateAction<string>>;
-    setEntryStep: React.Dispatch<React.SetStateAction<string>>;
+    customerGave: {[key: string]: number;};
+    setCustomeGave: React.Dispatch<React.SetStateAction<PaymentObject>>;
+    startNewEntry : boolean;
+    paymentDetails: PaymentDetails;
+    setStartNewEntry: React.Dispatch<React.SetStateAction<boolean>>;
+    setPaymentDetails: React.Dispatch<React.SetStateAction<PaymentDetails>>; 
 }
 
-const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, totalPrice, setEntryStep,
-    setPayMethods, payMethods, customerGave, setCustomeGave, activePayMethod, setActivePayMethod }) =>{
-
-    const [change, setChange] = useState({remaining: 0.00, change: 0.00});
-    const [startNewEntry, setStartNewEntry] = useState(true);
+const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, totalPrice,
+    activePayMethod, setActivePayMethod, customerGave, setCustomeGave, startNewEntry, setStartNewEntry,
+    paymentDetails, setPaymentDetails }) =>{
 
     useEffect(() =>{
-        if(payMethods.length){
+        if(Object.keys(customerGave).length){
             setCustomeGave((obj) => {
                 const totals = Number(Object.values(obj).reduce((acc, curr) => acc + curr, 0));
-    
-                calcAndSetChange(totals, totalPrice, setChange);
+
+                const details = calcAndSetChange(totals, totalPrice);
+                setPaymentDetails(details);
                 return obj;
             });
+        }else{
+            setPaymentDetails(obj => ({...obj, remaining: totalPrice}))
         }
     }, []);
 
@@ -40,9 +47,9 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
                 const {[activePayMethod]: removedKey, ...newObj} = obj;
                 const sum = Object.values(newObj).reduce((acc, curr) => acc + curr, 0);
                 const totals = Number( sum + newFig)
-                // console.log(totals)
 
-                calcAndSetChange(totals, totalPrice, setChange);
+                const details = calcAndSetChange(totals, totalPrice);
+                setPaymentDetails(details);
 
                 return {...obj ,[activePayMethod]: newFig};
             });
@@ -62,7 +69,8 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
                 const sum = Object.values(newObj).reduce((acc, curr) => acc + curr, 0);
                 const totals = Number( sum + newFig)
 
-                calcAndSetChange(totals, totalPrice, setChange);
+                const details = calcAndSetChange(totals, totalPrice);
+                setPaymentDetails(details);
 
                 return {...newObj, [activePayMethod] : newFig};
             })
@@ -75,9 +83,9 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
                 const {[activePayMethod]: removedKey, ...newObj} = obj;
                 const sum = Object.values(newObj).reduce((acc, curr) => acc + curr, 0);
                 const totals = Number( sum + newFig)
-                // console.log(totals)
 
-                calcAndSetChange(totals, totalPrice, setChange);
+                const details = calcAndSetChange(totals, totalPrice);
+                setPaymentDetails(details);
 
                 return {...obj ,[activePayMethod]: newFig};
             });
@@ -89,27 +97,23 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
         <div className="d-flex payment-step" >
             <PaymentMethod 
                 handleVilidateClick = {handleVilidateClick}
-                setPayMethods = {setPayMethods}
                 activePayMethod = {activePayMethod}
                 totalPrice = {totalPrice}
-                payMethods = {payMethods}
                 customerGave = {customerGave}
-                change = {change}
+                paymentDetails = {paymentDetails}
                 setCustomeGave = {setCustomeGave}
                 setActivePayMethod = {setActivePayMethod}
-                setChange = {setChange}
+                setPaymentDetails= {setPaymentDetails}
                 setStartNewEntry = {setStartNewEntry}
                 PaymentCalcHandles = {PaymentCalcHandles}
             />
             <PaymentCalc 
-                change = {change}
+                paymentDetails = {paymentDetails}
                 totalPrice = {totalPrice}
-                payMethods = {payMethods}
                 PaymentCalcHandles = {PaymentCalcHandles}
+                customerGave = {customerGave}
             />
-            <CustomerInvoice 
-                setEntryStep = {setEntryStep}
-            />
+            <CustomerInvoice />
         </div>
     )
 }

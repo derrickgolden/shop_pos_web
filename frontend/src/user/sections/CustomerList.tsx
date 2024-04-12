@@ -11,9 +11,10 @@ import { ImCheckboxUnchecked } from "react-icons/im";
 import { FaCheckSquare } from "react-icons/fa";
 import CustomerDetails from "../components/customers/CustomerDetails";
 import { getSessionStorage } from "../controllers/getSessionStorage";
+import { EntryStepTypes } from "../pages/types";
 
 interface CustomerListProps{
-    setEntryStep: React.Dispatch<React.SetStateAction<string>>;
+    setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
     selectCustomer: Customer | undefined;
     setSelectCustomer: React.Dispatch<React.SetStateAction<Customer | undefined>>;
 }
@@ -82,7 +83,7 @@ const CustomerList: React.FC<CustomerListProps> = ({setEntryStep, selectCustomer
             if(customer?.customer_id === row.customer_id){
                 return undefined
             };
-            setEntryStep("inProgress");
+            setEntryStep(obj => ({...obj, current: obj.prev}));;
             return row;
         });
     }
@@ -95,7 +96,6 @@ const CustomerList: React.FC<CustomerListProps> = ({setEntryStep, selectCustomer
         <div>
             <CustomerListNavbar 
                 setEntryStep = {setEntryStep} 
-                step = {{step: "payment"}}
             />
             {
                 customerDetail && 

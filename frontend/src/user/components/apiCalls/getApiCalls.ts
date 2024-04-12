@@ -1,9 +1,18 @@
 import axios from "axios";
-import { server_baseurl } from "../../../../baseUrl";
+import { server_baseurl } from "../../../baseUrl";
 import Swal from "sweetalert2";
-import { CustomerProps } from "../types";
+import { PaymentDetailProps } from "../../../redux/paymentDetails";
 
-export const addCustomer = async({shop_id, phone, full_name, email, country, address}: CustomerProps) =>{
+export const getPaymentDetails = async(data: string) =>{
+    return await makeApiCall('user/pay-method/get-details', 'post', data).then((payments) =>{
+        return payments.map((payment: {details: string}) =>{
+            const details = JSON.parse(payment.details);
+            return {...payment, details};
+        })
+    });
+}
+
+const makeApiCall = async(url: string, method: string, data: string) =>{
     const tokenString = sessionStorage.getItem("userToken");
 
     if (tokenString !== null) {
@@ -11,18 +20,16 @@ export const addCustomer = async({shop_id, phone, full_name, email, country, add
     } else {
         Swal.fire({
             title: "Token not Found",
-            text: "Try to login Again then add the customer.",
+            text: "Log out and log in then try again.",
             icon: "warning"
         });
         return
     }
 
-    const data = JSON.stringify({shop_id, phone, full_name, email, country, address });
-
     let config = {
-        method: 'post',
+        method: method,
         maxBodyLength: Infinity,
-        url: `${server_baseurl}/user/customer/add-customer`,
+        url: `${server_baseurl}/${url}`,
         headers: { 
             'Content-Type': 'application/json',
             'Authorization': `${token}`
@@ -30,14 +37,10 @@ export const addCustomer = async({shop_id, phone, full_name, email, country, add
         data : data
     };
 
-    await axios.request(config)
+    return await axios.request(config)
     .then((response) => {
         if(response.data.success){
-            Swal.fire({
-                title: "Success",
-                text: "Customer added successfully.",
-                icon: "success"
-            });
+            return response.data.details
         }else{
             Swal.fire({
                 text: `${response.data.msg}`,
@@ -47,7 +50,7 @@ export const addCustomer = async({shop_id, phone, full_name, email, country, add
                 color: "#dc3545",
                 padding: "5px"
             })
-        }
+        };
     })
     .catch((error) => {
         console.log(error);
@@ -60,4 +63,4 @@ export const addCustomer = async({shop_id, phone, full_name, email, country, add
             padding: "0px 0px 10px 0px"
         })
     });
-}
+};

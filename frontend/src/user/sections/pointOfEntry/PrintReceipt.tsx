@@ -8,16 +8,19 @@ import { useReactToPrint } from 'react-to-print';
 import Receipt from '../../components/pointOfEntry/Receipt';
 import { OrderDetail } from '../../pages/SalesEntry';
 import { SaleRes } from '../../pages/types';
+import InvoiceDesign from '../../components/sharedComponents/InvoiceDesign';
+import { Customer } from '../../components/customers/types';
 
 interface PrintReceiptProps{
     orderDetails: OrderDetail[], 
     totalPrice: number; 
     saleRes: SaleRes;
     handleStartNewOrderClick: () => void;
+    selectCustomer: Customer | undefined
 }
 
 const PrintReceipt: React.FC<PrintReceiptProps> = (
-    { orderDetails, handleStartNewOrderClick, totalPrice, saleRes }) =>{
+    { orderDetails, handleStartNewOrderClick, totalPrice, saleRes, selectCustomer  }) =>{
 
     const componentRef = useRef<HTMLDivElement | null>(null);
 
@@ -62,6 +65,7 @@ const PrintReceipt: React.FC<PrintReceiptProps> = (
                         saleRes ={saleRes} 
                         orderDetails ={orderDetails} 
                         totalPrice ={totalPrice}
+                        selectCustomer = {selectCustomer }
                     />
                 </div>
                 <div >
@@ -71,12 +75,25 @@ const PrintReceipt: React.FC<PrintReceiptProps> = (
                     </button>
                 </div>
             </div>
+            <div className='d-none col-4 print-receipt' >
+                {
+                    saleRes.invoice_id && 
+                    <InvoiceDesign 
+                        componentRef={componentRef} 
+                        saleRes ={saleRes} 
+                        orderDetails ={orderDetails} 
+                        totalPrice ={totalPrice}
+                        selectCustomer = {selectCustomer }
+                    />
+                }
+            </div>
             <div className='d-none d-md-block col-4 print-receipt' >
                 <Receipt 
                     componentRef={componentRef} 
                     saleRes ={saleRes} 
                     orderDetails ={orderDetails} 
                     totalPrice ={totalPrice}
+                    selectCustomer = {selectCustomer }
                 />
             </div>
         </div>

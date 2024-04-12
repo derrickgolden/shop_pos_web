@@ -7,6 +7,7 @@ import shopListDetailsReducer from './shopListDetails'
 import salesReportReducer from './salesReport'
 import rerenderReducer from './rerender'
 import activeShopReducer from './activeShop'
+import paymentDetailsReducer from './paymentDetails'
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     salesReport: salesReportReducer,
     rerender: rerenderReducer,
     activeShop: activeShopReducer,
+    paymentDetails: paymentDetailsReducer,
   },
 })
 

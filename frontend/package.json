@@ -20,6 +20,7 @@
     "boxicons": "^2.1.4",
     "chart.js": "^4.4.1",
     "countries-list": "^3.0.6",
+    "html2pdf.js": "^0.10.1",
     "jquery": "^3.7.1",
     "loaders.css": "^0.1.2",
     "papaparse": "^5.4.1",

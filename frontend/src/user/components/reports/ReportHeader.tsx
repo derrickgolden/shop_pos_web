@@ -51,7 +51,6 @@ const ReportHeader: React.FC<PagesHeaderProps> = ({handleRegenerateGraph, salesD
 
     // Trigger download
     const handleDownload = () => {
-        // console.log(salesData);
         let data;
         if(dataType === "Sales" && salesData){
             data = csvAttributes(salesData);
