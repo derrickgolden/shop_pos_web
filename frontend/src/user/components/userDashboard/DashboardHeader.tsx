@@ -71,7 +71,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ setHeaderToggle, head
                             </Link>
                         </li>
                         <li>
-                            <Link className="dropdown-item" to="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <Link className="dropdown-item" to="#" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
                                 Add Payment
                             </Link>
                         </li>

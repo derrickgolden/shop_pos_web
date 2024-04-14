@@ -60,7 +60,7 @@ const CustomerList: React.FC<CustomerListProps> = ({setEntryStep, selectCustomer
         {
             name: "Action",
             cell: (row: Customer) => <>
-                <button onClick={() => handleShowDetails(row)} data-bs-toggle="modal" data-bs-target="#exampleModal1"
+                <button onClick={() => handleShowDetails(row)} data-bs-toggle="modal" data-bs-target="#customerDetailsModal"
                 className=" btn btn-info btn-sm ms-1"  >
                     <FontAwesomeIcon icon={faCircleInfo} />
                 </button>

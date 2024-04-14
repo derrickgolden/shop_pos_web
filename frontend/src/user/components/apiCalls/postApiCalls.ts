@@ -11,6 +11,10 @@ export const addPaymentDetails = async (data: string): Promise<void> =>{
     await makeApiCall('user/pay-method/add-details', 'post', data);
 };
 
+export const updateInvoiceDetails = async (data: string): Promise<void> =>{
+    await makeApiCall('user/invoice/update', 'post', data);
+};
+
 const makeApiCall = async(url: string, method: string, data: string) =>{
     const tokenString = sessionStorage.getItem("userToken");
 

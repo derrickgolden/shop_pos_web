@@ -3,6 +3,7 @@ import { paymentDetailsFormat, paymentDetailsFormatProps } from "./paymentDeatai
 import FooterModal from "../sharedComponents/FooterModal";
 import { getSessionStorage } from "../../controllers/getSessionStorage";
 import { addPaymentDetails } from "../apiCalls/postApiCalls";
+import ModalWrapper from "../sharedComponents/ModalWrapper";
 
 const AddPaymentDetails = () =>{
     const [selectedPayment, setSelectedPayment] = useState<paymentDetailsFormatProps>();
@@ -50,57 +51,53 @@ const AddPaymentDetails = () =>{
     };
 
     return(
-        <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog">
-                <div className="modal-content">
-                <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">Payment Details</h5>
-                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form onSubmit={handlePaymentDetailsSubmit} action="#">
-                    <div className="modal-body">
-                        <div>
-                        {
-                            paymentDetailsFormat.map((payment, i) =>{
-                                return(
-                                <div key={i} className="form-check">
-                                    <input onChange={handlePaymentChange}
-                                        className="form-check-input" type="radio" name="flexRadioDefault" id={payment.details.process}
-                                        
-                                    />
-                                    <label className="form-check-label" htmlFor={payment.details.process}>
-                                        {payment.details.method} ({payment.details.process})
-                                    </label>
-                                </div>
-                                )
-                            })
-                        }
-                        </div>
-                        <div className="pt-4">
-                        {
-                            selectedPayment && 
-                            selectedPayment.inputs.map((payment, i) =>
-                                (
-                                    <div key={i} className="form-floating mb-3">
-                                        <input type={payment.type} onChange={handlePaymentInput} required
-                                        value={paymentDetails[payment.lebal]} name={payment.lebal}
-                                            className="form-control" id={payment.id} placeholder=""/>
-                                        <label htmlFor={payment.lebal}>{payment.lebal}</label>
-                                    </div>
-                                )
+        <ModalWrapper 
+            targetId='addPaymentModal'
+            title = "Payment Details"
+            btnDetails={{
+                confirmText: "Add Payment", 
+                confirmColor: "btn-primary", 
+                loaderColor: "#fff",
+                closeRef: btnClose
+            }}
+            isLoading = {isLoading}
+            submitHandle={handlePaymentDetailsSubmit}
+        >
+                <div className="modal-body">
+                    <div>
+                    {
+                        paymentDetailsFormat.map((payment, i) =>{
+                            return(
+                            <div key={i} className="form-check">
+                                <input onChange={handlePaymentChange}
+                                    className="form-check-input" type="radio" name="flexRadioDefault" id={payment.details.process}
+                                    
+                                />
+                                <label className="form-check-label" htmlFor={payment.details.process}>
+                                    {payment.details.method} ({payment.details.process})
+                                </label>
+                            </div>
                             )
-                        }   
-                        </div>
+                        })
+                    }
                     </div>
-                    <FooterModal
-                        key={"addPaymentFooterModal"}
-                        btnClose={btnClose}
-                        isLoading= {isLoading}
-                    />
-                </form>
+                    <div className="pt-4">
+                    {
+                        selectedPayment && 
+                        selectedPayment.inputs.map((payment, i) =>
+                            (
+                                <div key={i} className="form-floating mb-3">
+                                    <input type={payment.type} onChange={handlePaymentInput} required
+                                    value={paymentDetails[payment.lebal]} name={payment.lebal}
+                                        className="form-control" id={payment.id} placeholder=""/>
+                                    <label htmlFor={payment.lebal}>{payment.lebal}</label>
+                                </div>
+                            )
+                        )
+                    }   
+                    </div>
                 </div>
-            </div>
-        </div>
+        </ModalWrapper>
     )
 };
 

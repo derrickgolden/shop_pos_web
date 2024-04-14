@@ -26,7 +26,7 @@ const CustomerListNavbar: React.FC<ValidateOrderNavbarProps> = ({ setEntryStep }
             type="button"
             className="btn btn-warning"
             data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
+            data-bs-target="#addCustomerModal"
           >
             New Customer
           </button>

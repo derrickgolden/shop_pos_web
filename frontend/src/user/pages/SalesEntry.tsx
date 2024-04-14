@@ -337,7 +337,7 @@ const SalesEntry = () =>{
           orderDetails: [], activeOrder: true, status: "inProgress", totalPrice: 0
         }]
       })
-      // setCustomeGave({});
+      setCustomeGave({});
       setUpdateStock([]);
       setEntryStep(obj => ({current: "inProgress", prev: ""}));;
       setShowInventoryOrders("inventory");
@@ -356,7 +356,6 @@ const SalesEntry = () =>{
           });
           return setIsvalidateEnabled(true);
         };
-        console.log(customerGave)
         const [activeOrder] = ordersList.filter(order => order.activeOrder);
         const {orderDetails, total_profit, totalPrice} = activeOrder;
         const moneyTrans = {...paymentDetails, customerGave: customerGave};

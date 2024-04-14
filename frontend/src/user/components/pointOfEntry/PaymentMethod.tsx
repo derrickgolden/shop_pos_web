@@ -12,7 +12,7 @@ import { useCustomerContext } from "../../pages/SalesEntry";
 import { PaymentDetails } from "../../sections/pointOfEntry/types";
 import { PaymentObject } from "../../pages/types";
 
-const payments = [
+export const payments = [
     {icon:<BsCashCoin size={24}/>, method_name: "Cash", method: "cash", payment_method_id: 1},
     {icon:<FaRegCreditCard size={24}/>, method_name: "Bank", method: "bank", payment_method_id: 3},
     {icon:<MdOutlinePhoneAndroid size={24}/>, method_name: "Mpesa", method: "mpesa", payment_method_id: 4},

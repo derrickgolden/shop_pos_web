@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { ShopState } from '../../../redux/activeShop';
+import { getStatusColor } from './styles';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import UpdateInvoice from './UpdateInvoice';
+import { SharedSalesProps, columnsProps, subColumnsProps } from './types';
 
 interface salesItemProps{
     product_id: number,
@@ -9,47 +14,22 @@ interface salesItemProps{
     sub_total: number,
     units_sold: number
 }
-export interface salesProps{
-    sale_id: number,
-    sale_date: Date,
-    sales_items: salesItemProps[],
-    total_price: string,
-    total_profit: string,
-    cashier: {cashier_f_name: string, cashier_l_name: string, cashier_id: number},
+export interface salesProps extends SharedSalesProps{
+    sales_items: salesItemProps[]; 
 }
 export interface salesDataProps{
     salesData: salesProps[];
     activeShop: ShopState;
 }
 
-interface subColumnsProps {
-    sub_total: string;
-    id: string;
-    product_id: number;
-    product_name: string;
-    sales_item_id: number;
-    units_sold: number;
-    profit: number;
-}
-interface columnsProps {
-    id: number;
-    sale_id: number;
-    sale_date: string;
-    total_price: string;
-    total_profit: number;
-    cashier: {
-        cashier_f_name: string;
-        cashier_l_name: string;
-        cashier_id: number;
-    };
-    children: subColumnsProps[];
-}[];
-
 interface mappedDataProps{
     data: columnsProps;
 }
 
 const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
+//   console.log(salesData)
+    const [saleRowData, setSaleRowData] = useState<columnsProps>();
+
     // Define columns for the main DataTable
   const columns = [
     { name: 'Sale ID', selector: (row: columnsProps) => row.sale_id, sortable: true },
@@ -57,7 +37,20 @@ const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
     { name: 'Total Price', selector: (row: columnsProps) => row.total_price, sortable: true },
     { name: 'Total Profit', selector: (row: columnsProps) => row.total_profit, sortable: true },
     { name: 'Cashier Name', selector: (row: columnsProps) => row.cashier.cashier_f_name, sortable: true },
-    { name: 'Cashier Id', selector: (row: columnsProps) => row.cashier.cashier_id, sortable: true },
+    { name: 'Status', selector: (row: columnsProps) => row.payment_status, sortable: true,
+    cell: (row : columnsProps) => 
+        <div className={`${ getStatusColor(row.payment_status).text }`}>
+            {row.payment_status}
+        </div>
+     },
+     { name: 'Action',  cell: (row: columnsProps) => (
+        <button type='button' onClick={() => handleActionClick(row)} 
+            data-bs-toggle="modal" data-bs-target="#updateInvoiceModal"
+        className={`btn ${ getStatusColor(row.payment_status).btn } btn-sm`}>
+           <FontAwesomeIcon icon={faPenToSquare} />
+        </button>
+      ),
+       },
   ];
 
   // Define columns for the nested DataTable (Sales Items)
@@ -71,20 +64,30 @@ const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
   ];
 
   // Map the sales data to match the main DataTable structure
-    const mappedData = salesData?.map((sale) => ({
-        id: sale.sale_id,
-        sale_id: sale.sale_id,
-        sale_date: new Date(sale.sale_date).toLocaleString(),
-        total_price: `Ksh. ${parseFloat(sale.total_price).toFixed(2)}`,
-        total_profit: `Ksh. ${parseFloat(sale.total_profit).toFixed(2)}`,
-        cashier: sale.cashier,
-        children: sale.sales_items.map((item) => ({
-            ...item,
-            sub_total: `Ksh. ${(item.sub_total).toFixed(2)}`,
-        id: `${sale.sale_id}-${item.sales_item_id}`, // Unique identifier for each row
-        })),
-    }));
+    const mappedData = salesData?.map((sale) => {
+        const {cashier,payment_status,sale_date,sale_id,sales_items,total_price,total_profit,balance,customer_id} = sale
+        return({
+            id: sale_id, 
+            sale_id,
+            customer_id,
+            sale_date: new Date(sale_date).toLocaleString(),
+            total_price: `Ksh. ${parseFloat(total_price).toFixed(2)}`,
+            total_profit: `Ksh. ${parseFloat(total_profit).toFixed(2)}`,
+            balance: `Ksh. ${parseFloat(balance).toFixed(2)}`,
+            cashier, 
+            payment_status,
+            children: sales_items.map((item) => ({
+                ...item,
+                sub_total: `Ksh. ${(item.sub_total).toFixed(2)}`,
+            id: `${sale_id}-${item.sales_item_id}`, // Unique identifier for each row
+            })),
+        })
+    });
 
+    const handleActionClick = (row: columnsProps) =>{
+        console.log(row)
+        setSaleRowData(row);
+    }
     // const nestData = mappedData?.children
     const ExpandedComponent = ({data}: mappedDataProps) => {
         return(
@@ -110,40 +113,45 @@ const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
 
   return (
     <div className="container-fluid px-md-5" >
-    <div className="row my-3">
-        <div className="col-12">
-            <div className="card" style={{ borderTop: "2px solid #4723d9" }}>
-                <div className="card-header d-flex justify-content-between border-bottom pb-1">
-                    <h4>Sales Data</h4>
-                    {/* <select value={search} onChange={handleSearchChange}>
-                        <option value="product_name">Product Name</option>
-                        <option value="group_name">Product Group</option>
-                        <option value="product_id">Product Id</option>
-                    </select> */}
-                </div>
-                <div className="card-body">
-                    {activeShop?.shop? 
-                        (<div className="table-responsive ">
-                            <DataTable
-                                columns={columns}
-                                data={mappedData}
-                                pagination
-                                expandableRows
-                                expandOnRowClicked
-                                expandableRowsComponent={ExpandedComponent}
-                                highlightOnHover
-                                striped
-                            />
-                        </div>) :   (
-                        <h1>Select a shop first</h1>
-                        )
-                    }  
+        <div className="row my-3">
+            <div className="col-12">
+                <div className="card" style={{ borderTop: "2px solid #4723d9" }}>
+                    <div className="card-header d-flex justify-content-between border-bottom pb-1">
+                        <h4>Sales Data</h4>
+                        {/* <select value={search} onChange={handleSearchChange}>
+                            <option value="product_name">Product Name</option>
+                            <option value="group_name">Product Group</option>
+                            <option value="product_id">Product Id</option>
+                        </select> */}
+                    </div>
+                    <div className="card-body">
+                        {activeShop?.shop? 
+                            (<div className="table-responsive ">
+                                <DataTable
+                                    columns={columns}
+                                    data={mappedData}
+                                    pagination
+                                    expandableRows
+                                    expandOnRowClicked
+                                    expandableRowsComponent={ExpandedComponent}
+                                    highlightOnHover
+                                    striped
+                                />
+                            </div>) :   (
+                            <h1>Select a shop first</h1>
+                            )
+                        }  
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-    
+        {
+           saleRowData &&  
+            <UpdateInvoice 
+                sale = {saleRowData}
+            />
+        }
+    </div>   
   );
 };
 

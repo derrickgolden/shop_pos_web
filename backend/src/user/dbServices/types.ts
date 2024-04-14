@@ -33,5 +33,13 @@ export interface RegisterShopProps{
         path: string;
         filename : string;
     }
+};
+
+export interface UpdateInvoiceProps {
+    remaining: number;
+    change: number;
+    payment_status: string;
+    customerGave: {[key: string]: string};
+    sale_id: number;
 }
 

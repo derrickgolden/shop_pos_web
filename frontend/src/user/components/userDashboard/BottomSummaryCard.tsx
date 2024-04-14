@@ -7,13 +7,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-interface CustomDatePickerInputProps {
-    value: string;
-    onClick: () => void;
-    onChange: (date: Date | null) => void; // Adjusted onChange prop
-  }
+
   
-  const CustomDatePickerInput: React.FC<any> = ({ value, onClick, onChange, ...rest }) => (
+  const CustomDatePickerInput: React.FC<any> = ({ value, onClick, onChange, ...rest }) => {
+      console.log({ value, onClick, onChange, ...rest });
+    
+    return(
     <div className="d-flex align-items-center custom-datepicker-input" onClick={onClick}>
       {value} <FaChevronDown size={14} />
       <input
@@ -22,7 +21,7 @@ interface CustomDatePickerInputProps {
         onChange={(e) => onChange && onChange(new Date(e.target.value))}
       />
     </div>
-  );
+  )};
 
 const BottomSummaryCard: React.FC<{data: BottomSummaryCardValueProps}> = ({data}) =>{
     const [selectedDate, setSelectedDate] = useState(new Date());

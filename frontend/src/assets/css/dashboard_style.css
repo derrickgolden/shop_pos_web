@@ -216,5 +216,127 @@
 }
   
   
+/* Modal Popup Invoice */
+
+
+.transactions-popup .modal-header {
+  background: #F6F5FF;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.transactions-popup .modal-dialog {
+  max-width: 880px;
+}
+
+.transactions-popup .modal-dialog .modal-content {
+  border-radius: 20px;
+}
+
+.transactions-popup .modal-dialog .modal-content .modal-header {
+  padding: 30px;
+}
+
+.transactions-popup .modal-dialog .modal-content .modal-header h6 {
+  font-weight: 700;
+}
+
+.transactions-popup .modal-dialog .modal-content .modal-header button {
+  margin: 0;
+  z-index: 1;
+  border: none;
+  background: none;
+  background-color: var(--bs-white);
+  border-radius: 50%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.transactions-popup .modal-dialog .modal-content .modal-header button:focus {
+  box-shadow: none;
+}
+
+.transactions-popup .modal-dialog .modal-content .modal-header button {
+  color: #797979;
+  font-size: 32px;
+}
+
+.transactions-popup .modal-dialog .modal-content .icon-area {
+  padding: 40px 0;
+}
+
+.transactions-popup .modal-dialog .modal-content .text-area h3, .transactions-popup .modal-dialog .modal-content .text-area h6 {
+  font-weight: 700;
+}
+
+.transactions-popup .modal-dialog .modal-content .text-area p {
+  margin: 20px 0;
+}
+
+.transactions-popup .modal-dialog .modal-content .text-area .com {
+  color: #49C96D;
+  font-weight: 700;
+}
+
+.transactions-popup .modal-dialog .modal-content .right-area {
+  padding: 30px;
+  border-left: 1px solid #E6E5FF;
+}
+
+.transactions-popup .modal-dialog .modal-content .right-area h6 {
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.transactions-popup .modal-dialog .modal-content .right-area .payment-details {
+  padding: 10px 0;
+  border-top: 1px solid #E6E6FF;
+}
+
+.transactions-popup .modal-dialog .modal-content .right-area .payment-details li:first-child {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: space-between;
+}
+.transactions-popup .modal-dialog .modal-content .right-area .payment-details li:not(:first-child) {
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.transactions-popup .modal-dialog .modal-content .right-area .payment-details li:last-child {
+  border-top: 1px solid #E6E6FF;
+  border-bottom: 1px solid #E6E6FF;
+}
+
+.transactions-popup .modal-dialog .modal-content .right-area .payment-info li {
+  margin-top: 15px;
+  text-decoration: none !important;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: space-between;
+}
+
+.transactions-popup .modal-dialog .modal-content .right-area .payment-info li p {
+  color: #000000;
+}
+
+.transactions-popup .modal-dialog .modal-content .right-area .payment-info li span {
+  color: #696D8D;
+}
+
+@media (max-width: 767px) {
+  .transactions-popup .modal-dialog .modal-content .right-area {
+    padding: 15px;
+  }
+  .transactions-popup .modal-dialog .modal-content .right-area {
+    padding: 20px;
+    border: none;
+  }
   
- 
+}

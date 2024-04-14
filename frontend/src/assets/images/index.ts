@@ -11,6 +11,7 @@ import fb from "./fb.png"
 import desk from "./desk.jpg"
 import shop from "./pharmacy.jpg"
 import pharmLogo from "./logo1.png"
+import user_profile from "./user-profile.png"
 
 export {
     logo,
@@ -23,5 +24,6 @@ export {
     fb,
     desk,
     shop,
-    pharmLogo
+    pharmLogo,
+     user_profile,
 }

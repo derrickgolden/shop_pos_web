@@ -17,7 +17,8 @@ import shop from './user/routes/shop'
 import stock from './user/routes/stock'
 import paymentMethodSales from './user/routes/payments/getPayMethodsReport'
 import paymentDetails from './user/routes/payments/paymentDetails'
-import customer from './user/routes/customers'
+import customer from './user/routes/customers';
+import invoices from './user/routes/invoices'
 
 import {authenticateToken} from './user/middlewares/authenticateToken';
 
@@ -70,6 +71,7 @@ app.use("/user/sales", authenticateToken, [sales, report]);
 app.use("/user/stock", stock);
 app.use("/user/pay-method", [paymentMethodSales, paymentDetails]);
 app.use("/user/customer", customer);
+app.use("/user/invoice", invoices);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
