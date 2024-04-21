@@ -45,6 +45,7 @@ const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
      },
      { name: 'Action',  cell: (row: columnsProps) => (
         <button type='button' onClick={() => handleActionClick(row)} 
+            disabled = {row.balance === "0.00"? true: false}
             data-bs-toggle="modal" data-bs-target="#updateInvoiceModal"
         className={`btn ${ getStatusColor(row.payment_status).btn } btn-sm`}>
            <FontAwesomeIcon icon={faPenToSquare} />
@@ -73,7 +74,7 @@ const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
             sale_date: new Date(sale_date).toLocaleString(),
             total_price: `Ksh. ${parseFloat(total_price).toFixed(2)}`,
             total_profit: `Ksh. ${parseFloat(total_profit).toFixed(2)}`,
-            balance: `Ksh. ${parseFloat(balance).toFixed(2)}`,
+            balance,
             cashier, 
             payment_status,
             children: sales_items.map((item) => ({

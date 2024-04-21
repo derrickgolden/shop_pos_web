@@ -41,5 +41,6 @@ export interface UpdateInvoiceProps {
     payment_status: string;
     customerGave: {[key: string]: string};
     sale_id: number;
+    updated_at: Date;
 }
 

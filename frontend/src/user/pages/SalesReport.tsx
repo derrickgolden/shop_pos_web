@@ -7,7 +7,7 @@ import { setSalesReportList } from '../../redux/salesReport';
 import { RootState } from '../../redux/store';
 import { ResultItem, calculateTotalSales } from './calculations/totalSalesUnits';
 import ReportHeader, { SelectedDate } from '../components/reports/ReportHeader';
-import SalesTable from "../components/reports/SalesTable"
+import SalesTable from "../components/reports/SalesTable";
 
 export const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -25,9 +25,10 @@ const SalesReport = () =>{
     const dispatch = useDispatch()
     const sales = useSelector((state: RootState) => state.salesReport)
     const activeShop = useSelector((state: RootState) => state.activeShop); 
+    const apiCall = useSelector((state: RootState) => state.callApi); 
 
     useEffect(() =>{
-        if(activeShop.shop){
+        if(activeShop.shop ){
             const url = "sales/get-sales"
             const shop_id = activeShop.shop.shop_id
             const salesReport = getSalesReportApi({url, shop_id});
@@ -35,7 +36,7 @@ const SalesReport = () =>{
                 dispatch(setSalesReportList(data));
             })
         }
-    }, [sales.length === 0, activeShop]);
+    }, [sales.length === 0, activeShop, apiCall]);
 
     useEffect(() =>{
         const sortedSalesByDate = calculateTotalSales({data: sales, date: selectedDate, keyType: "sales_items" })

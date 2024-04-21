@@ -1,9 +1,9 @@
 import logo from "./logo.png"
 import left_arrow from "./left-icon.png"
-import show_hide from "./show-hide.png"
+import show_hide from "../images/show-hide.png"
 import register_illus from "./register-illus.png"
-import forgot_password_illus from "./forgot-password-illus.png"
-import forgot_pwd_2_illus from "./forgot-pwd-2-illus.png"
+import forgot_password_illus from "../images/forgot-password-Illus.png"
+import forgot_pwd_2_illus from "../images/forgot-pwd-2-Illus.png"
 
 import google from "./google.png"
 import fb from "./fb.png"

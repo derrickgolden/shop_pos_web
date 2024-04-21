@@ -7,15 +7,19 @@ import { InvoiceDetails } from "../apiCalls/types";
 import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChange";
 import { payments } from "../pointOfEntry/PaymentMethod";
 import { updateInvoiceDetails } from "../apiCalls/postApiCalls";
+import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { setCallApi } from "../../../redux/callApi";
 
 interface UpdateInvoiceProps{
     sale: columnsProps;
 };
 const  UpdateInvoice:React.FC<UpdateInvoiceProps> = ({sale}) =>{
-    const btnClose = useRef(null);
+    const btnClose = useRef<HTMLButtonElement>(null);
+    const dispatch = useDispatch();
 
+    const [isLoading, setIsLoading] = useState(false);
     const [customerInvoice, setCustomerInvoice] = useState<InvoiceDetails>();
-    const [pay, setPay] = useState<string>();
     const [paymentDetails, setPaymentDetails] = useState<PaymentDetailsProps>({
         remaining: 0, change: 0.00, payment_status: "Pending", customerGave: {}
     });
@@ -24,7 +28,8 @@ const  UpdateInvoice:React.FC<UpdateInvoiceProps> = ({sale}) =>{
         const sale_id = JSON.stringify({sale_id: sale.sale_id});
         getCustomerInvoiceDetails(sale_id).then((data) =>{
             const {success, details} = data
-            if(success){
+            console.log(data);
+            if(success && details.length){
                 const detail = details[0];
                 setCustomerInvoice(detail);
                 setPaymentDetails(obj =>({customerGave: {},
@@ -50,7 +55,6 @@ const  UpdateInvoice:React.FC<UpdateInvoiceProps> = ({sale}) =>{
             })
             return ({...details, customerGave})
         });
-        setPay(value);
     }
 
     const handleMethodSelect = (method: string) =>{
@@ -61,11 +65,21 @@ const  UpdateInvoice:React.FC<UpdateInvoiceProps> = ({sale}) =>{
     const handleUpdateInvoiceSubmit =(e: React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault()
 
-        console.log(paymentDetails)
-        const data = JSON.stringify(paymentDetails);
-        updateInvoiceDetails(data).then(data =>{
-            console.log(data);
-        });
+        if(Object.keys(paymentDetails.customerGave).length){
+            const data = JSON.stringify({...paymentDetails, sale_id: customerInvoice?.sale_id});
+
+            setIsLoading(true);
+            updateInvoiceDetails(data).then(data =>{
+                if(data.success){
+                    if (btnClose.current) {
+                        btnClose.current.click();
+                    };
+                    dispatch(setCallApi(true));
+                }
+            }).finally(() => setIsLoading(false))
+        }else{
+            Swal.fire("No changes made");
+        }
     }
 
     return(
@@ -74,7 +88,7 @@ const  UpdateInvoice:React.FC<UpdateInvoiceProps> = ({sale}) =>{
             <div className="row">
                 <div className="col-lg-6">
             <ModalWrapper 
-                targetId='updateInvoiceModal'
+                targetId = 'updateInvoiceModal'
                 title = "Sales/Invoice Details"
                 btnDetails={{
                     confirmText: "Update Invoice", 
@@ -82,7 +96,7 @@ const  UpdateInvoice:React.FC<UpdateInvoiceProps> = ({sale}) =>{
                     loaderColor: "#fff",
                     closeRef: btnClose
                 }}
-                isLoading = {false}
+                isLoading = {isLoading}
                 submitHandle={handleUpdateInvoiceSubmit}
             >
                 {
@@ -97,7 +111,7 @@ const  UpdateInvoice:React.FC<UpdateInvoiceProps> = ({sale}) =>{
                                 <h6>{customerInvoice.full_name}</h6>
                                 <p>{new Date(customerInvoice.invoice_date || sale.sale_date).toDateString()}</p>
                                 <h3>{sale.total_price}</h3>
-                                <p className="com">{sale.payment_status}</p>
+                                <p className="com">{customerInvoice.payment_status}</p>
                             </div>
                         </div>
                         <div className="col-sm-7">
@@ -123,7 +137,7 @@ const  UpdateInvoice:React.FC<UpdateInvoiceProps> = ({sale}) =>{
                                     </li>
                                     <li>
                                         <span>Balance</span>
-                                        <span>{sale.balance}</span>
+                                        <span>{customerInvoice.balance} Ksh</span>
                                     </li>
                                 </ul>
                                 <div className="mb-3">
