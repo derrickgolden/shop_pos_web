@@ -6,11 +6,8 @@ import { MdCancel, MdOutlinePhoneAndroid } from "react-icons/md";
 import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChange";
 import Swal from "sweetalert2";
 import ChangeDisplay from "./ChangeDisplay";
-import { PaymentCalcProps } from "./PaymentCalc";
-import { PaymentMethodProps, ValidateOrdersProps } from "./types";
+import { PaymentMethodProps } from "./types";
 import { useCustomerContext } from "../../pages/SalesEntry";
-import { PaymentDetails } from "../../sections/pointOfEntry/types";
-import { PaymentObject } from "../../pages/types";
 
 export const payments = [
     {icon:<BsCashCoin size={24}/>, method_name: "Cash", method: "cash", payment_method_id: 1},
@@ -28,7 +25,7 @@ interface PaymentProps{
 
 const PaymentMethod: React.FC<PaymentMethodProps> = ({ handleVilidateClick,  
     totalPrice, activePayMethod, customerGave, paymentDetails, setCustomeGave, 
-    setActivePayMethod, setPaymentDetails, PaymentCalcHandles, setStartNewEntry }) =>{
+    setActivePayMethod, setPaymentDetails, PaymentCalcHandles, setBtnClicks }) =>{
 
         const { sendInvoice } = useCustomerContext();
         const [ isValidateEnabled, setIsvalidateEnabled ] = useState(true)
@@ -52,7 +49,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({ handleVilidateClick,
     }
 
     const handleRemovePayment = (method: string) =>{
-        setStartNewEntry(true);
+        setBtnClicks((obj) => ({...obj, isNewPayment: true}));
         setCustomeGave((obj) => {
             const removedMethod = method;
             const {[removedMethod]: removedKey, ...newObj} = obj;

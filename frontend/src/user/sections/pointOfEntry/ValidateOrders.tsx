@@ -4,7 +4,7 @@ import PaymentCalc from "../../components/pointOfEntry/PaymentCalc"
 import PaymentMethod from "../../components/pointOfEntry/PaymentMethod";
 import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChange";
 import { PaymentMethodProps, ValidateOrdersProps } from "../../components/pointOfEntry/types";
-import { PaymentDetails } from "./types";
+import { BtnClicksProps, PaymentDetails } from "./types";
 import { PaymentObject } from "../../pages/types";
 
 interface ValidateOrdersProps2 extends ValidateOrdersProps{
@@ -13,15 +13,15 @@ interface ValidateOrdersProps2 extends ValidateOrdersProps{
     setActivePayMethod: React.Dispatch<React.SetStateAction<string>>;
     customerGave: {[key: string]: number;};
     setCustomeGave: React.Dispatch<React.SetStateAction<PaymentObject>>;
-    startNewEntry : boolean;
     paymentDetails: PaymentDetails;
-    setStartNewEntry: React.Dispatch<React.SetStateAction<boolean>>;
-    setPaymentDetails: React.Dispatch<React.SetStateAction<PaymentDetails>>; 
+    setPaymentDetails: React.Dispatch<React.SetStateAction<PaymentDetails>>;
+    btnClicks: BtnClicksProps;
+    setBtnClicks: React.Dispatch<React.SetStateAction<BtnClicksProps>>;
 }
 
 const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, totalPrice,
-    activePayMethod, setActivePayMethod, customerGave, setCustomeGave, startNewEntry, setStartNewEntry,
-    paymentDetails, setPaymentDetails }) =>{
+    activePayMethod, setActivePayMethod, customerGave, setCustomeGave, btnClicks,
+    setBtnClicks, paymentDetails, setPaymentDetails }) =>{
 
     useEffect(() =>{
         if(Object.keys(customerGave).length){
@@ -41,7 +41,7 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
         handleDigitClick: (digit: number) =>{
             const currentWidth = window.innerWidth;
             setCustomeGave((obj) => {
-                const newFig = startNewEntry? digit : Number(obj[activePayMethod] + String(digit)) || 0;
+                const newFig = btnClicks.isNewPayment? digit : Number(obj[activePayMethod] + String(digit)) || 0;
 
                 // remove the method being added first;
                 const {[activePayMethod]: removedKey, ...newObj} = obj;
@@ -53,7 +53,9 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
 
                 return {...obj ,[activePayMethod]: newFig};
             });
-            currentWidth < 768 ? setStartNewEntry(true) : setStartNewEntry(false);
+            setBtnClicks((obj) => {
+                return currentWidth < 768 ? {...obj, isNewPayment: true}: {...obj, isNewPayment: false}
+            })
         },
         handleDeleteDigit: () =>{
             setCustomeGave((obj) => {
@@ -77,7 +79,7 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
         },
         handleSetToQuantityChange: (digit: number) =>{
             setCustomeGave((obj) => {
-                const newFig = startNewEntry? digit : obj[activePayMethod] + digit;
+                const newFig = btnClicks.isNewPayment? digit : obj[activePayMethod] + digit;
 
                 // remove the method being added first;
                 const {[activePayMethod]: removedKey, ...newObj} = obj;
@@ -89,8 +91,7 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
 
                 return {...obj ,[activePayMethod]: newFig};
             });
-            setStartNewEntry(false);
-            
+            setBtnClicks((obj) => ({...obj, isNewPayment: false}));  
         }
     }
     return(
@@ -104,7 +105,7 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
                 setCustomeGave = {setCustomeGave}
                 setActivePayMethod = {setActivePayMethod}
                 setPaymentDetails= {setPaymentDetails}
-                setStartNewEntry = {setStartNewEntry}
+                setBtnClicks = {setBtnClicks}
                 PaymentCalcHandles = {PaymentCalcHandles}
             />
             <PaymentCalc 

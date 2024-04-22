@@ -1,6 +1,6 @@
 import { OrderDetail } from "../../pages/SalesEntry";
 import { PaymentObject, SaleRes } from "../../pages/types";
-import { PaymentDetails } from "../../sections/pointOfEntry/types";
+import { BtnClicksProps, PaymentDetails } from "../../sections/pointOfEntry/types";
 import { Customer } from "../customers/types";
 import { PaymentCalcProps } from "./PaymentCalc";
 
@@ -30,7 +30,7 @@ export interface ReceiptInvoiceProps{
 export interface PaymentMethodProps extends ValidateOrdersProps, PaymentCalcProps{
     activePayMethod: string;
     setActivePayMethod: React.Dispatch<React.SetStateAction<string>>;
-    setStartNewEntry: React.Dispatch<React.SetStateAction<boolean>>;
+    setBtnClicks: React.Dispatch<React.SetStateAction<BtnClicksProps>>;
     setPaymentDetails: React.Dispatch<React.SetStateAction<PaymentDetails>>; 
     customerGave: {[key: string]: number};
     setCustomeGave: React.Dispatch<React.SetStateAction<PaymentObject>>;

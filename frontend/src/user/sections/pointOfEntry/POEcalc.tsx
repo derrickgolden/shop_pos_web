@@ -3,14 +3,15 @@ import { FaDeleteLeft, FaRegNoteSticky } from 'react-icons/fa6';
 import { FaChevronRight } from 'react-icons/fa';
 import { RxAvatar } from 'react-icons/rx';
 import { HiOutlineReceiptRefund } from 'react-icons/hi';
-import { PoeCalcHandles } from './types';
+import { BtnClicksProps, PoeCalcHandles } from './types';
 import { Customer } from '../../components/customers/types';
 
 interface PosCalcProps{
     PoeCalcHandles: PoeCalcHandles;
     selectCustomer: Customer | undefined;
+    btnClicks: BtnClicksProps;
 }
-const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles, selectCustomer }) => {
+const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles, selectCustomer, btnClicks }) => {
   const renderDigitButtons = (digits: number[]) => {
     return digits.map((digit) => (
       <button
@@ -66,8 +67,8 @@ const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles, selectCustomer }) => 
               +
             </button>
             <button
-                className='btn btn-outline-secondary btn-calc col-4 rounded-0'
-                onClick={() => PoeCalcHandles.handleDigitClick(Number('.'))}
+              className='btn btn-outline-secondary btn-calc col-4 rounded-0'
+              onClick={() => PoeCalcHandles.handleDigitClick(Number('.'))}
             >
                 .
             </button>
@@ -76,20 +77,23 @@ const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles, selectCustomer }) => 
         </div>
         <div className='d-flex flex-column col-2 p-0'>
           <button
-            onClick={PoeCalcHandles.handleSetToQuantityChange}
-            className='btn btn-outline-secondary btn-calc rounded-0 active'
+            onClick={() => {PoeCalcHandles.setBtnClicks((obj) => ({...obj, focusedBtn: "qty", isDigit: false}))}}
+            className={`btn btn-outline-secondary btn-calc rounded-0
+             ${btnClicks.focusedBtn === 'qty'? ' active': ''}`}
           >
             Qty
           </button>
           <button
-            onClick={PoeCalcHandles.handleSetToGiveDiscount}
-            className='btn btn-outline-secondary btn-calc rounded-0'
+            onClick={() => PoeCalcHandles.setBtnClicks((obj) => ({...obj, focusedBtn: "disc", isDigit: false}))}
+            className={`btn btn-outline-secondary btn-calc rounded-0
+             ${btnClicks.focusedBtn === 'disc'? ' active': ''}`}
           >
             Disc
           </button>
           <button
-            onClick={PoeCalcHandles.handleSetToEditPrice}
-            className='btn btn-outline-secondary btn-calc rounded-0'
+            onClick={() => PoeCalcHandles.setBtnClicks((obj) => ({...obj, focusedBtn: "price", isDigit: false}))}
+            className={`btn btn-outline-secondary btn-calc rounded-0
+             ${btnClicks.focusedBtn === 'price'? ' active': ''}`}
           >
             Price
           </button>

@@ -2,11 +2,9 @@ import { OrderDetail } from "../../pages/SalesEntry";
 import { PaymentObject } from "../../pages/types";
 
 export interface PoeCalcHandles {
+    setBtnClicks: React.Dispatch<React.SetStateAction<BtnClicksProps>>
     handleDigitClick: (digit: number) => void;
     handleQuantityIncByOne: () => void;
-    handleSetToQuantityChange: () => void;
-    handleSetToGiveDiscount: () => void;
-    handleSetToEditPrice: () => void;
     handleDecreaseNcancelOrder: () => void;
     handleRefund: () => void;
     handleCustomerNote: () => void;
@@ -52,4 +50,10 @@ export interface PaymentDetails{
   remaining: number; 
   change: number;
   payment_status: 'Paid'|'Pending'|'Overdue'|'Partially Paid'|'Cancelled'|'Refunded';
+}
+
+export interface BtnClicksProps{
+  isNewPayment: boolean;
+  isDigit: boolean;
+  focusedBtn: "qty" | "disc" | "price";
 }

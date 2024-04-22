@@ -4,8 +4,8 @@ import OrdersCard from "../../components/pointOfEntry/OrdersCard";
 import calculateVAT from "../../controllers/calculations/calculateVAT";
 import { CommonSalesEntryProps } from "./types";
 
-const OrderDisplay: React.FC<CommonSalesEntryProps> = ({ 
-    activeCard, handleEditOrder, orderDetails, totalPrice, windowDisplay, setShowReview, handleEntryStep }) =>{
+const OrderDisplay: React.FC<CommonSalesEntryProps> = ({ activeCard, handleEditOrder, 
+    orderDetails, totalPrice, windowDisplay, setShowReview, handleEntryStep }) =>{
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {

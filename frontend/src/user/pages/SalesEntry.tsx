@@ -14,13 +14,15 @@ import Swal from "sweetalert2";
 import { EntryStepTypes, PaymentObject, SaleRes } from "./types";
 import CustomerList from "../sections/CustomerList";
 import { Customer } from "../components/customers/types";
-import { PaymentDetails } from "../sections/pointOfEntry/types";
+import { BtnClicksProps, PaymentDetails } from "../sections/pointOfEntry/types";
+import { calcNewUnitDiscPrice } from "./calculations/calcNewUnitDiscPrice";
 
 export interface OrderDetail extends ProductDetails {
   units: number;
   sub_total: number;
   customer_note: string;
   profit: number;
+  discount: number;
 }
 
 interface CustomerContextType {
@@ -46,16 +48,17 @@ const SalesEntry = () =>{
     }]);
     const [entryStep, setEntryStep] = useState({current: "inProgress", prev: ""});
 
+    // combine paymetod and customer gave in future;
     const [customerGave, setCustomeGave] = useState<PaymentObject>({});
     const [activePayMethod, setActivePayMethod] = useState("");
     const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
-        remaining: 0, change: 0.00, payment_status: "Pending"
+      remaining: 0, change: 0.00, payment_status: "Pending"
     });
-    const [startNewEntry, setStartNewEntry] = useState(true);
-
+    const [btnClicks, setBtnClicks] = useState<BtnClicksProps>({
+      isNewPayment: true, isDigit: false, focusedBtn: "qty"
+    });
     const [saleRes, setSaleRes] = useState<SaleRes>();
     const [updateStock, setUpdateStock] = useState<UpdateStockProps[]>([]);
-    const [isDigitClicked, setIsDigitClicked] = useState(false);
     const [showInventoryOrders, setShowInventoryOrders] = useState("inventory");
     const [selectCustomer, setSelectCustomer] = useState<Customer>();
     const [sendInvoice, setSendInvoice] = useState(false);
@@ -84,33 +87,29 @@ const SalesEntry = () =>{
     const localShop = userShop.localShop;
 
     const PoeCalcHandles = {
+        setBtnClicks,
+
         handleDigitClick: (digit: number) => {
           setOrdersList((arr) => {
             return arr.map((order) =>{
               if(order.activeOrder){
                 const newDetails =  order.orderDetails.map(orderDetail => {
-                  if (orderDetail.product_id === activeCard && orderDetail.units >= 0) {
-                    let newUnits;
-                    if(isDigitClicked){
-                      const newUnitsAsString = orderDetail.units.toString() + digit.toString();
-                      newUnits = parseInt(newUnitsAsString, 10);
-                    }else{
-                      newUnits = digit;
-                      setIsDigitClicked(true);
-                    }
-  
-                    return handleUpdatingStock(orderDetail, setUpdateStock, activeCard, newUnits);
-                  }
-                  return orderDetail
-                })
+                  if (orderDetail.product_id === activeCard && orderDetail.units >= 0) {                    
+                    const {newUnits, newDisc, newPrice} = calcNewUnitDiscPrice({
+                      btnClicks, orderDetail, operator: "digitClick", setBtnClicks, digit
+                    });
+                    return handleUpdatingStock({orderDetail, setUpdateStock, activeCard, newUnits, newDisc, newPrice});
+                  };
+                  return orderDetail;
+                });
 
                 const {totalPrice, total_profit} = calcTotalPrice(newDetails);
-                return {...order, orderDetails: newDetails, totalPrice, total_profit }
+                return {...order, orderDetails: newDetails, totalPrice, total_profit };
               }else{
                 return order;
-              }
-            })
-          })
+              };
+            });
+          });
         },
       
         handleQuantityIncByOne: () => {
@@ -118,14 +117,19 @@ const SalesEntry = () =>{
           setOrdersList((arr) => {
             return arr.map(order =>{
               if(order.activeOrder){
-                const newOrders = order.orderDetails.map(product => {
-                  if (product.product_id === activeCard) {
-                    const newUnits = product.units + 1;
-                    const newOrderDEtails = handleUpdatingStock(product, setUpdateStock, activeCard, newUnits);
-                    return newOrderDEtails;
-    
+                const newOrders = order.orderDetails.map(orderDetail => {
+                  if (orderDetail.product_id === activeCard) {
+                    // check if we are updating qty | discount | price
+                    const {newUnits, newDisc, newPrice} = calcNewUnitDiscPrice({
+                      btnClicks, orderDetail, operator: "add", setBtnClicks, digit: 1,
+                    });
+                    const newOrderDetails = handleUpdatingStock({
+                      orderDetail, setUpdateStock, activeCard, newUnits, newDisc, newPrice
+                    });
+
+                    return newOrderDetails;
                   } else {
-                    return product;
+                    return orderDetail;
                   }
                 });
                 const{ totalPrice, total_profit }= calcTotalPrice(newOrders);
@@ -136,52 +140,46 @@ const SalesEntry = () =>{
           });
         },
       
-        handleSetToQuantityChange: () => {
-          // Your logic for setting to quantity change
-          console.log('Setting to Quantity Change');
-        },
-      
-        handleSetToGiveDiscount: () => {
-          // Your logic for setting to give discount
-          console.log('Setting to Give Discount');
-        },
-      
-        handleSetToEditPrice: () => {
-          // Your logic for setting to edit price
-          console.log('Setting to Edit Price');
-        },
-      
         handleDecreaseNcancelOrder: () => {
           // Your logic for setting to Decrement and cancel order
           setOrdersList((arr) => {
             return arr.map(order =>{
-              if(order.activeOrder){
-                const [orderDetail] = order.orderDetails.filter(order=> order.product_id === activeCard);
-                if(orderDetail?.units > 0){
-                  const newDetails = order.orderDetails.map(orderDetail => {
-                    if (orderDetail.product_id === activeCard && orderDetail.units > 0) {
-                      const unitsString = orderDetail.units.toString();
-    
-                      const newUnits = Math.max(parseInt(unitsString.slice(0, -1), 10) || 0, 0);
-                      
-                      const newStockDetails = handleUpdatingStock(orderDetail, setUpdateStock, activeCard, newUnits);
-                      return newStockDetails;
-                    } else {
-                      return orderDetail;
-                    }
-                  })
-
-                  const{ totalPrice, total_profit }= calcTotalPrice(newDetails);
-                  return { ...order, orderDetails: newDetails, totalPrice, total_profit };
-                }else{
-                  setUpdateStock((stockArr) =>stockArr.filter(stock => stock?.product_id !== activeCard));
-                  
-                  const newOrderDetails =  order.orderDetails.filter(orderDetail => orderDetail?.product_id !== activeCard);
-                  setActiveCard(newOrderDetails[(newOrderDetails.length - 1)]?.product_id);
-                  
-                  const{ totalPrice, total_profit }= calcTotalPrice(newOrderDetails);
-
-                  return { ...order, orderDetails: newOrderDetails, totalPrice, total_profit };
+              const {activeOrder, orderDetails} = order;
+              if(activeOrder){
+                const [orderDetail] = orderDetails.filter(orderDetail=> orderDetail.product_id === activeCard);
+                if(orderDetail){
+                  const {focusedBtn} = btnClicks;
+                  if((orderDetail.units > 0)){
+                    const newDetails = orderDetails.map(orderDetail => {
+                      if (orderDetail.product_id === activeCard ) {
+                        const {newUnits, newDisc, newPrice} = calcNewUnitDiscPrice({
+                          btnClicks, orderDetail, operator: "slice", setBtnClicks, digit: 0
+                        });
+                        const newOrderDetails = handleUpdatingStock({
+                          orderDetail, setUpdateStock, activeCard, newUnits, newDisc, newPrice
+                        });
+                        
+                        return newOrderDetails;
+                      } else {
+                        return orderDetail;
+                      }
+                    })
+  
+                    const{ totalPrice, total_profit }= calcTotalPrice(newDetails);
+                    return { ...order, orderDetails: newDetails, totalPrice, total_profit };
+                  }else if(btnClicks.focusedBtn === 'qty'){
+                    console.log("jjj")
+                    setUpdateStock((stockArr) =>stockArr.filter(stock => stock?.product_id !== activeCard));
+                    
+                    const newOrderDetails =  order.orderDetails.filter(orderDetail => orderDetail?.product_id !== activeCard);
+                    setActiveCard(newOrderDetails[(newOrderDetails.length - 1)]?.product_id);
+                    
+                    const{ totalPrice, total_profit }= calcTotalPrice(newOrderDetails);
+  
+                    return { ...order, orderDetails: newOrderDetails, totalPrice, total_profit };
+                  }else{
+                    setBtnClicks((obj) => ({...obj, focusedBtn: 'qty'}));
+                  }
                 }
               }
               return order;
@@ -261,45 +259,52 @@ const SalesEntry = () =>{
             
     const handleNewOrderSelect = ( newOrder: ProductDetails ) => {
       setOrdersList((arr) => {
-            return arr.map(order => {
-              if(order.activeOrder){
-                const existingProduct = order.orderDetails.find(product => product.product_id === newOrder.product_id);
-                if (existingProduct) {
-                  const newOrders = order?.orderDetails.map(product => {
-                    if (product.product_id === newOrder.product_id) {
-                      const newUnits = product.units + 1;
-                      const newUpdateDetails = handleUpdatingStock(product, setUpdateStock, activeCard, newUnits)
-                      return newUpdateDetails;
-                    } else {
-                      return product;
-                    }
+        return arr.map(order => {
+          if(order.activeOrder){
+            const existingProduct = order.orderDetails.find(orderDetail => orderDetail.product_id === newOrder.product_id);
+            if (existingProduct) {
+              const newOrders = order?.orderDetails.map(orderDetail => {
+                if (orderDetail.product_id === newOrder.product_id) {
+                  const newUnits = orderDetail.units + 1;
+                  const newDisc = orderDetail.discount;
+                  const newPrice = orderDetail.price
+                  const newOrderDetails = handleUpdatingStock({
+                    orderDetail, setUpdateStock, activeCard, newUnits, newDisc, newPrice
                   });
-                  
-                  const {totalPrice, total_profit} = calcTotalPrice(newOrders);
-                  return { ...order, orderDetails: newOrders, totalPrice, total_profit };
-                }else{
-                  // calculate Remaining stock; 
-                  const newUnits = 1; 
-                  const useActiveCard = false;
-                  const orderDetail = {...newOrder, units: 1, sub_total: 0, profit: 0, customer_note: ""}
-                  const newUpdateDetails = handleUpdatingStock(orderDetail, setUpdateStock, activeCard,
-                     newUnits, useActiveCard)
-                  const updatedOrderDetails = [...order.orderDetails, newUpdateDetails];
-                    const {totalPrice, total_profit} = calcTotalPrice(updatedOrderDetails);
-                    return { ...order, orderDetails: updatedOrderDetails, totalPrice, total_profit };
+  
+                  return newOrderDetails;
+                } else {
+                  return orderDetail;
                 }
-              }else{
-                return order;
-              }
-            })
-          });
-          setActiveCard(newOrder.product_id);
-          isDigitClicked? setIsDigitClicked(false) :null;
+              });
+              
+              const {totalPrice, total_profit} = calcTotalPrice(newOrders);
+              return { ...order, orderDetails: newOrders, totalPrice, total_profit };
+            }else{
+              // calculate Remaining stock; 
+              const newUnits = 1; 
+              const useActiveCard = false;
+              const orderDetail = {...newOrder, units: 1, sub_total: 0, profit: 0, discount: 0, customer_note: ""}
+              const newUpdateDetails = handleUpdatingStock({orderDetail, setUpdateStock, activeCard,
+                 newUnits, newDisc: 0, newPrice: newOrder.price, useActiveCard
+              });
+              const updatedOrderDetails = [...order.orderDetails, newUpdateDetails];
+              const {totalPrice, total_profit} = calcTotalPrice(updatedOrderDetails);
+                
+              return { ...order, orderDetails: updatedOrderDetails, totalPrice, total_profit };
+            }
+          }else{
+            return order;
+          }
+        })
+      });
+      setActiveCard(newOrder.product_id);
+      btnClicks.isDigit? setBtnClicks((obj) => ({...obj, isDigit: false})) :null;
     };
         
     const handleEditOrder = (order: OrderDetail) =>{
       setActiveCard(order.product_id);
-      setIsDigitClicked(false);
+      setBtnClicks((obj) => ({...obj, isDigit: false}));
     };
 
     const handleNewCustomerOrder = ({date}: {date: string}) =>{
@@ -402,6 +407,7 @@ const SalesEntry = () =>{
                   <POEcalc 
                       PoeCalcHandles= {PoeCalcHandles}
                       selectCustomer = {selectCustomer}
+                      btnClicks = {btnClicks}
                   />
               </div>
               <div className={`${showInventoryOrders === "inventory" ? "" : "d-none"} 
@@ -441,8 +447,8 @@ const SalesEntry = () =>{
                 setCustomeGave = {setCustomeGave}
                 paymentDetails = {paymentDetails}  
                 setPaymentDetails = {setPaymentDetails}
-                startNewEntry = {startNewEntry} 
-                setStartNewEntry = {setStartNewEntry}
+                btnClicks = {btnClicks}
+                setBtnClicks = {setBtnClicks}
               />
             </CustomerContext.Provider>
           </div>
