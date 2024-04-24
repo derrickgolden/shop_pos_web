@@ -11,14 +11,13 @@ import { EntryStepTypes } from "../../pages/types";
 interface ListOfOrdersProps {
     ordersList: Order[];
     activeCard: number; 
-    totalPrice: number;
     setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
     handleNewCustomerOrder: ({date}: {date: string}) => void;
     handleDeleteCustomerOrder: (e: React.MouseEvent<HTMLTableDataCellElement, MouseEvent>, order: Order) => void;
     setOrdersList:  React.Dispatch<React.SetStateAction<Order[]>>
 }
 
-const ListOfOrders: React.FC<ListOfOrdersProps> = ({ordersList, activeCard, totalPrice, 
+const ListOfOrders: React.FC<ListOfOrdersProps> = ({ordersList, activeCard,  
     setEntryStep, handleNewCustomerOrder, handleDeleteCustomerOrder, setOrdersList }) =>{
 
     const [showReview, setShowReview] = useState(false); 
@@ -142,7 +141,7 @@ const ListOfOrders: React.FC<ListOfOrdersProps> = ({ordersList, activeCard, tota
                             activeCard = {activeCard}
                             handleEditOrder = {handleEditOrder}
                             orderDetails = {order.orderDetails}
-                            totalPrice = {totalPrice}
+                            totalPrice = {order.totalPrice}
                             setShowReview = {setShowReview}
                             handleEntryStep = {handleEntryStep}
                         /> : null

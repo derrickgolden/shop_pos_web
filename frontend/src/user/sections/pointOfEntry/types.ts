@@ -1,3 +1,4 @@
+import { Customer } from "../../components/customers/types";
 import { OrderDetail } from "../../pages/SalesEntry";
 import { PaymentObject } from "../../pages/types";
 
@@ -44,13 +45,28 @@ export interface Order{
   status: string;
   totalPrice: number;
   total_profit: number;
+};
+
+export interface PosCalcProps{
+  PoeCalcHandles: PoeCalcHandles;
+  selectCustomer: Customer | undefined;
+  btnClicks: BtnClicksProps;
 }
+
+export interface InventorySelectProps {
+  handleNewOrderSelect: (newOrder: ProductDetails) =>void;
+  orderDetails: OrderDetail[];
+  handleEditOrder: (order: OrderDetail) => void;
+  handlePayment: () => void;
+  setShowInventoryOrders: (orders: string) => void;
+  activeCard: number;
+};
 
 export interface PaymentDetails{ 
   remaining: number; 
   change: number;
   payment_status: 'Paid'|'Pending'|'Overdue'|'Partially Paid'|'Cancelled'|'Refunded';
-}
+};
 
 export interface BtnClicksProps{
   isNewPayment: boolean;

@@ -5,20 +5,10 @@ import { RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
 import { getProductGroupList } from "../../components/inventory/productGroup/apiCalls/getProductGroupList";
 import { setGroupList } from "../../../redux/groupList";
-import { OrderDetail } from "../../pages/SalesEntry";
 import OrdersCard from "../../components/pointOfEntry/OrdersCard";
 import { FaOpencart } from "react-icons/fa";
 import { getSessionStorage } from "../../controllers/getSessionStorage";
-import { ProductDetails } from "./types";
-
-interface InventorySelectProps {
-    handleNewOrderSelect: (newOrder: ProductDetails) =>void;
-    orderDetails: OrderDetail[];
-    handleEditOrder: (order: OrderDetail) => void;
-    handlePayment: () => void;
-    setShowInventoryOrders: (orders: string) => void;
-    activeCard: number;
-};
+import { InventorySelectProps } from "./types";
 
 const InventorySelect: React.FC<InventorySelectProps> = ({ handleNewOrderSelect, 
     handleEditOrder, orderDetails, handlePayment, setShowInventoryOrders, activeCard }) =>{
@@ -40,7 +30,6 @@ const InventorySelect: React.FC<InventorySelectProps> = ({ handleNewOrderSelect,
         })
         setGroupNames(groupNames);
     }, [productGroup])
-
     useEffect(()=>{
             const filterNull = true;
             const shop_id = localShop?.shop_id;

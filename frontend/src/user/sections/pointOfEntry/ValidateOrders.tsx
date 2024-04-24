@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import CustomerInvoice from "../../components/pointOfEntry/CustomerInvoice";
 import PaymentCalc from "../../components/pointOfEntry/PaymentCalc"
 import PaymentMethod from "../../components/pointOfEntry/PaymentMethod";
 import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChange";
-import { PaymentMethodProps, ValidateOrdersProps } from "../../components/pointOfEntry/types";
+import { ValidateOrdersProps } from "../../components/pointOfEntry/types";
 import { BtnClicksProps, PaymentDetails } from "./types";
-import { PaymentObject } from "../../pages/types";
+import { EntryStepTypes, PaymentObject } from "../../pages/types";
+import ValidateOrderNavbar from "../../components/pointOfEntry/ValidateOrderNavbar";
 
 interface ValidateOrdersProps2 extends ValidateOrdersProps{
     totalPrice: number;
@@ -17,11 +18,12 @@ interface ValidateOrdersProps2 extends ValidateOrdersProps{
     setPaymentDetails: React.Dispatch<React.SetStateAction<PaymentDetails>>;
     btnClicks: BtnClicksProps;
     setBtnClicks: React.Dispatch<React.SetStateAction<BtnClicksProps>>;
+    setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>
 }
 
 const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, totalPrice,
     activePayMethod, setActivePayMethod, customerGave, setCustomeGave, btnClicks,
-    setBtnClicks, paymentDetails, setPaymentDetails }) =>{
+    setBtnClicks, paymentDetails, setPaymentDetails, setEntryStep }) =>{
 
     useEffect(() =>{
         if(Object.keys(customerGave).length){
@@ -95,26 +97,33 @@ const ValidateOrders: React.FC<ValidateOrdersProps2> = ({handleVilidateClick, to
         }
     }
     return(
-        <div className="d-flex payment-step" >
-            <PaymentMethod 
-                handleVilidateClick = {handleVilidateClick}
-                activePayMethod = {activePayMethod}
-                totalPrice = {totalPrice}
-                customerGave = {customerGave}
-                paymentDetails = {paymentDetails}
-                setCustomeGave = {setCustomeGave}
-                setActivePayMethod = {setActivePayMethod}
-                setPaymentDetails= {setPaymentDetails}
-                setBtnClicks = {setBtnClicks}
-                PaymentCalcHandles = {PaymentCalcHandles}
+        <div>
+            <ValidateOrderNavbar 
+                setEntryStep={setEntryStep}
+                totalPrice={totalPrice}
+                step={{step: "payment"}}
             />
-            <PaymentCalc 
-                paymentDetails = {paymentDetails}
-                totalPrice = {totalPrice}
-                PaymentCalcHandles = {PaymentCalcHandles}
-                customerGave = {customerGave}
-            />
-            <CustomerInvoice />
+            <div className="d-flex payment-step" >
+                <PaymentMethod 
+                    handleVilidateClick = {handleVilidateClick}
+                    activePayMethod = {activePayMethod}
+                    totalPrice = {totalPrice}
+                    customerGave = {customerGave}
+                    paymentDetails = {paymentDetails}
+                    setCustomeGave = {setCustomeGave}
+                    setActivePayMethod = {setActivePayMethod}
+                    setPaymentDetails= {setPaymentDetails}
+                    setBtnClicks = {setBtnClicks}
+                    PaymentCalcHandles = {PaymentCalcHandles}
+                />
+                <PaymentCalc 
+                    paymentDetails = {paymentDetails}
+                    totalPrice = {totalPrice}
+                    PaymentCalcHandles = {PaymentCalcHandles}
+                    customerGave = {customerGave}
+                />
+                <CustomerInvoice />
+            </div>
         </div>
     )
 }

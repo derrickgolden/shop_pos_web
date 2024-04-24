@@ -37,11 +37,11 @@ export const registerSales = async (saleDetails: RegisterSalesProp, user_id: num
             const sale_id = res.insertId;
 
             orderDetails.map( async(details) =>{
-                const { product_id, units, sub_total, profit } = details;
+                const { product_id, units, sub_total, profit, price, discount } = details;
                 var [pricing_res] = await connection.query(`
-                    INSERT INTO sales_items (sale_id, product_id, units_sold, sub_total, profit)
-                    VALUES (?, ?, ?, ?, ?)
-                `, [sale_id, product_id, units, sub_total, profit]);
+                    INSERT INTO sales_items (sale_id, product_id, price, units_sold, sub_total, profit, discount)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                `, [sale_id, product_id, price, units, sub_total, profit, discount]);
             });
 
             // insert invoice if available 

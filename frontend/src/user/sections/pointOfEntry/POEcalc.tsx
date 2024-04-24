@@ -3,14 +3,8 @@ import { FaDeleteLeft, FaRegNoteSticky } from 'react-icons/fa6';
 import { FaChevronRight } from 'react-icons/fa';
 import { RxAvatar } from 'react-icons/rx';
 import { HiOutlineReceiptRefund } from 'react-icons/hi';
-import { BtnClicksProps, PoeCalcHandles } from './types';
-import { Customer } from '../../components/customers/types';
+import { PosCalcProps } from './types';
 
-interface PosCalcProps{
-    PoeCalcHandles: PoeCalcHandles;
-    selectCustomer: Customer | undefined;
-    btnClicks: BtnClicksProps;
-}
 const POEcalc: React.FC<PosCalcProps> = ({ PoeCalcHandles, selectCustomer, btnClicks }) => {
   const renderDigitButtons = (digits: number[]) => {
     return digits.map((digit) => (

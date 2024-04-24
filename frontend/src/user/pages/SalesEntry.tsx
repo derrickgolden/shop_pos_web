@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { InventorySelect, OrderDisplay, POEcalc, ValidateOrders, PrintReceipt, 
+import { ValidateOrders, PrintReceipt, 
   ListOfOrders, ProductDetails, Order } from "../sections";
-import ValidateOrderNavbar from "../components/pointOfEntry/ValidateOrderNavbar";
 import POSnavbar from "../components/pointOfEntry/POSnavbar";
 import { getSessionStorage } from "../controllers/getSessionStorage";
 
@@ -16,6 +15,7 @@ import CustomerList from "../sections/CustomerList";
 import { Customer } from "../components/customers/types";
 import { BtnClicksProps, PaymentDetails } from "../sections/pointOfEntry/types";
 import { calcNewUnitDiscPrice } from "./calculations/calcNewUnitDiscPrice";
+import SelectOrders from "../sections/pointOfEntry/SelectOrders";
 
 export interface OrderDetail extends ProductDetails {
   units: number;
@@ -148,8 +148,11 @@ const SalesEntry = () =>{
               if(activeOrder){
                 const [orderDetail] = orderDetails.filter(orderDetail=> orderDetail.product_id === activeCard);
                 if(orderDetail){
+
                   const {focusedBtn} = btnClicks;
-                  if((orderDetail.units > 0)){
+                  if((focusedBtn === 'qty' && orderDetail.units > 0) || 
+                    (focusedBtn === 'disc' && orderDetail.discount > 0) || 
+                    (focusedBtn === 'price' && orderDetail.price > 0)){
                     const newDetails = orderDetails.map(orderDetail => {
                       if (orderDetail.product_id === activeCard ) {
                         const {newUnits, newDisc, newPrice} = calcNewUnitDiscPrice({
@@ -167,11 +170,12 @@ const SalesEntry = () =>{
   
                     const{ totalPrice, total_profit }= calcTotalPrice(newDetails);
                     return { ...order, orderDetails: newDetails, totalPrice, total_profit };
-                  }else if(btnClicks.focusedBtn === 'qty'){
-                    console.log("jjj")
+                  }else if(focusedBtn === 'qty'){
                     setUpdateStock((stockArr) =>stockArr.filter(stock => stock?.product_id !== activeCard));
                     
-                    const newOrderDetails =  order.orderDetails.filter(orderDetail => orderDetail?.product_id !== activeCard);
+                    const newOrderDetails =  order.orderDetails.filter(orderDetail =>{ 
+                      return orderDetail?.product_id !== activeCard
+                    });
                     setActiveCard(newOrderDetails[(newOrderDetails.length - 1)]?.product_id);
                     
                     const{ totalPrice, total_profit }= calcTotalPrice(newOrderDetails);
@@ -267,7 +271,7 @@ const SalesEntry = () =>{
                 if (orderDetail.product_id === newOrder.product_id) {
                   const newUnits = orderDetail.units + 1;
                   const newDisc = orderDetail.discount;
-                  const newPrice = orderDetail.price
+                  const newPrice = orderDetail.price;
                   const newOrderDetails = handleUpdatingStock({
                     orderDetail, setUpdateStock, activeCard, newUnits, newDisc, newPrice
                   });
@@ -275,7 +279,7 @@ const SalesEntry = () =>{
                   return newOrderDetails;
                 } else {
                   return orderDetail;
-                }
+                };
               });
               
               const {totalPrice, total_profit} = calcTotalPrice(newOrders);
@@ -299,7 +303,8 @@ const SalesEntry = () =>{
         })
       });
       setActiveCard(newOrder.product_id);
-      btnClicks.isDigit? setBtnClicks((obj) => ({...obj, isDigit: false})) :null;
+      // btnClicks.isDigit? setBtnClicks((obj) => ({...obj, isDigit: false})) :null;
+      setBtnClicks((obj) => ({...obj, isDigit: false, focusedBtn: "qty"}));
     };
         
     const handleEditOrder = (order: OrderDetail) =>{
@@ -375,131 +380,86 @@ const SalesEntry = () =>{
           });
         };
     };
-   
-    return(
-      <>            
-          <POSnavbar 
-            entryStep={entryStep}
-            isOnline={isOnline}
-            ordersList={ordersList}
-            setEntryStep={setEntryStep}
-            setShowInventoryOrders={setShowInventoryOrders}
-            showInventoryOrders={showInventoryOrders}
-          />
-        {
-          entryStep.current === "inProgress" && 
-            <div className="sales-entry-container d-flex flex-column flex-md-row col-12" >
-              <div className={`${showInventoryOrders === "orders" ? "" : "d-none "} d-md-flex 
-              flex-column col-12 justify-content-between col-md-5 p-0 grow-1`} >
-                {
-                  ordersList.map((order, i) =>{
-                    const totalPrice = (ordersList.filter(order => order.activeOrder))[0].totalPrice;
 
-                    return order.activeOrder ? 
-                      <OrderDisplay key={i}
-                          activeCard = {activeCard}
-                          handleEditOrder = {handleEditOrder}
-                          orderDetails = {order.orderDetails}
-                          totalPrice = {totalPrice}
-                      /> : null
-                  })
-                }
-                  <POEcalc 
-                      PoeCalcHandles= {PoeCalcHandles}
-                      selectCustomer = {selectCustomer}
-                      btnClicks = {btnClicks}
-                  />
-              </div>
-              <div className={`${showInventoryOrders === "inventory" ? "" : "d-none"} 
-              col-md-7 px-0 d-md-flex`} >
-                {
-                  ordersList.map((order, i) =>{
-                    return order.activeOrder ? 
-                      <InventorySelect 
-                          key={i}
-                          handleNewOrderSelect = {handleNewOrderSelect}
-                          handleEditOrder = {handleEditOrder}
-                          orderDetails = {order.orderDetails}
-                          handlePayment= {PoeCalcHandles.handlePayment}
-                          setShowInventoryOrders = {setShowInventoryOrders}
-                          activeCard = {activeCard}
-                      /> : null
-                  })
-                }
-              </div>
-            </div>
-        }
-        {
-          entryStep.current === "payment" && 
-          <div className="">
-            <ValidateOrderNavbar 
-              setEntryStep = {setEntryStep}
-              totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
-              step = {{step: "payment"}}
-            />
-            <CustomerContext.Provider value={{ selectCustomer, setSendInvoice, sendInvoice, setEntryStep }}>
-              <ValidateOrders 
-                handleVilidateClick = {handleVilidateClick}
-                totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
-                activePayMethod = {activePayMethod} 
-                setActivePayMethod = {setActivePayMethod}
-                customerGave = {customerGave} 
-                setCustomeGave = {setCustomeGave}
-                paymentDetails = {paymentDetails}  
-                setPaymentDetails = {setPaymentDetails}
-                btnClicks = {btnClicks}
-                setBtnClicks = {setBtnClicks}
+    return(
+      <>
+      <POSnavbar 
+        entryStep={entryStep}
+        isOnline={isOnline}
+        ordersList={ordersList}
+        setEntryStep={setEntryStep}
+        setShowInventoryOrders={setShowInventoryOrders}
+        showInventoryOrders={showInventoryOrders}
+      />
+      {(() => {
+        switch(entryStep.current) {
+          case "inProgress":
+            return (
+              <SelectOrders
+                handleNewOrderSelect={handleNewOrderSelect}
+                handleEditOrder={handleEditOrder}
+                setShowInventoryOrders={setShowInventoryOrders}
+                activeCard={activeCard}
+                showInventoryOrders={showInventoryOrders}
+                ordersList={ordersList}
+                PoeCalcHandles={PoeCalcHandles}
+                selectCustomer={selectCustomer}
+                btnClicks={btnClicks}
               />
-            </CustomerContext.Provider>
-          </div>
-        }
-        {
-          entryStep.current === "receipt" &&
-          <div >
-            <div className="d-none d-md-block">
-              <ValidateOrderNavbar 
-                setEntryStep = {setEntryStep}
-                totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
-                step = {{step: "receipt"}}
+            );
+          case "payment":
+            return (                
+              <CustomerContext.Provider value={{ selectCustomer, setSendInvoice, sendInvoice, setEntryStep }}>
+                <ValidateOrders 
+                  handleVilidateClick={handleVilidateClick}
+                  totalPrice={(ordersList.filter(order => order.activeOrder))[0].totalPrice}
+                  activePayMethod={activePayMethod} 
+                  setActivePayMethod={setActivePayMethod}
+                  customerGave={customerGave} 
+                  setCustomeGave={setCustomeGave}
+                  paymentDetails={paymentDetails}  
+                  setPaymentDetails={setPaymentDetails}
+                  btnClicks={btnClicks}
+                  setBtnClicks={setBtnClicks}
+                  setEntryStep={setEntryStep}
+                />
+              </CustomerContext.Provider>
+            );
+          case "receipt":
+            return (
+              <PrintReceipt 
+                setEntryStep={setEntryStep}
+                handleStartNewOrderClick={handleStartNewOrderClick}
+                saleRes={saleRes}
+                selectCustomer={selectCustomer}
+                ordersList = {ordersList}
+              /> 
+            );
+          case "ordersList":
+            return (
+              <ListOfOrders 
+                ordersList={ordersList}
+                setOrdersList={setOrdersList}
+                activeCard={activeCard}
+                setEntryStep={setEntryStep}
+                handleNewCustomerOrder={handleNewCustomerOrder}
+                handleDeleteCustomerOrder={handleDeleteCustomerOrder}
               />
-            </div>
-            {
-              ordersList.map((order, i) =>{
-                return order.activeOrder && saleRes !== undefined ? 
-                  <PrintReceipt 
-                    key={i}
-                    orderDetails ={order.orderDetails}
-                    handleStartNewOrderClick = {handleStartNewOrderClick}
-                    totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
-                    saleRes = {saleRes}
-                    selectCustomer = {selectCustomer}
-                  /> : null
-              })
-            }
-          </div>
+            );
+          case "customerList":
+            return (
+              <CustomerList 
+                setEntryStep={setEntryStep}
+                selectCustomer={selectCustomer}
+                setSelectCustomer={setSelectCustomer}
+              />
+            );
+          default:
+            return null;
         }
-        {
-          entryStep.current === "ordersList" && 
-          <ListOfOrders 
-            ordersList = {ordersList}
-            setOrdersList = {setOrdersList}
-            activeCard = {activeCard}
-            totalPrice = {(ordersList.filter(order => order.activeOrder))[0].totalPrice}
-            setEntryStep = {setEntryStep}
-            handleNewCustomerOrder = {handleNewCustomerOrder}
-            handleDeleteCustomerOrder = {handleDeleteCustomerOrder}
-          />
-        }
-        {
-          entryStep.current === "customerList" && 
-          <CustomerList 
-            setEntryStep = {setEntryStep}
-            selectCustomer = {selectCustomer}
-            setSelectCustomer = {setSelectCustomer}
-          />
-        }
-      </>
-    )
+      })()}
+    </>  
+  )
 }
 
 export default SalesEntry;

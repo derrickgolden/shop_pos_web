@@ -8,7 +8,6 @@ import { useEffect, useRef } from "react";
 const InvoiceDesign: React.FC<ReceiptInvoiceProps> = ({componentRef, saleRes, orderDetails, totalPrice, selectCustomer}) =>{
     const isMounted = useRef(false);
     const paymentDetails = useSelector((state: RootState) => state.paymentDetails);
-    console.log(saleRes)
 
     const userShop = getSessionStorage();
     const { localShop } = userShop;
@@ -16,7 +15,7 @@ const InvoiceDesign: React.FC<ReceiptInvoiceProps> = ({componentRef, saleRes, or
     const handleDownloadPDF = () => {
         const opt = {
             margin:       1,
-            filename:     selectCustomer?.full_name,
+            filename:     `${selectCustomer?.full_name}-${new Date(saleRes.sale_date).toLocaleDateString()}`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2 },
             jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
