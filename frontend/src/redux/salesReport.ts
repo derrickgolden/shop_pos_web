@@ -1,7 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { salesProps } from '../user/components/reports/SalesTable';
+import { SalesItemApiData, SharedSalesProps } from '../user/components/reports/types';
 
-const initialState: salesProps[] = [];
+export interface SalesApiData extends SharedSalesProps{
+  sales_items: SalesItemApiData[]; 
+}
+
+const initialState: SalesApiData[] = [];
 
 const salesReportSlice = createSlice({
   name: 'salesReport',

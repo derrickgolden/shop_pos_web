@@ -1,13 +1,16 @@
 import axios from "axios";
 import { server_baseurl } from "../../../baseUrl";
 import Swal from "sweetalert2";
+import { SalesApiData } from "../../../redux/salesReport";
 
 interface salesReportProps{
     url: string,
     shop_id: number
 }
 
-export const getSalesReportApi = async({url, shop_id}: salesReportProps) =>{
+export const getSalesReportApi = async({url, shop_id}: salesReportProps): Promise<{
+    success: boolean, details: SalesApiData[]
+}> =>{
 
     const tokenString = sessionStorage.getItem("userToken");
 
@@ -19,7 +22,7 @@ export const getSalesReportApi = async({url, shop_id}: salesReportProps) =>{
             text: "Try to login Again then add the group.",
             icon: "warning"
         });
-        return
+        return {success: false, details: []};
     }
     
     let data = JSON.stringify({shop_id});
@@ -38,13 +41,14 @@ export const getSalesReportApi = async({url, shop_id}: salesReportProps) =>{
     return await axios.request(config)
     .then((response) => {
         if(response.data.success){            
-            return (response.data.details);
+            return {success: true, details: response.data.details};
         }else{
             Swal.fire({
                 title: "Failed",
                 text: `${response.data.msg}`,
                 icon: "warning"
             });
+            return {success: false, details: []};
         }
     })
     .catch((error) => {
@@ -54,5 +58,6 @@ export const getSalesReportApi = async({url, shop_id}: salesReportProps) =>{
             text: `Server side error`,
             icon: "warning"
         });
-    });   
+        return {success: false, details: []};  
+    }); 
 }

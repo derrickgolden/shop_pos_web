@@ -19,6 +19,15 @@ export interface SharedSalesProps{
     cashier: {cashier_f_name: string, cashier_l_name: string, cashier_id: number},
 }
 
+export interface SalesItemApiData{
+    product_id: number,
+    product_name: string,
+    sales_item_id: number,
+    sub_total: number,
+    units_sold: number,
+    units?: number
+}
+
 export interface columnsProps extends SharedSalesProps{
     id: number;
     children: subColumnsProps[];

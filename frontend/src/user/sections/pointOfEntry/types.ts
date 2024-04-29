@@ -2,7 +2,7 @@ import { Customer } from "../../components/customers/types";
 import { OrderDetail } from "../../pages/SalesEntry";
 import { PaymentObject } from "../../pages/types";
 
-export interface PoeCalcHandles {
+export interface PoeCalcHandlesProps {
     setBtnClicks: React.Dispatch<React.SetStateAction<BtnClicksProps>>
     handleDigitClick: (digit: number) => void;
     handleQuantityIncByOne: () => void;
@@ -48,7 +48,7 @@ export interface Order{
 };
 
 export interface PosCalcProps{
-  PoeCalcHandles: PoeCalcHandles;
+  PoeCalcHandles: PoeCalcHandlesProps;
   selectCustomer: Customer | undefined;
   btnClicks: BtnClicksProps;
 }

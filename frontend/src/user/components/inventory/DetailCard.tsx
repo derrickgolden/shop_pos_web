@@ -4,13 +4,6 @@ import { useEffect, useState } from "react";
 import { RootState } from "../../../redux/store";
 import { useSelector } from "react-redux";
 
-export interface SalesProps{
-    sub_total: number,
-    units_sold: number,
-    product_id: number,
-    sales_item_id: number
-}
-
 const DetailCard: React.FC<{data: Product}> = ({data}) =>{
     const nodata = "No data"
     const [salesTotals, setSalesTotals ] = useState<{totalSales: number, totalUnits: number}>()

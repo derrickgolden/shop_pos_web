@@ -7,7 +7,7 @@ import { calcAndSetChange } from "../../controllers/calculations/calcAndSetChang
 import Swal from "sweetalert2";
 import ChangeDisplay from "./ChangeDisplay";
 import { PaymentMethodProps } from "./types";
-import { useCustomerContext } from "../../pages/SalesEntry";
+import { useCustomerContext } from "../../pages/createContext";
 
 export const payments = [
     {icon:<BsCashCoin size={24}/>, method_name: "Cash", method: "cash", payment_method_id: 1},
@@ -31,7 +31,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({ handleVilidateClick,
         const [ isValidateEnabled, setIsvalidateEnabled ] = useState(true)
         const currentWidth = window.innerWidth;
         const isDisableBtn = sendInvoice && isValidateEnabled || 
-                            !paymentDetails.remaining && Object.keys(customerGave).length && isValidateEnabled
+                        !paymentDetails.remaining && Object.keys(customerGave).length && isValidateEnabled
         
     const handlePaymentMethod = (payment: PaymentProps) =>{
         if (!(Object.keys(customerGave).includes(payment.method_name))) {

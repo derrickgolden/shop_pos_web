@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { RxAvatar } from 'react-icons/rx';
 import { LiaFileInvoiceSolid } from "react-icons/lia";
-import { useCustomerContext } from '../../pages/SalesEntry';
 import { getPaymentDetails } from '../apiCalls/getApiCalls';
 import { getSessionStorage } from '../../controllers/getSessionStorage';
 import { setPaymentDetails } from '../../../redux/paymentDetails';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
+import { useCustomerContext } from '../../pages/createContext';
 
 const CustomerInvoice = () =>{
     const dispatch = useDispatch();

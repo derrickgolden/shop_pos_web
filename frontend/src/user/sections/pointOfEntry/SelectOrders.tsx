@@ -1,6 +1,7 @@
 import InventorySelect from "./InventorySelect";
 import OrderDisplay from "./OrderDisplay";
 import POEcalc from "./POEcalc";
+import PoeCalcOrderDisplay from "./PoeCalcOrderDisplay";
 import { InventorySelectProps, Order, PosCalcProps } from "./types";
 
 interface SalectOrdersProps extends Omit<InventorySelectProps, 'orderDetails' | 'handlePayment'>, PosCalcProps{
@@ -17,20 +18,16 @@ const SelectOrders: React.FC<SalectOrdersProps> = ({handleNewOrderSelect, handle
                 return(
                     <div key={i}
                     className="sales-entry-container d-flex flex-column flex-md-row col-12">
-                    <div className={`${showInventoryOrders === "orders" ? "" : "d-none "} d-md-flex 
-                    flex-column col-12 justify-content-between col-md-5 p-0 grow-1`} >
-                        <OrderDisplay 
-                            activeCard={activeCard}
-                            handleEditOrder={handleEditOrder}
-                            orderDetails={orderDetails}
-                            totalPrice={totalPrice}
-                        />
-                        <POEcalc 
-                            PoeCalcHandles={PoeCalcHandles}
-                            selectCustomer={selectCustomer}
-                            btnClicks={btnClicks}
-                        />
-                    </div>
+                    <PoeCalcOrderDisplay 
+                        showInventoryOrders = {showInventoryOrders}
+                        activeCard={activeCard}
+                        handleEditOrder={handleEditOrder}
+                        orderDetails={orderDetails}
+                        totalPrice={totalPrice}
+                        PoeCalcHandles={PoeCalcHandles}
+                        selectCustomer={selectCustomer}
+                        btnClicks={btnClicks}
+                    />
                     <div className={`${showInventoryOrders === "inventory" ? "" : "d-none"} 
                     col-md-7 px-0 d-md-flex`} >
                         <InventorySelect 

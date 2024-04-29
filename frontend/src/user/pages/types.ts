@@ -1,3 +1,6 @@
+import { Customer } from "../components/customers/types";
+import { BtnClicksProps, PoeCalcHandlesProps } from "../sections/pointOfEntry/types";
+
 export interface details{
     icon: JSX.Element;
     status: string;
@@ -64,4 +67,20 @@ export type PaymentObject = {
 export type EntryStepTypes = {
     current: string;
     prev: string;
+};
+
+export interface CustomerContextType {
+    selectCustomer: Customer | undefined;
+    setSendInvoice: React.Dispatch<React.SetStateAction<boolean>>;
+    sendInvoice: boolean;
+    setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
+};
+
+export interface SalesListContextProps{
+    setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
+    handleNewCustomerOrder: ({date}: {date: string}) => void;
+    showInventoryOrders: string;
+    PoeCalcHandles: PoeCalcHandlesProps;
+    selectCustomer: Customer | undefined;
+    btnClicks: BtnClicksProps;
 }

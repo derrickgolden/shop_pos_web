@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { ValidateOrders, PrintReceipt, 
-  ListOfOrders, ProductDetails, Order } from "../sections";
+import { ValidateOrders, PrintReceipt, OrdersList, ProductDetails, Order, 
+  PaymentDetails, BtnClicksProps, SelectOrders, CustomerList,
+  SalesList} from "../sections";
 import POSnavbar from "../components/pointOfEntry/POSnavbar";
 import { getSessionStorage } from "../controllers/getSessionStorage";
 
@@ -10,12 +11,10 @@ import { calcTotalPrice } from "./calculations/calcTotalPrice";
 import { regiterSalesApi } from "./apiCalls/registerSales";
 import Swal from "sweetalert2";
 
-import { EntryStepTypes, PaymentObject, SaleRes } from "./types";
-import CustomerList from "../sections/CustomerList";
+import { CustomerContextType, EntryStepTypes, PaymentObject, SaleRes } from "./types";
 import { Customer } from "../components/customers/types";
-import { BtnClicksProps, PaymentDetails } from "../sections/pointOfEntry/types";
 import { calcNewUnitDiscPrice } from "./calculations/calcNewUnitDiscPrice";
-import SelectOrders from "../sections/pointOfEntry/SelectOrders";
+import { CustomerContext, SalesListContext } from "./createContext";
 
 export interface OrderDetail extends ProductDetails {
   units: number;
@@ -24,22 +23,6 @@ export interface OrderDetail extends ProductDetails {
   profit: number;
   discount: number;
 }
-
-interface CustomerContextType {
-  selectCustomer: Customer | undefined;
-  setSendInvoice: React.Dispatch<React.SetStateAction<boolean>>;
-  sendInvoice: boolean;
-  setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
-}
-
-// Create the context
-const CustomerContext = createContext<CustomerContextType>({
-  selectCustomer: undefined, setSendInvoice: () =>{}, sendInvoice: false, 
-  setEntryStep: () =>({current: "inProgress", prev: ""})
-});
-
-// Create a custom hook to consume the context
-export const useCustomerContext = () => useContext(CustomerContext);
 
 const SalesEntry = () =>{
     const [activeCard, setActiveCard] = useState(0);
@@ -194,6 +177,7 @@ const SalesEntry = () =>{
         handleRefund: () => {
           // Your logic for handling refund
           console.log('Handling Refund');
+          setEntryStep({current: "salesList", prev: "inProgress"});
         },
       
         handleCustomerNote: async() => {
@@ -437,7 +421,7 @@ const SalesEntry = () =>{
             );
           case "ordersList":
             return (
-              <ListOfOrders 
+              <OrdersList 
                 ordersList={ordersList}
                 setOrdersList={setOrdersList}
                 activeCard={activeCard}
@@ -454,6 +438,15 @@ const SalesEntry = () =>{
                 setSelectCustomer={setSelectCustomer}
               />
             );
+          case "salesList":
+            return(
+              <SalesListContext.Provider value={{ setEntryStep, handleNewCustomerOrder, showInventoryOrders,
+                PoeCalcHandles, selectCustomer, btnClicks
+              }}>
+                <SalesList
+                />
+              </SalesListContext.Provider>
+            )
           default:
             return null;
         }

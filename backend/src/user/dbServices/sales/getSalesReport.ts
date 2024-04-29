@@ -28,7 +28,8 @@ export const getSalesReport = async ( shop_id: number): Promise<universalRespons
                         'product_name', pl.product_name,
                         'units_sold', si.units_sold,
                         'sub_total', si.sub_total,
-                        'profit', si.profit
+                        'profit', si.profit,
+                        'price', si.price
                     )
                 ) AS sales_items
             FROM

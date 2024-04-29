@@ -5,20 +5,11 @@ import { getStatusColor } from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import UpdateInvoice from './UpdateInvoice';
-import { SharedSalesProps, columnsProps, subColumnsProps } from './types';
+import { columnsProps, subColumnsProps } from './types';
+import { SalesApiData } from '../../../redux/salesReport';
 
-interface salesItemProps{
-    product_id: number,
-    product_name: string,
-    sales_item_id: number,
-    sub_total: number,
-    units_sold: number
-}
-export interface salesProps extends SharedSalesProps{
-    sales_items: salesItemProps[]; 
-}
-export interface salesDataProps{
-    salesData: salesProps[];
+export interface SalesDataProps{
+    salesData: SalesApiData[];
     activeShop: ShopState;
 }
 
@@ -26,7 +17,7 @@ interface mappedDataProps{
     data: columnsProps;
 }
 
-const SalesTable: React.FC<salesDataProps> = ({ salesData, activeShop }) => {
+const SalesTable: React.FC<SalesDataProps> = ({ salesData, activeShop }) => {
 //   console.log(salesData)
     const [saleRowData, setSaleRowData] = useState<columnsProps>();
 
