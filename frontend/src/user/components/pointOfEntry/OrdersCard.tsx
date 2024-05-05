@@ -35,6 +35,14 @@ const OrdersCard: React.FC< OrdersCardProps > = ({ order, activeCard, handleEdit
                                     discount per Unit
                                 </p>                          
                             }                         
+                            {
+                                order.refund_units > 0 && 
+                                <p className="mb-0 fst-italic"> To refund:&nbsp;
+                                    <span className="text-poppins-semibold fst-italic">
+                                        { order.refund_units } &nbsp; 
+                                    </span>Unit(s)
+                                </p>                          
+                            }                         
                         </div>
                         <div className="text-poppins-semibold pl-3">
                             Ksh.{order.sub_total}

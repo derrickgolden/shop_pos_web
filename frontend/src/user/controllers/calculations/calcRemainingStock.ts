@@ -9,12 +9,12 @@ export const calculateRemainingStock = (
   unitsSold: number
 ): { error: boolean; msg: string; remainingContainers?: number; remainingUnits?: number } => {
   
-  if (unitsSold < 0) {
-    return {
-      error: true,
-      msg: 'Quantity sold cannot be negative.',
-    };
-  }
+  // if (unitsSold < 0) {
+  //   return {
+  //     error: true,
+  //     msg: 'Quantity sold cannot be negative.',
+  //   };
+  // }
 
   const totalUnitsInStock =
     product.containersInStock * product.unitsPerContainer +

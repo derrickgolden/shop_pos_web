@@ -15,6 +15,7 @@ import { CustomerContextType, EntryStepTypes, PaymentObject, SaleRes } from "./t
 import { Customer } from "../components/customers/types";
 import { calcNewUnitDiscPrice } from "./calculations/calcNewUnitDiscPrice";
 import { CustomerContext, SalesListContext } from "./createContext";
+import { RefundDetailsObj } from "../sections/pointOfEntry/types";
 
 export interface OrderDetail extends ProductDetails {
   units: number;
@@ -22,12 +23,14 @@ export interface OrderDetail extends ProductDetails {
   customer_note: string;
   profit: number;
   discount: number;
+  refund_units: number;
 }
 
 const SalesEntry = () =>{
     const [activeCard, setActiveCard] = useState(0);
     const [ordersList, setOrdersList] = useState<Order[]>([{ date: new Date().toLocaleString(), 
       orderDetails: [], activeOrder: true, status: "inProgress" , totalPrice: 0, total_profit: 0,
+      isRefund: false
     }]);
     const [entryStep, setEntryStep] = useState({current: "inProgress", prev: ""});
 
@@ -230,8 +233,10 @@ const SalesEntry = () =>{
         },
       
         handlePayment: () => { 
-          const totalPrice = (ordersList.filter(order => order.activeOrder))[0].totalPrice;        
-          if(totalPrice > 0){
+          console.log(ordersList);
+          const [order] = (ordersList.filter(order => order.activeOrder));
+          const {totalPrice, isRefund} = order;        
+          if(totalPrice > 0 || isRefund){
             setEntryStep({current: "payment", prev: "inProgress"})
             setOrdersList(arr =>{
               return arr.map(order => order.activeOrder? {...order, status: "payment"} : order)
@@ -245,15 +250,16 @@ const SalesEntry = () =>{
         }
     };
             
-    const handleNewOrderSelect = ( newOrder: ProductDetails ) => {
+    const handleNewOrderSelect = ( newOrder: ProductDetails | RefundDetailsObj, isRefund = false, units = 1 ) => {
+      const {product_id, price} = newOrder;
       setOrdersList((arr) => {
         return arr.map(order => {
           if(order.activeOrder){
-            const existingProduct = order.orderDetails.find(orderDetail => orderDetail.product_id === newOrder.product_id);
+            const existingProduct = order.orderDetails.find(orderDetail => orderDetail.product_id === product_id);
             if (existingProduct) {
               const newOrders = order?.orderDetails.map(orderDetail => {
-                if (orderDetail.product_id === newOrder.product_id) {
-                  const newUnits = orderDetail.units + 1;
+                if (orderDetail.product_id === product_id) {
+                  const newUnits = orderDetail.units + units;
                   const newDisc = orderDetail.discount;
                   const newPrice = orderDetail.price;
                   const newOrderDetails = handleUpdatingStock({
@@ -270,23 +276,31 @@ const SalesEntry = () =>{
               return { ...order, orderDetails: newOrders, totalPrice, total_profit };
             }else{
               // calculate Remaining stock; 
-              const newUnits = 1; 
               const useActiveCard = false;
-              const orderDetail = {...newOrder, units: 1, sub_total: 0, profit: 0, discount: 0, customer_note: ""}
+              let orderDetail
+              if(isRefund){
+                orderDetail = newOrder;
+              }else{
+                orderDetail = {...newOrder, units, sub_total: 0, profit: 0, 
+                  discount: 0, customer_note: "", refund_units: 0
+                }
+              }
+              
               const newUpdateDetails = handleUpdatingStock({orderDetail, setUpdateStock, activeCard,
-                 newUnits, newDisc: 0, newPrice: newOrder.price, useActiveCard
+                 newUnits: units, newDisc: 0, newPrice: price, useActiveCard
               });
               const updatedOrderDetails = [...order.orderDetails, newUpdateDetails];
               const {totalPrice, total_profit} = calcTotalPrice(updatedOrderDetails);
                 
-              return { ...order, orderDetails: updatedOrderDetails, totalPrice, total_profit };
+              console.log(total_profit);
+              return { ...order, orderDetails: updatedOrderDetails, totalPrice, total_profit, isRefund };
             }
           }else{
             return order;
           }
         })
       });
-      setActiveCard(newOrder.product_id);
+      setActiveCard(product_id);
       // btnClicks.isDigit? setBtnClicks((obj) => ({...obj, isDigit: false})) :null;
       setBtnClicks((obj) => ({...obj, isDigit: false, focusedBtn: "qty"}));
     };
@@ -303,7 +317,8 @@ const SalesEntry = () =>{
         arr.map((obj) =>{
           obj.activeOrder = false;
         })
-        return [...arr, { date, orderDetails:[], activeOrder: true, status: "inProgress", totalPrice: 0, total_profit: 0 }]
+        return [...arr, { date, orderDetails:[], activeOrder: true, status: "inProgress", 
+          totalPrice: 0, total_profit: 0, isRefund: false }]
       })
       setEntryStep(obj => ({...obj, current: "inProgress"}));
     }
@@ -320,7 +335,7 @@ const SalesEntry = () =>{
         }
         
         return [{ date: new Date().toLocaleString(), orderDetails:[], activeOrder: true, 
-          status: "inProgress", totalPrice: 0 , total_profit: 0}];
+          status: "inProgress", totalPrice: 0 , total_profit: 0, isRefund: false}];
       });
     }
     
@@ -328,7 +343,8 @@ const SalesEntry = () =>{
       setOrdersList(arr =>{
         const removeOrder = arr.filter(order => !order.activeOrder);
         return [...removeOrder, { date: new Date().toLocaleString(), total_profit: 0,
-          orderDetails: [], activeOrder: true, status: "inProgress", totalPrice: 0
+          orderDetails: [], activeOrder: true, status: "inProgress", totalPrice: 0,
+          isRefund: false,
         }]
       })
       setCustomeGave({});
@@ -441,7 +457,7 @@ const SalesEntry = () =>{
           case "salesList":
             return(
               <SalesListContext.Provider value={{ setEntryStep, handleNewCustomerOrder, showInventoryOrders,
-                PoeCalcHandles, selectCustomer, btnClicks
+                PoeCalcHandles, selectCustomer, btnClicks, handleNewOrderSelect
               }}>
                 <SalesList
                 />

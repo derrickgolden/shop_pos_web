@@ -25,6 +25,7 @@ export interface SalesItemApiData{
     sales_item_id: number,
     sub_total: number,
     units_sold: number,
+    price: number;
     units?: number
 }
 

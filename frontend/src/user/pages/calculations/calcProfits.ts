@@ -1,9 +1,9 @@
-import { salesProps } from "../../components/reports/SalesTable";
+import { SalesApiData } from "../../../redux/salesReport";
+// import { salesProps } from "../../components/reports/SalesTable";
 
-export const calcProfits = (sales: salesProps[]) => {
+export const calcProfits = (sales: SalesApiData[]) => {
     // Get current date
     const currentDate = new Date();
-    // console.log(currentDate)
     const today = currentDate.setHours(0, 0, 0, 0);
     const mondayDate = calcLastMonday(currentDate);
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);

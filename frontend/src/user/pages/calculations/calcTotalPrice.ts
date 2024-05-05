@@ -7,6 +7,6 @@ export const calcTotalPrice = (orderDetails: OrderDetail[]) =>{
       totalPrice += Number(item.sub_total);
       total_profit += Number(item.profit);
     }) 
-       
+       console.log(total_profit)
     return {totalPrice, total_profit};
 }

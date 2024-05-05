@@ -10,7 +10,6 @@ import { Link } from "react-router-dom";
 
   
   const CustomDatePickerInput: React.FC<any> = ({ value, onClick, onChange, ...rest }) => {
-      console.log({ value, onClick, onChange, ...rest });
     
     return(
     <div className="d-flex align-items-center custom-datepicker-input" onClick={onClick}>

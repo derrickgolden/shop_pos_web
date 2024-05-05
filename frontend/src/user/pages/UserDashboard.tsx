@@ -75,17 +75,19 @@ const UserDashboard: React.FC = () =>{
                 const url = "sales/get-sales"
                 const salesReport = getSalesReportApi({url, shop_id});
                 salesReport.then((data) =>{
-
-                    const invoices = data.length;
-                    let productsSold = 0;
-                    data.map((details: {sales_items: []}) =>{
-                        productsSold += details.sales_items.length
-                    })
-                    
-                    setLowerDashboardData((data: BottomSummaryCardProps )  => ({...data,
-                        quickReport: {title: "Quick Report", side_title_link: "#", side_title_link_caption: "Date", left_totals: productsSold, left_totals_caption: "Qty of Products Solid", right_totals: invoices, right_totals_caption: "Invoices Generated", display_date_picker: true},
-                    }))
-                    dispatch(setSalesReportList(data));
+                    const { success, details } = data;
+                    if(success){
+                        const invoices = details.length;
+                        let productsSold = 0;
+                        details.map((sale) =>{
+                            productsSold += sale.sales_items.length
+                        })
+                        
+                        setLowerDashboardData((data: BottomSummaryCardProps )  => ({...data,
+                            quickReport: {title: "Quick Report", side_title_link: "#", side_title_link_caption: "Date", left_totals: productsSold, left_totals_caption: "Qty of Products Solid", right_totals: invoices, right_totals_caption: "Invoices Generated", display_date_picker: true},
+                        }))
+                        dispatch(setSalesReportList(details));
+                    }
                 })
             }
         }

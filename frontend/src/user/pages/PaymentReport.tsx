@@ -24,12 +24,15 @@ const PaymentReport = () =>{
             const shop_id = activeShop.shop?.shop_id;
             const salesPayMethods = getSalesReportApi({url, shop_id});
             salesPayMethods.then((data) =>{
-                const sortedPaymentsByDate = calcSalesPayMethodTotals({data, date: {
-                    startDate:  thirtyDaysAgo, endDate: new Date(),
-                }, keyType: "payment_methods" });
-    
-                setSortedPaymentsByDateSelect(sortedPaymentsByDate);
-                setSalesPayMethods(data);
+                const { success, details } = data;
+                if(success){
+                    const sortedPaymentsByDate = calcSalesPayMethodTotals({data: details, date: {
+                        startDate:  thirtyDaysAgo, endDate: new Date(),
+                    }, keyType: "payment_methods" });
+        
+                    setSortedPaymentsByDateSelect(sortedPaymentsByDate);
+                    setSalesPayMethods(details);
+                }
             })
         }
     }, [activeShop]);

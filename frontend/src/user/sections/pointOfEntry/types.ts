@@ -1,6 +1,6 @@
 import { Customer } from "../../components/customers/types";
+import { SalesItemApiData } from "../../components/reports/types";
 import { OrderDetail } from "../../pages/SalesEntry";
-import { PaymentObject } from "../../pages/types";
 
 export interface PoeCalcHandlesProps {
     setBtnClicks: React.Dispatch<React.SetStateAction<BtnClicksProps>>
@@ -45,6 +45,7 @@ export interface Order{
   status: string;
   totalPrice: number;
   total_profit: number;
+  isRefund: boolean;
 };
 
 export interface PosCalcProps{
@@ -54,7 +55,7 @@ export interface PosCalcProps{
 }
 
 export interface InventorySelectProps {
-  handleNewOrderSelect: (newOrder: ProductDetails) =>void;
+  handleNewOrderSelect: (newOrder: ProductDetails, isRefund: boolean, units?: number) =>void;
   orderDetails: OrderDetail[];
   handleEditOrder: (order: OrderDetail) => void;
   handlePayment: () => void;
@@ -73,3 +74,7 @@ export interface BtnClicksProps{
   isDigit: boolean;
   focusedBtn: "qty" | "disc" | "price";
 }
+
+export interface RefundDetailsObj extends SalesItemApiData{
+  refund_units?: number;
+};

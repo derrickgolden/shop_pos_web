@@ -33,7 +33,10 @@ const SalesReport = () =>{
             const shop_id = activeShop.shop.shop_id
             const salesReport = getSalesReportApi({url, shop_id});
             salesReport.then((data) =>{
-                dispatch(setSalesReportList(data));
+                const { success, details } = data;
+                if(success){
+                    dispatch(setSalesReportList(details));
+                }
             })
         }
     }, [sales.length === 0, activeShop, apiCall]);

@@ -1,5 +1,5 @@
 import { Customer } from "../components/customers/types";
-import { BtnClicksProps, PoeCalcHandlesProps } from "../sections/pointOfEntry/types";
+import { BtnClicksProps, RefundDetailsObj, PoeCalcHandlesProps } from "../sections/pointOfEntry/types";
 
 export interface details{
     icon: JSX.Element;
@@ -80,7 +80,12 @@ export interface SalesListContextProps{
     setEntryStep: React.Dispatch<React.SetStateAction<EntryStepTypes>>;
     handleNewCustomerOrder: ({date}: {date: string}) => void;
     showInventoryOrders: string;
-    PoeCalcHandles: PoeCalcHandlesProps;
+    PoeCalcHandles: PoeCalcHandlesProps | undefined;
     selectCustomer: Customer | undefined;
     btnClicks: BtnClicksProps;
+    handleNewOrderSelect: (
+        newOrder: RefundDetailsObj | undefined, 
+        isRefund: boolean, 
+        units?: number
+    ) =>void;
 }

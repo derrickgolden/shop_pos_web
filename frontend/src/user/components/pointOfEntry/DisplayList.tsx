@@ -18,7 +18,7 @@ const DisplayList = ({showReview, handleEntryStep, handleNewCustomerOrder, list,
         data: string;
     }[]>()
     useState(() =>{
-        listType === "orders" ?
+        listType === "ordering" ?
             setTableDetails(ordersTableDetails) :
             setTableDetails(salesTableDetails) 
     })
@@ -62,7 +62,7 @@ const DisplayList = ({showReview, handleEntryStep, handleNewCustomerOrder, list,
                                 ))
                                 }
                                 {
-                                    listType === "orders" && 
+                                    listType === "ordering" && 
                                     <th scope="col">Action</th>
                                 }
                             </tr>
@@ -78,7 +78,7 @@ const DisplayList = ({showReview, handleEntryStep, handleNewCustomerOrder, list,
                                             ))
                                         }
                                         {
-                                            listType === "orders" && 
+                                            listType === "ordering" && 
                                             <td onClick={(e) => handleDeleteCustomerOrder(e, order)}>
                                                 <button className=" btn btn-secondary btn-sm ms-1"  >
                                                     <FaDeleteLeft />
@@ -93,7 +93,7 @@ const DisplayList = ({showReview, handleEntryStep, handleNewCustomerOrder, list,
                 </div>
                 <div className="d-flex  fixed-bottom">
                     {
-                        listType === "orders" && 
+                        listType === "ordering" && 
                         <button type="button" onClick={() => handleEntryStep()}
                         className="btn col-6 col-md-7 py-3 rounded-0 btn-warning">
                             <h5 className="mb-0"><b>Load Order</b></h5>

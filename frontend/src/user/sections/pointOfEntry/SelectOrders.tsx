@@ -1,6 +1,4 @@
 import InventorySelect from "./InventorySelect";
-import OrderDisplay from "./OrderDisplay";
-import POEcalc from "./POEcalc";
 import PoeCalcOrderDisplay from "./PoeCalcOrderDisplay";
 import { InventorySelectProps, Order, PosCalcProps } from "./types";
 

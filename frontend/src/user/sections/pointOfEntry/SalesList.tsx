@@ -8,27 +8,59 @@ import { RootState } from "../../../redux/store";
 import { useSalesListContext } from "../../pages/createContext";
 import PoeCalcOrderDisplay from "./PoeCalcOrderDisplay";
 import { SalesItemApiData } from "../../components/reports/types";
+import Swal from "sweetalert2";
+import { RefundDetailsObj } from "./types";
 
 interface SalesListMapped extends Omit<SalesApiData, 'cashier' | 'sale_date'> {
   // Define additional properties or methods if needed
   cashier: string;
   sale_date: string;
-}
+};
 
 const  SalesList = () =>{
     const [showReview, setShowReview] = useState(false);
-    const [orderDetails, setOrderDetails] = useState<SalesItemApiData[]>([]);
+    const [refundDetails, setRefundDetails] = useState<RefundDetailsObj[]>([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [activeCard, setActiveCard] = useState(0);
-    const [salesList, setSalesList] = useState<SalesListMapped[]>([])
+    const [salesList, setSalesList] = useState<SalesListMapped[]>([]);
     const dispatch = useDispatch();
     // const salesList = useSelector((state: RootState) => state.salesReport);
 
     const {setEntryStep, handleNewCustomerOrder, showInventoryOrders,
-        PoeCalcHandles, selectCustomer, btnClicks
-    } = useSalesListContext()
+        PoeCalcHandles, selectCustomer, btnClicks, handleNewOrderSelect
+    } = useSalesListContext();
 
-    const {localShop} = getSessionStorage()
+    const handleDigitClick = (digit: number) => {
+        setRefundDetails(order => {
+            return order.map((details) =>{
+                const {product_id, units_sold, product_name} = details;
+                if(product_id === activeCard){
+                    if(units_sold >= digit){
+                        return {...details, refund_units: digit};
+                    }else{
+                        Swal.fire(`You can not refund more than units sold (${units_sold}) for ${product_name}`);
+                    };
+                };
+                return details;
+            });
+        });
+    };
+
+    const handlePayment = () =>{
+        refundDetails.map((details, i) =>{
+            const { refund_units } = details;
+            if(refund_units && refund_units > 0){
+                const units = refund_units * -1;
+                const isRefund = true;
+                handleNewOrderSelect( details, isRefund, units );
+            };
+        });
+        setEntryStep({current: "inProgress", prev: "salesList"});
+    };
+
+    const poeCalcHandles = {...PoeCalcHandles, handleDigitClick, handlePayment};
+
+    const {localShop} = getSessionStorage();
     useEffect(() =>{
         if(localShop){
             const url = "sales/get-sales"
@@ -56,8 +88,8 @@ const  SalesList = () =>{
     const handleChangeActiveOrder = (sale: SalesApiData) =>{
         console.log(sale);
         const {sales_items, total_price} = sale;
-        setOrderDetails(sales_items);
-        setActiveCard(sales_items[0].product_id)
+        setRefundDetails(sales_items);
+        setActiveCard(sales_items[0].product_id);
         setTotalPrice(Number(total_price));
         // setOrdersList((arr) => {
         //     return arr.map(prevOrder =>{
@@ -77,7 +109,7 @@ const  SalesList = () =>{
     
     const handleDeleteCustomerOrder = () =>{
 
-    }
+    };
 
     const handleEditOrder = (order: SalesItemApiData) =>{
         setActiveCard(order.product_id);
@@ -91,7 +123,7 @@ const  SalesList = () =>{
                 handleEntryStep = {handleEntryStep} 
                 handleNewCustomerOrder = {handleNewCustomerOrder} 
                 list = {salesList}
-                listType = "listType"
+                listType = "refund"
                 handleChangeActiveOrder = {handleChangeActiveOrder} 
                 handleDeleteCustomerOrder = {handleDeleteCustomerOrder} 
                 setShowReview = {setShowReview}
@@ -100,9 +132,9 @@ const  SalesList = () =>{
                 showInventoryOrders = {showInventoryOrders}
                 activeCard={activeCard}
                 handleEditOrder={handleEditOrder}
-                orderDetails={orderDetails}
+                orderDetails={refundDetails}
                 totalPrice={totalPrice}
-                PoeCalcHandles={PoeCalcHandles}
+                PoeCalcHandles={poeCalcHandles}
                 selectCustomer={selectCustomer}
                 btnClicks={btnClicks}
             />

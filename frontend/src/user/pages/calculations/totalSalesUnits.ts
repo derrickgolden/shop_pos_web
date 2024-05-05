@@ -1,5 +1,5 @@
+import { SalesApiData } from "../../../redux/salesReport";
 import { SelectedDate } from "../../components/reports/ReportHeader";
-import { salesProps } from "../../components/reports/SalesTable";
 
 export interface ResultItem {
     accumulatedSales:{
@@ -8,16 +8,16 @@ export interface ResultItem {
         units_sold: number;
         Clients: number;
     }[];
-    sortedSales: salesProps[]
+    sortedSales: SalesApiData[]
 }
 
 interface calculateTotalSalesProps {
-    data: salesProps[], date: SelectedDate, keyType: "payment_methods" | "sales_items"
+    data: SalesApiData[], date: SelectedDate, keyType: "payment_methods" | "sales_items"
 }
 
 export function calculateTotalSales({data, date, keyType}: calculateTotalSalesProps): ResultItem {
     const accumulatedSales = [];
-    const sortedSales: salesProps[] = [];
+    const sortedSales: SalesApiData[] = [];
     const startDate = new Date(date?.startDate);
     const endDate = new Date(date?.endDate);
 

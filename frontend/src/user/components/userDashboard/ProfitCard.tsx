@@ -10,17 +10,20 @@ const ProfitCard = () =>{
     const sales = useSelector((state: RootState) => state.salesReport)
     const activeShop = useSelector((state: RootState) => state.activeShop); 
 
-    useEffect(() =>{
-        if(activeShop.shop && sales.length <= 0){
-            const url = "sales/get-sales";
-            const shop_id = activeShop.shop.shop_id;
-            const salesReport = getSalesReportApi({url, shop_id});
-            salesReport.then((data) =>{
-                // console.log(data);
-                dispatch(setSalesReportList(data));
-            });
-        };
-    }, [sales.length === 0, activeShop]);
+    // useEffect(() =>{
+    //     if(activeShop.shop && sales.length <= 0){
+    //         console.log(sales)
+    //         const url = "sales/get-sales";
+    //         const shop_id = activeShop.shop.shop_id;
+    //         const salesReport = getSalesReportApi({url, shop_id});
+    //         salesReport.then((data) =>{
+    //             const { success, details } = data;
+    //             if(success){
+    //                 dispatch(setSalesReportList(details));
+    //             }
+    //         });
+    //     };
+    // }, [sales.length === 0, activeShop]);
 
 
     const profits = calcProfits(sales)

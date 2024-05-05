@@ -28,7 +28,7 @@ export const handleUpdatingStock = ({orderDetail, setUpdateStock, activeCard, ne
     };
 
     const { error, msg, remainingContainers, remainingUnits  } = calculateRemainingStock( product2, newUnits);
-
+console.log(remainingContainers, remainingUnits);
     if(error){
         Swal.fire({
             icon: "error",
@@ -64,7 +64,14 @@ export const handleUpdatingStock = ({orderDetail, setUpdateStock, activeCard, ne
     }
 
     const price = newPrice - newDisc;
-    const profit = (price - (package_cost / package_size)) * newUnits;
+    if(package_cost){
+        var profit = (price - (package_cost / package_size)) * newUnits;
+    }else{
+        var profit = orderDetail.profit * newUnits;
+        console.log(profit);
+        console.log(orderDetail);
+        
+    }
     const sub_total = price * newUnits;
     const customer_note = orderDetail.customer_note || "";
 
